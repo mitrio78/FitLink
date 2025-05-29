@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 final class ScheduleViewModel: ObservableObject {
-    @Published var sessions: [Session] = Session.mockData
+    @Published var sessions: [Session] = mockSessions
     @Published var searchText: String = ""
     @Published var selectedDate: Date = Date()
     @Published var isCalendarMode: Bool = true // переключатель режимов: календарь/список

@@ -6,11 +6,23 @@
 //
 import Foundation
 
-struct Client: Identifiable {
-    let id = UUID()
+struct Client: Identifiable, Hashable {
+    let id: UUID
     let name: String
     let avatarURL: URL?
-    let lastSessionDescription: String
-    let nextSession: String // Пример: "5:00pm" или "Thu"
-    let nextSessionAccent: String // Например: "Next: 5:00pm"
+    
+    var initials: String {
+        let nameComponents = name.components(separatedBy: " ")
+        let first = nameComponents.first?.first.map { String($0) } ?? ""
+        let last = nameComponents.dropFirst().first?.first.map { String($0) } ?? ""
+        return first + last
+    }
+}
+
+struct StatSummary: Identifiable {
+    let id: String
+    let title: String
+    let value: String
+    let icon: String?
+    let hasDot: Bool
 }

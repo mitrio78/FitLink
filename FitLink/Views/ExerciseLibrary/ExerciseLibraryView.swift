@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 struct ExerciseLibraryView: View {
     @StateObject private var viewModel = ExerciseLibraryViewModel()
     @State private var showFilterDialog = false
@@ -30,22 +29,19 @@ struct ExerciseLibraryView: View {
 
                 SearchBarWithFilter(
                     text: $viewModel.searchText,
-                    placeholder: "Search exercises...",
+                    placeholder: "Поиск упражнения...",
                     onFilterTapped: {
                         showFilterDialog = true
                     }
                 )
                 .padding(.horizontal)
-
-                // Фильтр по типу упражнения
-                .confirmationDialog("Filter by type", isPresented: $showFilterDialog) {
-                    Button("All", role: .none) { viewModel.selectedType = nil }
-                    ForEach(ExerciseType.allCases) { type in
-                        Button(type.rawValue) { viewModel.selectedType = type }
+                .confirmationDialog("Выберите категорию", isPresented: $showFilterDialog) {
+                    Button("Все", role: .none) { viewModel.selectedCategory = nil }
+                    ForEach(ExerciseCategory.allCases) { category in
+                        Button(category.rawValue) { viewModel.selectedCategory = category }
                     }
                 }
 
-                // Список упражнений
                 ScrollView {
                     LazyVStack(spacing: 12) {
                         ForEach(viewModel.filteredExercises) { exercise in

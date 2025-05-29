@@ -58,5 +58,5 @@ struct CalendarModeView: View {
 }
 
 #Preview {
-    CalendarModeView(selectedDate: .constant(Date()), sessions: Session.mockData, filteredSessions: Session.mockData)
+    CalendarModeView(selectedDate: .constant(Date()), sessions: mockSessions, filteredSessions: mockSessions)
 }

@@ -44,5 +44,5 @@ struct ListModeView: View {
 }
 
 #Preview {
-    ListModeView(todaySessions: Session.mockData)
+    ListModeView(todaySessions: mockSessions)
 }

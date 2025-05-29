@@ -11,38 +11,53 @@ struct ExerciseRow: View {
     let exercise: Exercise
 
     var body: some View {
-        HStack {
-            Image(systemName: exercise.thumbnailName ?? exercise.type.iconName)
+        HStack(alignment: .center, spacing: 14) {
+            Image(systemName: exercise.category.iconName)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 44, height: 44)
-                .padding(6)
-                .background(Color(.systemGray5))
-                .clipShape(Circle())
+                .frame(width: 40, height: 40)
+                .foregroundColor(exercise.category.color)
+                .padding(.vertical, 4)
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text(exercise.name).font(.body.bold())
-                Text("\(exercise.muscleGroup) • \(exercise.equipment)")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                HStack(spacing: 4) {
-                    ForEach(exercise.variations, id: \.self) { variation in
-                        if variation != .none {
-                            VariationBadge(variation: variation)
+            VStack(alignment: .leading, spacing: 7) {
+                Text(exercise.name)
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundColor(.primary)
+                    .lineLimit(2)
+                
+                // Категория — Capsule
+                HStack(spacing: 6) {
+                    Image(systemName: exercise.category.iconName)
+                        .font(.system(size: 12))
+                        .foregroundColor(exercise.category.color)
+                    Text(exercise.category.rawValue)
+                        .font(.caption.bold())
+                        .foregroundColor(exercise.category.color)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(exercise.category.color.opacity(0.08))
+                        .clipShape(Capsule())
+                }
+
+                if !exercise.variations.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 6) {
+                            ForEach(exercise.variations) { variation in
+                                VariationBadge(variation: variation)
+                            }
                         }
+                        .padding(.top, 2)
                     }
                 }
             }
-            .padding(.leading, 8)
-            
+            .padding(.vertical, 6)
             Spacer()
-            Image(systemName: "chevron.right")
-                .foregroundColor(.gray)
         }
-        .padding(10)
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: Color(.systemGray4).opacity(0.15), radius: 2, x: 0, y: 1)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(Color(.secondarySystemBackground))
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.03), radius: 1, x: 0, y: 1)
     }
 }
 
