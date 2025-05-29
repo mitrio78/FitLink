@@ -11,7 +11,7 @@ import SwiftUI
 struct FitLinkApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
         }
     }
 }
