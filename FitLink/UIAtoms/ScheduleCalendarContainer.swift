@@ -10,10 +10,14 @@ import SwiftUI
 struct ScheduleCalendarContainer: View {
     @ObservedObject var viewModel: ScheduleViewModel
     @State private var monthDate: Date
+    @Binding var selectedSession: WorkoutSession?
+    let clients: [UUID: Client]
 
-    init(viewModel: ScheduleViewModel) {
+    init(viewModel: ScheduleViewModel, selectedSession: Binding<WorkoutSession?>, clients: [UUID: Client]) {
         self.viewModel = viewModel
         _monthDate = State(initialValue: viewModel.selectedDate)
+        self._selectedSession = selectedSession
+        self.clients = clients
     }
 
     var body: some View {
@@ -36,9 +40,17 @@ struct ScheduleCalendarContainer: View {
                     .padding()
             } else {
                 ForEach(daySessions) { session in
-                    SessionRow(session: session)
+                    Button {
+                        selectedSession = session
+                    } label: {
+                        SessionRow(
+                            session: session,
+                            client: session.clientId.flatMap { clients[$0] } ?? .placeholder
+                        )
                         .padding(.horizontal)
                         .padding(.bottom, 8)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
             Spacer()

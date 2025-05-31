@@ -9,8 +9,8 @@ import Foundation
 import Combine
 
 final class TrainerDashboardViewModel: ObservableObject {
-    @Published var clients: [Client] = mockClients
-    @Published var sessions: [Session] = mockSessions
+    @Published var clients: [Client] = clientsMock
+    @Published var sessions: [WorkoutSession] = MockData.complexMockSessions
     @Published var searchText: String = ""
     @Published var currentFilter: FilterType = .none
 
@@ -31,8 +31,8 @@ final class TrainerDashboardViewModel: ObservableObject {
         case .nextSessionType:
             // Можно сортировать по title или другому признаку
             result = result.sorted { (lhs, rhs) in
-                let lType = nextSession(for: lhs)?.workoutTitle ?? ""
-                let rType = nextSession(for: rhs)?.workoutTitle ?? ""
+                let lType = nextSession(for: lhs)?.title ?? ""
+                let rType = nextSession(for: rhs)?.title ?? ""
                 return lType < rType
             }
         default: break
@@ -53,18 +53,29 @@ final class TrainerDashboardViewModel: ObservableObject {
         currentFilter = filter
     }
 
-    // Логика поиска last/next session
-    func lastSession(for client: Client) -> Session? {
+    func lastSession(for client: Client) -> WorkoutSession? {
         sessions
-            .filter { $0.clientId == client.id && $0.status == .completed && $0.date < Date() }
-            .sorted { $0.date > $1.date }
+            .filter {
+                $0.clientId == client.id &&
+                $0.status == .completed &&
+                ($0.date ?? .distantPast) < Date()
+            }
+            .sorted {
+                ($0.date ?? .distantPast) > ($1.date ?? .distantPast)
+            }
             .first
     }
 
-    func nextSession(for client: Client) -> Session? {
+    func nextSession(for client: Client) -> WorkoutSession? {
         sessions
-            .filter { $0.clientId == client.id && $0.status == .planned && $0.date > Date() }
-            .sorted { $0.date < $1.date }
+            .filter {
+                $0.clientId == client.id &&
+                $0.status == .planned &&
+                ($0.date ?? .distantFuture) > Date()
+            }
+            .sorted {
+                ($0.date ?? .distantFuture) < ($1.date ?? .distantFuture)
+            }
             .first
     }
     

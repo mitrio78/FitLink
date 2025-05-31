@@ -19,6 +19,15 @@ struct Client: Identifiable, Hashable {
     }
 }
 
+extension Client {
+    static let placeholder = Client(
+        id: UUID(),
+        name: "Клиент",
+        avatarURL: nil
+    )
+}
+
+
 struct StatSummary: Identifiable {
     let id: String
     let title: String

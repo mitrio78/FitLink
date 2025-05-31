@@ -8,17 +8,21 @@
 import Foundation
 import Combine
 
-import SwiftUI
-
 final class ExerciseLibraryViewModel: ObservableObject {
-    @Published var exercises: [Exercise] = Exercise.mockData
+    @Published var exercises: [Exercise] = exercisesCatalog
     @Published var searchText: String = ""
-    @Published var selectedCategory: ExerciseCategory? = nil
+    @Published var selectedMuscleGroup: MuscleGroup? = nil
 
     var filteredExercises: [Exercise] {
         exercises.filter { exercise in
-            (selectedCategory == nil || exercise.category == selectedCategory!) &&
-            (searchText.isEmpty || exercise.name.localizedCaseInsensitiveContains(searchText))
+            let matchesGroup = selectedMuscleGroup == nil
+                || exercise.muscleGroups.contains(selectedMuscleGroup!)
+            let matchesSearch = searchText.isEmpty
+                || exercise.name.localizedCaseInsensitiveContains(searchText)
+                || exercise.muscleGroups
+                    .map { $0.displayName.lowercased() }
+                    .contains(where: { $0.contains(searchText.lowercased()) })
+            return matchesGroup && matchesSearch
         }
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+
 struct ExerciseLibraryView: View {
     @StateObject private var viewModel = ExerciseLibraryViewModel()
     @State private var showFilterDialog = false
@@ -35,10 +36,10 @@ struct ExerciseLibraryView: View {
                     }
                 )
                 .padding(.horizontal)
-                .confirmationDialog("Выберите категорию", isPresented: $showFilterDialog) {
-                    Button("Все", role: .none) { viewModel.selectedCategory = nil }
-                    ForEach(ExerciseCategory.allCases) { category in
-                        Button(category.rawValue) { viewModel.selectedCategory = category }
+                .confirmationDialog("Выберите группу мышц", isPresented: $showFilterDialog) {
+                    Button("Все", role: .none) { viewModel.selectedMuscleGroup = nil }
+                    ForEach(MuscleGroup.allStandardCases, id: \.self) { group in
+                        Button(group.displayName) { viewModel.selectedMuscleGroup = group }
                     }
                 }
 

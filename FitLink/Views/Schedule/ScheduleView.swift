@@ -8,7 +8,8 @@ import SwiftUI
 
 struct ScheduleView: View {
     @StateObject private var viewModel = ScheduleViewModel()
-    
+    @State private var selectedSession: WorkoutSession?
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -63,11 +64,17 @@ struct ScheduleView: View {
                 ScrollView {
                     // Content
                     if viewModel.isCalendarMode {
-                        ScheduleCalendarContainer(viewModel: viewModel)
-                            .padding(.bottom, 8)
+                        ScheduleCalendarContainer(
+                            viewModel: viewModel,
+                            selectedSession: $selectedSession,
+                            clients: viewModel.clients
+                        )
+                        .padding(.bottom, 8)
                     } else {
                         ListModeView(
-                            todaySessions: viewModel.todaySessions
+                            todaySessions: viewModel.todaySessions,
+                            clients: viewModel.clients,
+                            selectedSession: $selectedSession
                         )
                         .padding(.bottom, 8)
                     }
@@ -77,8 +84,12 @@ struct ScheduleView: View {
                 TapGesture().onEnded { _ in hideKeyboard() }
             )
             .background(Color(.systemBackground))
+            .navigationDestination(item: $selectedSession) { session in
+                let client = session.clientId.flatMap { viewModel.clients[$0] }
+                WorkoutSessionView(session: session, client: client)
+            }
             .navigationBarHidden(true)
-                
+            
         }
     }
 }

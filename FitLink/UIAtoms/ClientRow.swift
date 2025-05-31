@@ -9,8 +9,8 @@ import SwiftUI
 // Client Row
 struct ClientRow: View {
     let client: Client
-    let lastSession: Session?
-    let nextSession: Session?
+    let lastSession: WorkoutSession?
+    let nextSession: WorkoutSession?
     
     var body: some View {
         HStack(alignment: .center, spacing: 14) {
@@ -23,13 +23,13 @@ struct ClientRow: View {
                     .foregroundColor(.primary)
                 
                 if let lastSession = lastSession {
-                    Text("Последняя: \(lastSession.workoutTitle) • \(lastSession.date.formattedHuman())")
+                    Text("Последняя: \(lastSession.timeString) • \(lastSession.date?.formattedHuman() ?? "")")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
                 
                 if let nextSession = nextSession {
-                    Text("Следующая: \(nextSession.workoutTitle) • \(nextSession.date.formattedHuman())")
+                    Text("Следующая: \(nextSession.timeString) • \(nextSession.date?.formattedHuman() ?? "")")
                         .font(.caption)
                         .foregroundColor(Color(.label))
                         .padding(.vertical, 2)

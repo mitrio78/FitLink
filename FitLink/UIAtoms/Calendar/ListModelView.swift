@@ -8,18 +8,20 @@
 import SwiftUI
 
 struct ListModeView: View {
-    let todaySessions: [Session]
+    let todaySessions: [WorkoutSession]
+    let clients: [UUID: Client]
+    @Binding var selectedSession: WorkoutSession?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text("Today's Sessions")
+                Text("Сессии на сегодня")
                     .font(.headline)
                 Spacer()
                 Button(action: {
                     // Новая сессия на сегодня
                 }) {
-                    Label("New Session", systemImage: "plus")
+                    Label("Новая сессия", systemImage: "plus")
                         .font(.subheadline.bold())
                         .foregroundColor(.blue)
                 }
@@ -28,14 +30,23 @@ struct ListModeView: View {
             .padding(.bottom, 16)
 
             if todaySessions.isEmpty {
-                Text("No sessions for today")
+                Text("Нет сессий на сегодня")
                     .foregroundColor(.gray)
                     .padding()
             } else {
                 ForEach(todaySessions) { session in
-                    SessionRow(session: session)
+                    Button {
+                        selectedSession = session
+                    } label: {
+                        SessionRow(
+                            session: session,
+                            client: session.clientId.flatMap { clients[$0] } ?? .placeholder
+                        )
+                        .contentShape(Rectangle())
                         .padding(.horizontal)
                         .padding(.top, 8)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
             Spacer()
@@ -43,6 +54,6 @@ struct ListModeView: View {
     }
 }
 
-#Preview {
-    ListModeView(todaySessions: mockSessions)
-}
+//#Preview {
+//    ListModeView(todaySessions: mockSessions, selectedSession: nil)
+//}
