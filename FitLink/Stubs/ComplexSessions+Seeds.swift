@@ -10,75 +10,76 @@
 
 import Foundation
 
-// Дропсет: один подход, внутри три ступени (три веса)
 let dropSetExercise = exercisesCatalog[0] // Жим лёжа
 
-let dropSetApproach1 = Approach.dropset([
-    ExerciseSet(
+let dropSetApproach1 = Approach(
+    set: ExerciseSet(
         id: UUID(),
         metricValues: [.reps: 8, .weight: 50],
         notes: "Основной вес"
     ),
-    ExerciseSet(
-        id: UUID(),
-        metricValues: [.reps: 8, .weight: 40],
-        notes: "Дроп 1"
-    ),
-    ExerciseSet(
-        id: UUID(),
-        metricValues: [.reps: 8, .weight: 30],
-        notes: "Дроп 2"
-    )
-])
+    drops: [
+        ExerciseSet(
+            id: UUID(),
+            metricValues: [.reps: 8, .weight: 40],
+            notes: "Дроп 1"
+        ),
+        ExerciseSet(
+            id: UUID(),
+            metricValues: [.reps: 8, .weight: 30],
+            notes: "Дроп 2"
+        )
+    ]
+)
 
-let dropSetApproach2 = Approach.dropset([
-    ExerciseSet(
+let dropSetApproach2 = Approach(
+    set: ExerciseSet(
         id: UUID(),
         metricValues: [.reps: 7, .weight: 45],
         notes: "Основной вес"
     ),
-    ExerciseSet(
-        id: UUID(),
-        metricValues: [.reps: 7, .weight: 35],
-        notes: "Дроп 1"
-    ),
-    ExerciseSet(
-        id: UUID(),
-        metricValues: [.reps: 7, .weight: 25],
-        notes: "Дроп 2"
-    )
-])
+    drops: [
+        ExerciseSet(
+            id: UUID(),
+            metricValues: [.reps: 7, .weight: 35],
+            notes: "Дроп 1"
+        ),
+        ExerciseSet(
+            id: UUID(),
+            metricValues: [.reps: 7, .weight: 25],
+            notes: "Дроп 2"
+        )
+    ]
+)
 
 let dropSetInstance = ExerciseInstance(
     id: UUID(),
     exercise: dropSetExercise,
-    approaches: [dropSetApproach1, dropSetApproach2], // <--- теперь два подхода!
+    approaches: [dropSetApproach1, dropSetApproach2],
     groupId: nil,
     notes: "Дропсет: два подхода, по три ступени"
 )
 
 // Генератор подходов-дропсетов из ExerciseInstance (если их несколько — каждый Approach.dropset отдельно)
 func makeDropSetApproaches(for ex: ExerciseInstance) -> [DropSetApproach] {
-    ex.approaches.compactMap { approach in
-        if case let .dropset(steps) = approach {
-            return DropSetApproach(steps: steps)
-        } else {
-            return nil
-        }
+    ex.approaches.map { approach in
+        DropSetApproach(steps: [approach.set] + approach.drops)
     }
 }
+
 
 
 // Суперсет из двух упражнений: сгибания рук и тяга штанги
 // Для суперсета нам нужно, чтобы в каждом подходе был Approach.regular для каждого упражнения
 func generateRegularApproaches(for exercise: Exercise, reps: [Int], weights: [Double]) -> [Approach] {
     zip(reps, weights).map { (rep, weight) in
-        Approach.regular(
-            ExerciseSet(
+        Approach(
+            set: ExerciseSet(
                 id: UUID(),
                 metricValues: [.reps: Double(rep), .weight: weight],
                 notes: nil
-            )
+            ),
+            drops: []
         )
     }
 }
@@ -98,35 +99,25 @@ let superSetInstance2 = ExerciseInstance(
     notes: nil
 )
 
+
 /// Генерирует массив подходов для суперсета
 func makeSupersetApproaches(
     group: SetGroup,
     allExercises: [ExerciseInstance]
 ) -> [SupersetApproach] {
-    // Находим инстансы упражнений
     let instances = group.exerciseInstanceIds.compactMap { id in
         allExercises.first(where: { $0.id == id })
     }
     guard !instances.isEmpty else { return [] }
 
-    // Предполагаем, что в ExerciseInstance есть массив метрик
-    // (например, instance.exercise.metrics: [ExerciseMetric])
-    // Если нет — добавь это поле
-
-    let regularApproachesList: [[ExerciseSet]] = instances.map { instance in
-        instance.approaches.compactMap { approach in
-            if case let .regular(set) = approach { return set }
-            else { return nil }
-        }
-    }
-    let approachesCount = regularApproachesList.map { $0.count }.min() ?? 0
+    let approachesList: [[Approach]] = instances.map { $0.approaches }
+    let approachesCount = approachesList.map { $0.count }.min() ?? 0
     guard approachesCount > 0 else { return [] }
 
     var result: [SupersetApproach] = []
     for i in 0..<approachesCount {
-        let exerciseResults: [ExerciseResult] = zip(instances, regularApproachesList).map { (instance, regularApproaches) in
-            let set = regularApproaches[i]
-            // Берём описание метрик для этого упражнения
+        let exerciseResults: [ExerciseResult] = zip(instances, approachesList).map { (instance, approaches) in
+            let set = approaches[i].set
             let metrics = instance.exercise.metrics
 
             let metricValues: [MetricValue] = metrics.compactMap { metric in

@@ -20,13 +20,16 @@ struct ExerciseApproachListView: View {
 
     @ViewBuilder
     private func approachView(approach: Approach, index: Int) -> some View {
-        switch approach {
-        case .regular(let set):
-            ApproachSetView(set: set, index: index, metrics: exerciseInstance.exercise.metrics)
-        case .dropset(let steps):
+        if let _ = exerciseInstance.groupId {
             DropSetView(
-                exercise: exerciseInstance, // теперь в scope!
-                approaches: [DropSetApproach(steps: steps)]
+                exercise: exerciseInstance,
+                approaches: [DropSetApproach(steps: [approach.set] + approach.drops)]
+            )
+        } else {
+            ApproachSetView(
+                set: approach.set,
+                index: index,
+                metrics: exerciseInstance.exercise.metrics
             )
         }
     }

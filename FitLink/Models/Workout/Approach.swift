@@ -6,13 +6,8 @@
 //
 import Foundation
 
-enum Approach: Codable, Equatable, Hashable, Identifiable {
-    case regular(ExerciseSet)
-    case dropset([ExerciseSet])
-    var id: UUID {
-        switch self {
-        case .regular(let set): return set.id
-        case .dropset(let sets): return sets.first?.id ?? UUID()
-        }
-    }
+struct Approach: Identifiable, Codable, Equatable, Hashable {
+    var id: UUID = UUID()
+    var set: ExerciseSet
+    var drops: [ExerciseSet] // Пустой если нет дропов
 }

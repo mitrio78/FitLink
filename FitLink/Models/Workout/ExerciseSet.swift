@@ -12,4 +12,5 @@ struct ExerciseSet: Identifiable, Codable, Equatable, Hashable {
     let id: UUID
     var metricValues: [ExerciseMetricType: Double]
     var notes: String?
+    var drops: [ExerciseSet]? // добавь этот массив
 }

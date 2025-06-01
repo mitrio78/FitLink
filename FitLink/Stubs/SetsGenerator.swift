@@ -20,18 +20,21 @@ func generateRegularApproaches(for exercise: Exercise, count: Int) -> [Approach]
                 metricValues[.time] = Double(30 + 10 * index)
             case .distance:
                 metricValues[.distance] = Double(1 + index)
-            default: break
+            default:
+                break
             }
         }
-        return Approach.regular(
-            ExerciseSet(
+        return Approach(
+            set: ExerciseSet(
                 id: UUID(),
                 metricValues: metricValues,
                 notes: (index == 0 && Bool.random()) ? "Техника, фокус!" : nil
-            )
+            ),
+            drops: [.init(id: UUID(), metricValues: [.weight: 10, .reps: 2])]
         )
     }
 }
+
 
 func makeInstance(exercise: Exercise, approachesCount: Int = 3) -> ExerciseInstance {
     ExerciseInstance(

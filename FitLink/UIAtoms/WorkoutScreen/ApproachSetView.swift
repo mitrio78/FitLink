@@ -10,34 +10,61 @@ import SwiftUI
 struct ApproachSetView: View {
     let set: ExerciseSet
     let index: Int
-    let metrics: [ExerciseMetric] // Метаданные для форматирования/иконок
+    let metrics: [ExerciseMetric]
 
     var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            // Номер сета (можно заменить на точку/иконку — на твой вкус)
-            Text("Подход \(index + 1):")
-                .font(.subheadline)
-                .foregroundColor(.primary)
-                // .frame(width: 65, alignment: .leading)
-            Spacer()
-            // Метрики с иконками и значениями
-            ForEach(metrics, id: \.type) { metric in
-                if let rawValue = set.metricValues[metric.type] {
-                    HStack(spacing: 4) {
-                        if let iconName = metric.iconName {
-                            Image(systemName: iconName)
-                                .font(.system(size: 13))
-                                .foregroundColor(.secondary)
+        VStack(alignment: .leading, spacing: 4) {
+            // Основной сет
+            HStack {
+                Text("Сет \(index + 1):")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                ForEach(metrics, id: \.type) { metric in
+                    if let value = set.metricValues[metric.type] {
+                        HStack(spacing: 4) {
+                            if let icon = metric.iconName {
+                                Image(systemName: icon)
+                                    .font(.system(size: 13))
+                                    .foregroundColor(.secondary)
+                            }
+                            Text(ExerciseMetric.formattedMetric(value, metric: metric))
+                                .font(.body)
+                                .foregroundColor(.primary)
                         }
-                        Text(ExerciseMetric.formattedMetric(rawValue, metric: metric))
-                            .font(.body)
-                            .foregroundColor(.primary)
                     }
                 }
             }
-            Spacer()
+            .padding(.vertical, 2)
+
+            // Дропы, если есть
+            if let drops = set.drops, !drops.isEmpty {
+                ForEach(Array(drops.enumerated()), id: \.element.id) { i, drop in
+                    HStack {
+                        Circle()
+                            .fill(Color.orange.opacity(0.5))
+                            .frame(width: 8, height: 8)
+                        Text("Дроп \(i + 1):")
+                            .font(.caption2)
+                            .foregroundColor(.orange)
+                            .frame(width: 60, alignment: .leading)
+                        ForEach(metrics, id: \.type) { metric in
+                            if let value = drop.metricValues[metric.type] {
+                                HStack(spacing: 4) {
+                                    if let icon = metric.iconName {
+                                        Image(systemName: icon)
+                                            .font(.system(size: 11))
+                                            .foregroundColor(.secondary)
+                                    }
+                                    Text(ExerciseMetric.formattedMetric(value, metric: metric))
+                                        .font(.caption)
+                                        .foregroundColor(.primary)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.vertical, 1)
+                }
+            }
         }
-        .padding(.vertical, 4)
-        // Можно добавить небольшой фон, если хочется выделить (например, цвет или Capsule)
     }
 }
