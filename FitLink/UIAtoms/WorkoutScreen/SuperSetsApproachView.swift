@@ -59,3 +59,17 @@ struct SupersetApproachView: View {
         )
     }
 }
+
+#if DEBUG
+struct SupersetApproachView_Previews: PreviewProvider {
+    static var previews: some View {
+        let metrics = [MetricValue(type: .reps, displayName: "повт.", value: "10", iconName: "arrow.2.squarepath"), MetricValue(type: .weight, displayName: "кг", value: "50", iconName: "scalemass")]
+        let ex1 = ExerciseResult(exerciseName: "Сгибания рук", metricValues: metrics)
+        let ex2 = ExerciseResult(exerciseName: "Тяга штанги", metricValues: metrics)
+        let approach = SupersetApproach(exercises: [ex1, ex2])
+        SupersetApproachView(index: 0, approach: approach)
+            .padding()
+            .previewLayout(.sizeThatFits)
+    }
+}
+#endif

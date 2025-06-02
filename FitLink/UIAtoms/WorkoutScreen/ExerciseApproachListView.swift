@@ -34,3 +34,17 @@ struct ExerciseApproachListView: View {
         }
     }
 }
+
+#if DEBUG
+struct ExerciseApproachListView_Previews: PreviewProvider {
+    static var previews: some View {
+        let metrics = [ExerciseMetric(type: .reps, isRequired: true), ExerciseMetric(type: .weight, isRequired: false)]
+        let set = ExerciseSet(id: UUID(), metricValues: [.reps: 10, .weight: 50], notes: nil, drops: nil)
+        let approach = Approach(set: set, drops: [])
+        let exercise = ExerciseInstance(id: UUID(), exercise: Exercise(id: UUID(), name: "Становая тяга", description: "", mediaURL: nil, variations: [], muscleGroups: [], metrics: metrics), approaches: [approach, approach], groupId: nil, notes: nil)
+        ExerciseApproachListView(exerciseInstance: exercise)
+            .padding()
+            .previewLayout(.sizeThatFits)
+    }
+}
+#endif

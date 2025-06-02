@@ -58,3 +58,16 @@ struct ScheduleCalendarContainer: View {
         .padding(.top)
     }
 }
+
+#if DEBUG
+struct ScheduleCalendarContainer_Previews: PreviewProvider {
+    static var previews: some View {
+        ScheduleCalendarContainer(
+            viewModel: ScheduleViewModel(),
+            selectedSession: .constant(nil),
+            clients: [:]
+        )
+        .previewLayout(.sizeThatFits)
+    }
+}
+#endif

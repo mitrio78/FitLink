@@ -25,12 +25,13 @@ struct ExerciseBlockCard: View {
                         if group.type == .superset {
                             ForEach(exerciseInstances, id: \ .id) { ex in
                                 Text(ex.exercise.name)
-                                    .font(.subheadline)
+                                    .font(.headline)
                                     .foregroundColor(.primary)
+                                    .padding(.vertical, 1)
                             }
                         } else if let first = exerciseInstances.first {
                             Text(first.exercise.name)
-                                .font(.subheadline)
+                                .font(.headline)
                                 .foregroundColor(.primary)
                         }
                     }
@@ -41,13 +42,13 @@ struct ExerciseBlockCard: View {
                 }
                 Spacer()
                 Text("×\(setCount)")
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundColor(.secondary)
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                     .foregroundColor(.secondary)
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.vertical, 16)
             .contentShape(Rectangle())
             .onTapGesture { withAnimation { isExpanded.toggle() } }
 
@@ -64,11 +65,11 @@ struct ExerciseBlockCard: View {
                 .fill(backgroundColor)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(borderColor, lineWidth: 2)
+                        .stroke(borderColor, lineWidth: 0.3)
                 )
         )
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
+        .padding(.horizontal, 0)
+        // .padding(.vertical, )
     }
 
     private var setCount: Int {
@@ -85,7 +86,7 @@ struct ExerciseBlockCard: View {
         group?.type.color.opacity(0.07) ?? Color(.secondarySystemBackground)
     }
     private var borderColor: Color {
-        group?.type.color ?? .clear
+        group?.type.color ?? .gray
     }
 
     @ViewBuilder
@@ -138,3 +139,30 @@ struct ExerciseBlockCard: View {
         return result
     }
 }
+
+#if DEBUG
+struct WorkoutExerciseCard_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack(spacing: 16) {
+            // Обычное упражнение
+            let metrics = [ExerciseMetric(type: .reps, isRequired: true), ExerciseMetric(type: .weight, isRequired: false)]
+            let set = ExerciseSet(id: UUID(), metricValues: [.reps: 10, .weight: 50], notes: nil, drops: nil)
+            let approach = Approach(set: set, drops: [])
+            let exercise = ExerciseInstance(id: UUID(), exercise: Exercise(id: UUID(), name: "Становая тяга", description: "", mediaURL: nil, variations: [], muscleGroups: [], metrics: metrics), approaches: [approach, approach, approach], groupId: nil, notes: nil)
+            ExerciseBlockCard(group: nil, exerciseInstances: [exercise])
+
+            // Дропсет
+            let dropSetGroup = SetGroup(id: UUID(), type: .dropset, exerciseInstanceIds: [exercise.id], repeatCount: 2)
+            ExerciseBlockCard(group: dropSetGroup, exerciseInstances: [exercise])
+
+            // Суперсет
+            let ex1 = ExerciseInstance(id: UUID(), exercise: Exercise(id: UUID(), name: "Сгибания рук", description: "", mediaURL: nil, variations: [], muscleGroups: [], metrics: metrics), approaches: [approach, approach, approach], groupId: nil, notes: nil)
+            let ex2 = ExerciseInstance(id: UUID(), exercise: Exercise(id: UUID(), name: "Тяга штанги", description: "", mediaURL: nil, variations: [], muscleGroups: [], metrics: metrics), approaches: [approach, approach, approach], groupId: nil, notes: nil)
+            let superSetGroup = SetGroup(id: UUID(), type: .superset, exerciseInstanceIds: [ex1.id, ex2.id], repeatCount: 3)
+            ExerciseBlockCard(group: superSetGroup, exerciseInstances: [ex1, ex2])
+        }
+        .padding()
+        .previewLayout(.sizeThatFits)
+    }
+}
+#endif

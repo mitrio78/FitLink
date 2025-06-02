@@ -16,9 +16,10 @@ struct ApproachSetView: View {
         VStack(alignment: .leading, spacing: 4) {
             // Основной сет
             HStack {
-                Text("Сет \(index + 1):")
+                Text("Подход \(index + 1):")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+                Spacer()
                 ForEach(metrics, id: \.type) { metric in
                     if let value = set.metricValues[metric.type] {
                         HStack(spacing: 4) {
@@ -68,3 +69,15 @@ struct ApproachSetView: View {
         }
     }
 }
+
+#if DEBUG
+struct ApproachSetView_Previews: PreviewProvider {
+    static var previews: some View {
+        let metrics = [ExerciseMetric(type: .reps, isRequired: true), ExerciseMetric(type: .weight, isRequired: false)]
+        let set = ExerciseSet(id: UUID(), metricValues: [.reps: 10, .weight: 50], notes: nil, drops: nil)
+        ApproachSetView(set: set, index: 0, metrics: metrics)
+            .padding()
+            .previewLayout(.sizeThatFits)
+    }
+}
+#endif

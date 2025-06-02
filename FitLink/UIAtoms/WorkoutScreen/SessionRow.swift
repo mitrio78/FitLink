@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct SessionRow: View {
     let session: WorkoutSession
     let client: Client
@@ -69,3 +67,15 @@ struct InitialsCircle: View {
         }
     }
 }
+
+#if DEBUG
+struct SessionRow_Previews: PreviewProvider {
+    static var previews: some View {
+        let session = WorkoutSession(id: UUID(), clientId: nil, title: "Тренировка", date: Date(), exerciseInstances: [], setGroups: nil, notes: nil, status: .planned)
+        let client = Client(id: UUID(), name: "Иван Петров", avatarURL: nil)
+        SessionRow(session: session, client: client)
+            .padding()
+            .previewLayout(.sizeThatFits)
+    }
+}
+#endif

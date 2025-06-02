@@ -17,3 +17,15 @@ struct CheckboxToggleStyle: ToggleStyle {
         .buttonStyle(.plain)
     }
 }
+
+#if DEBUG
+struct CheckboxToggleStyle_Previews: PreviewProvider {
+    @State static var isOn = true
+    static var previews: some View {
+        Toggle("Checkbox", isOn: $isOn)
+            .toggleStyle(CheckboxToggleStyle())
+            .padding()
+            .previewLayout(.sizeThatFits)
+    }
+}
+#endif

@@ -12,14 +12,6 @@ struct DropSetView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(exercise.exercise.name)
-//                .font(.subheadline.bold())
-//                .padding(.leading, 6)
-//                .padding(.top, 2)
-                .font(.body.bold())
-                .lineLimit(2)
-                .minimumScaleFactor(0.9)
-            
             ForEach(Array(approaches.enumerated()), id: \.element.id) { idx, app in
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(alignment: .firstTextBaseline) {
@@ -80,17 +72,21 @@ struct DropSetView: View {
 
 // ===== PREVIEW ======
 
+#if DEBUG
 struct DropSetView_Previews: PreviewProvider {
     static var previews: some View {
-        DropSetView(
-            exercise: mockDropSetInstance,
-            approaches: mockDropSetApproaches
-        )
-        .previewLayout(.sizeThatFits)
-        .padding()
-        .background(Color(.systemBackground))
+        let metrics = [ExerciseMetric(type: .reps, isRequired: true), ExerciseMetric(type: .weight, isRequired: false)]
+        let set1 = ExerciseSet(id: UUID(), metricValues: [.reps: 8, .weight: 50], notes: nil, drops: nil)
+        let set2 = ExerciseSet(id: UUID(), metricValues: [.reps: 8, .weight: 40], notes: nil, drops: nil)
+        let set3 = ExerciseSet(id: UUID(), metricValues: [.reps: 8, .weight: 30], notes: nil, drops: nil)
+        let approach = DropSetApproach(steps: [set1, set2, set3])
+        let exercise = ExerciseInstance(id: UUID(), exercise: Exercise(id: UUID(), name: "Жим лёжа", description: "", mediaURL: nil, variations: [], muscleGroups: [], metrics: metrics), approaches: [], groupId: nil, notes: nil)
+        DropSetView(exercise: exercise, approaches: [approach])
+            .padding()
+            .previewLayout(.sizeThatFits)
     }
 }
+#endif
 
 // ===== MOCKS for Preview =====
 

@@ -19,3 +19,13 @@ struct VariationBadge: View {
             .clipShape(Capsule())
     }
 }
+
+#if DEBUG
+struct VariationBadge_Previews: PreviewProvider {
+    static var previews: some View {
+        VariationBadge(variation: "Классический")
+            .padding()
+            .previewLayout(.sizeThatFits)
+    }
+}
+#endif
