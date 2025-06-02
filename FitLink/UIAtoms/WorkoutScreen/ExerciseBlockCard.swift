@@ -57,7 +57,7 @@ struct ExerciseBlockCard: View {
                 VStack(alignment: .leading, spacing: 0) {
                     expandedContent
                 }
-                .padding(16) // внутренний отступ для контента
+                //.padding(16) // внутренний отступ для контента
             }
         }
         .background(
@@ -69,7 +69,7 @@ struct ExerciseBlockCard: View {
                 )
         )
         .padding(.horizontal, 0)
-        // .padding(.vertical, )
+        //.padding(.vertical, )
     }
 
     private var setCount: Int {
@@ -105,6 +105,7 @@ struct ExerciseBlockCard: View {
             }
         } else if let exercise = exerciseInstances.first {
             ExerciseApproachListView(exerciseInstance: exercise)
+                .padding()
         }
     }
 

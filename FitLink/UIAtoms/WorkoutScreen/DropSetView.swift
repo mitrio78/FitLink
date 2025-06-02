@@ -13,24 +13,23 @@ struct DropSetView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             ForEach(Array(approaches.enumerated()), id: \.element.id) { idx, app in
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 2) {
                     HStack(alignment: .firstTextBaseline) {
                         Text("Подход \(idx + 1)")
                             .font(.headline)
                             .foregroundColor(.orange)
-                        Spacer()
+                            .padding(.bottom, 6)
                         // (Можно добавить метку или иконку, если нужно)
                     }
                     ForEach(Array(app.steps.enumerated()), id: \.element.id) { i, step in
-                        HStack(alignment: .center, spacing: 10) {
+                        HStack(alignment: .center, spacing: 12) {
                             // Индикатор основной/дроп
                             Circle()
                                 .fill(i == 0 ? Color.orange : Color.orange.opacity(0.4))
-                                .frame(width: 8, height: 8)
+                                .frame(width: 10, height: 10)
                             Text(i == 0 ? "Основной" : "Дроп \(i)")
-                                .font(.caption2)
-                                .frame(width: 65, alignment: .leading)
-                                .foregroundColor(i == 0 ? .orange : .primary)
+                                .font(.body)
+                                .foregroundColor( .primary)
                             Spacer()
                             // Универсальный перебор метрик
                             ForEach(exercise.exercise.metrics, id: \.type) { metric in
@@ -42,7 +41,7 @@ struct DropSetView: View {
                                                 .foregroundColor(.secondary)
                                         }
                                         Text("\(ExerciseMetric.formattedMetric(value, metric: metric))")
-                                            .font(.caption)
+                                            .font(.body)
                                             .foregroundColor(.primary)
                                     }
                                 }
@@ -50,17 +49,10 @@ struct DropSetView: View {
                         }
                         .padding(.vertical, 3)
                     }
+                    .padding(.bottom, 6)
+                    // Divider()
                 }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 18)
-                        .fill(Color(.systemBackground))
-                        .shadow(color: Color.orange.opacity(0.07), radius: 6, x: 0, y: 2)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(Color.orange.opacity(0.14), lineWidth: 1)
-                )
+                .padding(.horizontal)
             }
         }
         .padding(.vertical, 7)
