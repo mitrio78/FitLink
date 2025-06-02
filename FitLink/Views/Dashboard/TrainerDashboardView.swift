@@ -67,7 +67,7 @@ struct TrainerDashboardView: View {
                                 lastSession: viewModel.lastSession(for: client),
                                 nextSession: viewModel.nextSession(for: client)
                             )
-                            .padding(.horizontal, 4)
+                            .padding(.horizontal, 16)
                         }
                     }
                     .padding(.top, 8)
