@@ -56,7 +56,8 @@ struct WorkoutSetGroupView: View {
                 VStack(spacing: 8) {
                     ForEach(viewModel.regularExercises, id: \.id) { instance in
                         ExerciseBlockCard(
-                            exerciseInstance: instance
+                            group: nil,
+                            exerciseInstances: [instance]
                         )
                         .padding(.vertical, 2)
                     }

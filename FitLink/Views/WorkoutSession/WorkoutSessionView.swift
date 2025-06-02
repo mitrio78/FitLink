@@ -33,28 +33,20 @@ struct WorkoutSessionView: View {
                         .padding(.vertical, 4)
                 }
                 
-                // --- Блоки групп (суперсеты/дропсеты/комбо) ---
-                ForEach(session.setGroups ?? []) { group in
-                    WorkoutSetGroupView(
-                        viewModel: WorkoutSetGroupViewModel(
-                            group: group,
-                            allExercises: session.exerciseInstances
-                        )
-                    )
-                }
-                
-                // --- Разделитель, если хочется визуально разграничить ---
-                if !singleExercises.isEmpty && (session.setGroups?.isEmpty == false) {
-                    Divider().padding(.vertical, 8)
-                    Text("Одиночные упражнения")
-                        .font(.subheadline.bold())
-                        .foregroundColor(.secondary)
-                }
-                
-                // --- Одиночные упражнения — теперь с новым универсальным блоком ---
-                ForEach(singleExercises) { exerciseInstance in
-                    ExerciseBlockCard(exerciseInstance: exerciseInstance)
-                        .padding(.vertical, 6)
+                // --- Универсальный список упражнений и групп ---
+                ForEach(session.exerciseInstances) { exerciseInstance in
+                    // Проверяем, входит ли упражнение в какую-либо группу
+                    if let group = (session.setGroups?.first { $0.exerciseInstanceIds.contains(exerciseInstance.id) }) {
+                        // Если это первое упражнение группы — рендерим карточку группы
+                        if group.exerciseInstanceIds.first == exerciseInstance.id {
+                            let groupExercises = session.exerciseInstances.filter { group.exerciseInstanceIds.contains($0.id) }
+                            ExerciseBlockCard(group: group, exerciseInstances: groupExercises)
+                        }
+                        // Остальные упражнения группы не рендерим отдельно
+                    } else {
+                        // Одиночное упражнение
+                        ExerciseBlockCard(group: nil, exerciseInstances: [exerciseInstance])
+                    }
                 }
             }
             .padding()

@@ -141,6 +141,27 @@ func makeSupersetApproaches(
     return result
 }
 
+// --- ДОБАВЛЯЕМ ОДИНОЧНЫЕ УПРАЖНЕНИЯ ДЛЯ ПРИМЕРА ---
+func makeRegularInstance(exIndex: Int, reps: [Int], weights: [Double]) -> ExerciseInstance {
+    let ex = exercisesCatalog[exIndex]
+    let approaches = zip(reps, weights).map { (rep, weight) in
+        Approach(
+            set: ExerciseSet(
+                id: UUID(),
+                metricValues: [.reps: Double(rep), .weight: weight],
+                notes: nil
+            ),
+            drops: []
+        )
+    }
+    return ExerciseInstance(
+        id: UUID(),
+        exercise: ex,
+        approaches: approaches,
+        groupId: nil,
+        notes: nil
+    )
+}
 
 struct MockData {
     static var complexMockSessions: [WorkoutSession] {
@@ -170,9 +191,12 @@ struct MockData {
                 title: "Дропсет + Суперсет (пример)",
                 date: ISO8601DateFormatter().date(from: "2025-05-30T18:00:00+03:00"),
                 exerciseInstances: [
+                    makeRegularInstance(exIndex: 3, reps: [12,10,9], weights: [0,0,0]), // Подтягивания (без веса)
                     dropSetInstance,
+                    makeRegularInstance(exIndex: 1, reps: [8,12,10], weights: [30,40,50]), // Становая тяга
                     superSetInstance1,
-                    superSetInstance2
+                    superSetInstance2,
+                    makeRegularInstance(exIndex: 2, reps: [10,9,8], weights: [30,40,45]) // Приседания со штангой
                 ],
                 setGroups: [dropSetGroup, superSetGroup],
                 notes: "Тест дропсета и суперсета",
