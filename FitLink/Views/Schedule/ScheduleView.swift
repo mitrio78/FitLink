@@ -16,7 +16,7 @@ struct ScheduleView: View {
                 // Header с кнопками режимов справа
                 HStack {
                     Spacer()
-                    Text("Занятия")
+                    Text(NSLocalizedString("Schedule.Header", comment: "Занятия"))
                         .font(.title2.bold())
                     Spacer()
                     HStack(spacing: 16) {
@@ -49,7 +49,7 @@ struct ScheduleView: View {
                 // Search
                 SearchBarWithFilter(
                     text: $viewModel.searchText,
-                    placeholder: "Search clients...",
+                    placeholder: NSLocalizedString("Schedule.SearchPlaceholder", comment: "Search clients..."),
                     onFilterTapped: {
                         // Тут future: фильтр по статусу, тренеру и т.д.
                     }

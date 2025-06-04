@@ -23,13 +23,13 @@ struct ClientRow: View {
                     .foregroundColor(.primary)
                 
                 if let lastSession = lastSession {
-                    Text("Последняя: \(lastSession.timeString) • \(lastSession.date?.formattedHuman() ?? "")")
+                    Text(String(format: NSLocalizedString("ClientRow.LastSession", comment: "Последняя: %@ • %@"), lastSession.timeString, lastSession.date?.formattedHuman() ?? ""))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
                 
                 if let nextSession = nextSession {
-                    Text("Следующая: \(nextSession.timeString) • \(nextSession.date?.formattedHuman() ?? "")")
+                    Text(String(format: NSLocalizedString("ClientRow.NextSession", comment: "Следующая: %@ • %@"), nextSession.timeString, nextSession.date?.formattedHuman() ?? ""))
                         .font(.caption)
                         .foregroundColor(Color(.label))
                         .padding(.vertical, 2)

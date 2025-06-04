@@ -32,7 +32,7 @@ struct CalendarModeView: View {
                 Button(action: {
                     // Добавить сессию на выбранную дату
                 }) {
-                    Label("Добавить сессию", systemImage: "plus")
+                    Label(NSLocalizedString("CalendarMode.AddSession", comment: "Добавить сессию"), systemImage: "plus")
                         .font(.subheadline.bold())
                         .foregroundColor(.blue)
                 }
@@ -41,7 +41,7 @@ struct CalendarModeView: View {
             .padding(.bottom, 16)
 
             if filteredSessions.isEmpty {
-                Text("Нет запланированных сессий")
+                Text(NSLocalizedString("CalendarMode.Empty", comment: "Нет запланированных сессий"))
                     .foregroundColor(.gray)
                     .padding()
             } else {

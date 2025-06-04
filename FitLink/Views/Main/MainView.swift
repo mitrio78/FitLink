@@ -12,23 +12,23 @@ struct MainView: View {
         TabView {
             TrainerDashboardView()
                 .tabItem {
-                    Label("Dashboard", systemImage: "house")
+                    Label(NSLocalizedString("Main.Tab.Dashboard", comment: "Dashboard"), systemImage: "house")
                 }
             ExerciseLibraryView()
                 .tabItem {
-                    Label("Exercises", systemImage: "list.bullet.rectangle")
+                    Label(NSLocalizedString("Main.Tab.Exercises", comment: "Exercises"), systemImage: "list.bullet.rectangle")
                 }
             ScheduleView()
                 .tabItem {
-                    Label("Schedule", systemImage: "calendar")
+                    Label(NSLocalizedString("Main.Tab.Schedule", comment: "Schedule"), systemImage: "calendar")
                 }
             WorkoutsView()
                 .tabItem {
-                    Label("Workouts", systemImage: "dumbbell")
+                    Label(NSLocalizedString("Main.Tab.Workouts", comment: "Workouts"), systemImage: "dumbbell")
                 }
             ProfileView()
                 .tabItem {
-                    Label("Profile", systemImage: "person.circle")
+                    Label(NSLocalizedString("Main.Tab.Profile", comment: "Profile"), systemImage: "person.circle")
                 }
         }
     }

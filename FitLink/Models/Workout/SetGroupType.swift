@@ -17,11 +17,16 @@ enum SetGroupType: Codable, Equatable, Hashable {
 
     var displayName: String {
         switch self {
-        case .superset: return "Суперсет"
-        case .dropset: return "Дропсет"
-        case .circuit: return "Круг"
-        case .pyramid: return "Пирамида"
-        case .custom(let value): return value
+        case .superset:
+            return NSLocalizedString("SetGroupType.Superset", comment: "Суперсет")
+        case .dropset:
+            return NSLocalizedString("SetGroupType.Dropset", comment: "Дропсет")
+        case .circuit:
+            return NSLocalizedString("SetGroupType.Circuit", comment: "Круг")
+        case .pyramid:
+            return NSLocalizedString("SetGroupType.Pyramid", comment: "Пирамида")
+        case .custom(let value):
+            return value
         }
     }
 
