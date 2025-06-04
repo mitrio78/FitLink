@@ -15,7 +15,7 @@ struct ExerciseLibraryView: View {
         NavigationStack {
             VStack(spacing: 12) {
                 HStack {
-                    Text("Упражнения")
+                    Text(NSLocalizedString("ExerciseLibrary.Header", comment: "Упражнения"))
                         .font(.title2.bold())
                     Spacer()
                     Button(action: {
@@ -30,14 +30,14 @@ struct ExerciseLibraryView: View {
 
                 SearchBarWithFilter(
                     text: $viewModel.searchText,
-                    placeholder: "Поиск упражнения...",
+                    placeholder: NSLocalizedString("ExerciseLibrary.SearchPlaceholder", comment: "Поиск упражнения..."),
                     onFilterTapped: {
                         showFilterDialog = true
                     }
                 )
                 .padding(.horizontal)
-                .confirmationDialog("Выберите группу мышц", isPresented: $showFilterDialog) {
-                    Button("Все", role: .none) { viewModel.selectedMuscleGroup = nil }
+                .confirmationDialog(NSLocalizedString("ExerciseLibrary.FilterTitle", comment: "Выберите группу мышц"), isPresented: $showFilterDialog) {
+                    Button(NSLocalizedString("ExerciseLibrary.FilterAll", comment: "Все"), role: .none) { viewModel.selectedMuscleGroup = nil }
                     ForEach(MuscleGroup.allStandardCases, id: \.self) { group in
                         Button(group.displayName) { viewModel.selectedMuscleGroup = group }
                     }

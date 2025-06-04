@@ -20,8 +20,13 @@ struct WorkoutSessionView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
                 // Заголовок
-                Text("Тренировка для \(client?.name ?? "Клиента")")
-                    .font(.title2.bold())
+                Text(
+                    String(
+                        format: NSLocalizedString("WorkoutSession.Header", comment: "Тренировка для %@"),
+                        client?.name ?? NSLocalizedString("WorkoutSession.ClientPlaceholder", comment: "Клиента")
+                    )
+                )
+                .font(.title2.bold())
                 if let date = session.date {
                     Text("\(date.formatted(date: .long, time: .shortened))")
                         .foregroundColor(.secondary)
@@ -51,7 +56,7 @@ struct WorkoutSessionView: View {
             }
             .padding()
         }
-        .navigationTitle("Тренировка")
+        .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
         .presentationDetents([.medium, .large])
     }
 }

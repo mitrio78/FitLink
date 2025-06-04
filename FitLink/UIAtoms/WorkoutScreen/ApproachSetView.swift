@@ -16,7 +16,7 @@ struct ApproachSetView: View {
         VStack(alignment: .leading, spacing: 4) {
             // Основной сет
             HStack {
-                Text("Подход \(index + 1):")
+                Text(String(format: NSLocalizedString("ApproachSetView.Title", comment: "Подход %d:"), index + 1))
                     .font(.body)
                     .foregroundColor(.primary)
                 Spacer()
@@ -44,7 +44,7 @@ struct ApproachSetView: View {
                         Circle()
                             .fill(Color.orange.opacity(0.5))
                             .frame(width: 8, height: 8)
-                        Text("Дроп \(i + 1):")
+                        Text(String(format: NSLocalizedString("ApproachSetView.DropLabel", comment: "Дроп %d:"), i + 1))
                             .font(.caption2)
                             .foregroundColor(.orange)
                             .frame(width: 60, alignment: .leading)

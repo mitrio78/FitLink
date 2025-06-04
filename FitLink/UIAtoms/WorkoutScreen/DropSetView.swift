@@ -15,7 +15,7 @@ struct DropSetView: View {
             ForEach(Array(approaches.enumerated()), id: \.element.id) { idx, app in
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(alignment: .firstTextBaseline) {
-                        Text("Подход \(idx + 1)")
+                        Text(String(format: NSLocalizedString("DropSetView.Title", comment: "Подход %d"), idx + 1))
                             .font(.headline)
                             .foregroundColor(.orange)
                             .padding(.bottom, 6)
@@ -27,7 +27,7 @@ struct DropSetView: View {
                             Circle()
                                 .fill(i == 0 ? Color.orange : Color.orange.opacity(0.4))
                                 .frame(width: 10, height: 10)
-                            Text(i == 0 ? "Основной" : "Дроп \(i)")
+                            Text(i == 0 ? NSLocalizedString("DropSetView.MainStep", comment: "Основной") : String(format: NSLocalizedString("DropSetView.DropStep", comment: "Дроп %d"), i))
                                 .font(.body)
                                 .foregroundColor( .primary)
                             Spacer()

@@ -93,7 +93,7 @@ struct CustomCalendarView: View {
                                         .frame(width: 6, height: 6)
                                 }
                                 if colors.count > 3 {
-                                    Text("+")
+                                    Text(NSLocalizedString("Calendar.MoreIndicator", comment: "+"))
                                         .font(.caption2)
                                         .foregroundColor(.gray)
                                 }
