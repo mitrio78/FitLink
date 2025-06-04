@@ -1,50 +1,53 @@
 import SwiftUI
 
+import SwiftUI
+
 struct TrainerDashboardView: View {
     @StateObject private var viewModel = TrainerDashboardViewModel()
     @State private var showFilterDialog = false
     @State private var selectedFilter: FilterType = .none
-    
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: 12) {
+            VStack(spacing: 16) {
                 // Header
                 HStack {
-                    Text("Физкульт привет!")
+                    Text("Привет, Юрий!")
                         .font(.system(size: 22, weight: .bold))
-                        .padding(.vertical)
+                        .foregroundColor(Color(.label))
                     Spacer()
                     Button(action: {}) {
-                        Image(systemName: "bell")
-                            .font(.title2)
-                            .overlay(
-                                Circle()
-                                    .fill(Color.blue)
-                                    .frame(width: 8, height: 8)
-                                    .offset(x: 8, y: -8),
-                                alignment: .topTrailing
-                            )
+                        ZStack(alignment: .topTrailing) {
+                            Image(systemName: "bell")
+                                .font(.title2)
+                                .foregroundColor(Color(.secondaryLabel))
+                            Circle()
+                                .fill(Color.accentColor)
+                                .frame(width: 8, height: 8)
+                                .offset(x: 7, y: -7)
+                        }
                     }
                 }
                 .padding(.horizontal)
-                .padding(.top)
+                .padding(.top, 36)
                 
-                // Stats
+                // Stats tiles
                 HStack(spacing: 12) {
                     ForEach(viewModel.clientStats) { stat in
                         StatSummaryCard(stat: stat)
+                            .frame(maxWidth: .infinity)
                     }
                 }
                 .padding(.horizontal)
+                .padding(.bottom, 8)
                 
+                // Search bar with filter
                 SearchBarWithFilter(
                     text: $viewModel.searchText,
                     placeholder: "Поиск клиента...",
-                    onFilterTapped: {
-                        showFilterDialog = true
-                    }
+                    onFilterTapped: { showFilterDialog = true }
                 )
-                .confirmationDialog("Фильровать по", isPresented: $showFilterDialog, titleVisibility: .visible) {
+                .confirmationDialog("Фильтровать по", isPresented: $showFilterDialog, titleVisibility: .visible) {
                     ForEach(FilterType.allCases) { filter in
                         Button(filter.rawValue) {
                             selectedFilter = filter
@@ -53,22 +56,29 @@ struct TrainerDashboardView: View {
                     }
                 }
                 .padding(.horizontal)
+                .padding(.bottom, 4)
                 
+                // Clients list
                 ScrollView {
-                    LazyVStack(spacing: 12) {
+                    LazyVStack(spacing: 8) {
                         ForEach(viewModel.filteredClients) { client in
-                            ClientRow(client: client)
+                            ClientRow(
+                                client: client,
+                                lastSession: viewModel.lastSession(for: client),
+                                nextSession: viewModel.nextSession(for: client)
+                            )
+                            .padding(.horizontal, 16)
                         }
                     }
-                    .padding()
+                    .padding(.top, 8)
                 }
             }
+            .background(Color(.systemBackground).ignoresSafeArea())
             .simultaneousGesture(
                 TapGesture().onEnded { _ in
                     hideKeyboard()
                 }
             )
-            .background(Color(.systemBackground))
             .navigationBarHidden(true)
         }
     }

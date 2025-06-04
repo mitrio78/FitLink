@@ -9,24 +9,20 @@ import Foundation
 import Combine
 
 final class ExerciseLibraryViewModel: ObservableObject {
-    @Published var exercises: [Exercise] = Exercise.mockData
+    @Published var exercises: [Exercise] = exercisesCatalog
     @Published var searchText: String = ""
-    @Published var selectedType: ExerciseType? = nil
+    @Published var selectedMuscleGroup: MuscleGroup? = nil
 
     var filteredExercises: [Exercise] {
         exercises.filter { exercise in
-            (searchText.isEmpty || exercise.name.lowercased().contains(searchText.lowercased()))
-            && (selectedType == nil || exercise.type == selectedType)
-        }
-    }
-    
-    func addExercise(_ exercise: Exercise) {
-        exercises.append(exercise)
-    }
-    
-    func updateExercise(_ exercise: Exercise) {
-        if let index = exercises.firstIndex(where: { $0.id == exercise.id }) {
-            exercises[index] = exercise
+            let matchesGroup = selectedMuscleGroup == nil
+                || exercise.muscleGroups.contains(selectedMuscleGroup!)
+            let matchesSearch = searchText.isEmpty
+                || exercise.name.localizedCaseInsensitiveContains(searchText)
+                || exercise.muscleGroups
+                    .map { $0.displayName.lowercased() }
+                    .contains(where: { $0.contains(searchText.lowercased()) })
+            return matchesGroup && matchesSearch
         }
     }
 }

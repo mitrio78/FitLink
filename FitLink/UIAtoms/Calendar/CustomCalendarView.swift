@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 struct CustomCalendarView: View {
     @Binding var selectedDate: Date
-    let eventsByDate: [Date: [Session]]
+    let eventsByDate: [Date: [WorkoutSession]]
     let monthDate: Date
     let calendar = Calendar.current
 

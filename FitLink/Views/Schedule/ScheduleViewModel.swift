@@ -4,40 +4,48 @@
 //
 //  Created by Дмитрий Гришечко on 28.05.2025.
 //
-
 import Foundation
 import Combine
 
 final class ScheduleViewModel: ObservableObject {
-    @Published var sessions: [Session] = Session.mockData
+    @Published var sessions: [WorkoutSession] = MockData.complexMockSessions
+    @Published var clients: [UUID: Client] = clientsDict
     @Published var searchText: String = ""
     @Published var selectedDate: Date = Date()
-    @Published var isCalendarMode: Bool = true // переключатель режимов: календарь/список
+    @Published var isCalendarMode: Bool = true
 
     // Фильтрация по клиенту и дате
-    var filteredSessions: [Session] {
+    var filteredSessions: [WorkoutSession] {
         sessions.filter { session in
-            (searchText.isEmpty || session.clientName.lowercased().contains(searchText.lowercased()))
-            && Calendar.current.isDate(session.date, inSameDayAs: selectedDate)
+            let clientName = session.clientId.flatMap { clients[$0]?.name } ?? ""
+            let matchesSearch = searchText.isEmpty || clientName.lowercased().contains(searchText.lowercased())
+            let matchesDate = session.date.map { Calendar.current.isDate($0, inSameDayAs: selectedDate) } ?? false
+            return matchesSearch && matchesDate
         }
-        .sorted(by: { $0.date < $1.date })
+        .sorted {
+            ($0.date ?? .distantPast) < ($1.date ?? .distantPast)
+        }
     }
-    
-    // Для списка всех (например, today's sessions)
-    var todaySessions: [Session] {
+
+    // Для списка всех на сегодня
+    var todaySessions: [WorkoutSession] {
         let today = Date()
-        return sessions.filter {
-            Calendar.current.isDate($0.date, inSameDayAs: today)
-            && (searchText.isEmpty || $0.clientName.lowercased().contains(searchText.lowercased()))
+        return sessions.filter { session in
+            let clientName = session.clientId.flatMap { clients[$0]?.name } ?? ""
+            let matchesSearch = searchText.isEmpty || clientName.lowercased().contains(searchText.lowercased())
+            let matchesDate = session.date.map { Calendar.current.isDate($0, inSameDayAs: today) } ?? false
+            return matchesSearch && matchesDate
         }
-        .sorted(by: { $0.date < $1.date })
+        .sorted {
+            ($0.date ?? .distantPast) < ($1.date ?? .distantPast)
+        }
     }
 }
 
 extension ScheduleViewModel {
-    var sessionsByDate: [Date: [Session]] {
-        Dictionary(grouping: sessions) {
-            Calendar.current.startOfDay(for: $0.date)
+    var sessionsByDate: [Date: [WorkoutSession]] {
+        Dictionary(grouping: sessions.filter { $0.date != nil }) {
+            Calendar.current.startOfDay(for: $0.date!)
         }
     }
 }

@@ -30,22 +30,19 @@ struct ExerciseLibraryView: View {
 
                 SearchBarWithFilter(
                     text: $viewModel.searchText,
-                    placeholder: "Search exercises...",
+                    placeholder: "Поиск упражнения...",
                     onFilterTapped: {
                         showFilterDialog = true
                     }
                 )
                 .padding(.horizontal)
-
-                // Фильтр по типу упражнения
-                .confirmationDialog("Filter by type", isPresented: $showFilterDialog) {
-                    Button("All", role: .none) { viewModel.selectedType = nil }
-                    ForEach(ExerciseType.allCases) { type in
-                        Button(type.rawValue) { viewModel.selectedType = type }
+                .confirmationDialog("Выберите группу мышц", isPresented: $showFilterDialog) {
+                    Button("Все", role: .none) { viewModel.selectedMuscleGroup = nil }
+                    ForEach(MuscleGroup.allStandardCases, id: \.self) { group in
+                        Button(group.displayName) { viewModel.selectedMuscleGroup = group }
                     }
                 }
 
-                // Список упражнений
                 ScrollView {
                     LazyVStack(spacing: 12) {
                         ForEach(viewModel.filteredExercises) { exercise in

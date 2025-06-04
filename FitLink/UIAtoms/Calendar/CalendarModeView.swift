@@ -8,15 +8,15 @@ import SwiftUI
 
 struct CalendarModeView: View {
     @Binding var selectedDate: Date
-    let sessions: [Session]
-    let filteredSessions: [Session]
+    let sessions: [WorkoutSession]
+    let filteredSessions: [WorkoutSession]
+    let clients: [UUID: Client]     // Прокидываем клиентов
 
     var body: some View {
         VStack(spacing: 0) {
-            // Здесь можно использовать кастомный календарь
-            // Для MVP — просто DatePicker, позже интегрировать FSCalendar или SwiftUI календарь
             DatePicker(
-                "June 2024", selection: $selectedDate,
+                selectedDate.formatted(date: .long, time: .omitted),
+                selection: $selectedDate,
                 displayedComponents: [.date]
             )
             .datePickerStyle(.graphical)
@@ -32,7 +32,7 @@ struct CalendarModeView: View {
                 Button(action: {
                     // Добавить сессию на выбранную дату
                 }) {
-                    Label("Add Session", systemImage: "plus")
+                    Label("Добавить сессию", systemImage: "plus")
                         .font(.subheadline.bold())
                         .foregroundColor(.blue)
                 }
@@ -40,23 +40,22 @@ struct CalendarModeView: View {
             .padding(.horizontal)
             .padding(.bottom, 16)
 
-            // Список сессий на выбранную дату
             if filteredSessions.isEmpty {
-                Text("No sessions scheduled")
+                Text("Нет запланированных сессий")
                     .foregroundColor(.gray)
                     .padding()
             } else {
                 ForEach(filteredSessions) { session in
-                    SessionRow(session: session)
-                        .padding(.horizontal)
-                        .padding(.top, 6)
+                    // Получаем клиента для каждой сессии по clientId (если нет, показываем заглушку)
+                    SessionRow(
+                        session: session,
+                        client: session.clientId.flatMap { clients[$0] } ?? .placeholder
+                    )
+                    .padding(.horizontal)
+                    .padding(.top, 6)
                 }
             }
             Spacer()
         }
     }
-}
-
-#Preview {
-    CalendarModeView(selectedDate: .constant(Date()), sessions: Session.mockData, filteredSessions: Session.mockData)
 }

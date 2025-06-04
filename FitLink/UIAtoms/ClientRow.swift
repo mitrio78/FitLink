@@ -9,40 +9,49 @@ import SwiftUI
 // Client Row
 struct ClientRow: View {
     let client: Client
+    let lastSession: WorkoutSession?
+    let nextSession: WorkoutSession?
     
     var body: some View {
-        HStack {
-            // Replace with AsyncImage in production
-            Circle()
-                .fill(Color.gray.opacity(0.2))
+        HStack(alignment: .center, spacing: 14) {
+            AvatarView(initials: client.initials)
                 .frame(width: 44, height: 44)
-                .overlay(Text(client.name.prefix(1)).foregroundColor(.gray))
             
-            VStack(alignment: .leading, spacing: 2) {
-                Text(client.name).font(.body.bold())
-                Text("Last: \(client.lastSessionDescription)")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .lineLimit(1)
-                Text("Next: \(client.nextSession)")
-                    .font(.caption)
-                    .foregroundColor(.accentColor)
-                    .lineLimit(1)
+            VStack(alignment: .leading, spacing: 6) {
+                Text(client.name)
+                    .font(.body.bold())
+                    .foregroundColor(.primary)
+                
+                if let lastSession = lastSession {
+                    Text("Последняя: \(lastSession.timeString) • \(lastSession.date?.formattedHuman() ?? "")")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                if let nextSession = nextSession {
+                    Text("Следующая: \(nextSession.timeString) • \(nextSession.date?.formattedHuman() ?? "")")
+                        .font(.caption)
+                        .foregroundColor(Color(.label))
+                        .padding(.vertical, 2)
+                        .padding(.horizontal, 6)
+                        .background(Color(.systemOrange).opacity(0.13))
+                        .cornerRadius(8)
+                }
             }
             Spacer()
-            HStack(spacing: 4) {
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
-            }
         }
-        .padding(10)
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: Color(.systemGray4).opacity(0.18), radius: 2, x: 0, y: 1)
+        .padding(.vertical, 10)
+        .padding(.horizontal, 10)
+        .background(Color(.tertiarySystemBackground))
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color(.systemGray5), lineWidth: 1)
+        )
+        //.frame(minHeight: 86)
     }
 }
 
-struct ClientRow_Previews: PreviewProvider {
-    static var previews: some View = ClientRow(client: .init(name: "John Doe", avatarURL: nil, lastSessionDescription: "12:00", nextSession: "14:00", nextSessionAccent: "#FF0000"))
-        .previewLayout(.sizeThatFits)
+#Preview {
+    ClientRow(client: .init(id: UUID(), name: "Joe", avatarURL: nil), lastSession: nil, nextSession: nil)
 }
