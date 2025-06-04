@@ -101,8 +101,10 @@ let mockDropSetSteps = [
     )
 ]
 
+let sampleApproach = DropSetApproach(steps: mockDropSetSteps)
+
 let mockDropSetApproaches = [
-    DropSetApproach(steps: mockDropSetSteps)
+    sampleApproach
 ]
 
 // Пример ExerciseInstance для превью
@@ -120,7 +122,7 @@ let mockDropSetInstance = ExerciseInstance(
             ExerciseMetric(type: .weight, isRequired: true)
         ]
     ),
-    approaches: [dropSetApproach1],
+    approaches: [sampleApproach],
     groupId: nil,
     notes: nil
 )
