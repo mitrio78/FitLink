@@ -1,0 +1,133 @@
+/* WorkoutSession header with client name */
+"WorkoutSession.Header" = "Тренировка для %@";
+"WorkoutSession.ClientPlaceholder" = "Клиента";
+"WorkoutSession.Title" = "Тренировка";
+
+/* Schedule screen */
+"Schedule.Header" = "Занятия";
+"Schedule.SearchPlaceholder" = "Search clients...";
+
+/* Exercise library */
+"ExerciseLibrary.Header" = "Упражнения";
+"ExerciseLibrary.SearchPlaceholder" = "Поиск упражнения...";
+"ExerciseLibrary.FilterTitle" = "Выберите группу мышц";
+"ExerciseLibrary.FilterAll" = "Все";
+
+/* Dashboard */
+"Dashboard.Greeting" = "Привет, Юрий!";
+"Dashboard.SearchPlaceholder" = "Поиск клиента...";
+"Dashboard.FilterTitle" = "Фильтровать по";
+"Dashboard.Filter.None" = "Очистить фильтр";
+"Dashboard.Filter.NextSessionDate" = "По дате следующей тренировки";
+"Dashboard.Filter.NextSessionType" = "По типу тренировки";
+"Dashboard.Stats.TotalClients" = "Всего клиентов";
+"Dashboard.Stats.InProgress" = "Идёт сейчас";
+"Dashboard.Stats.Feedback" = "Отзывов";
+
+/* Main tabs */
+"Main.Tab.Dashboard" = "Dashboard";
+"Main.Tab.Exercises" = "Exercises";
+"Main.Tab.Schedule" = "Schedule";
+"Main.Tab.Workouts" = "Workouts";
+"Main.Tab.Profile" = "Profile";
+
+/* Schedule calendar */
+"ScheduleCalendar.Empty" = "Нет занятий на эту дату";
+
+/* Schedule list */
+"ScheduleList.TodayTitle" = "Сессии на сегодня";
+"ScheduleList.NewSession" = "Новая сессия";
+"ScheduleList.Empty" = "Нет сессий на сегодня";
+
+/* Calendar mode */
+"CalendarMode.AddSession" = "Добавить сессию";
+"CalendarMode.Empty" = "Нет запланированных сессий";
+"Calendar.MoreIndicator" = "+";
+
+/* Client row */
+"ClientRow.LastSession" = "Последняя: %@ • %@";
+"ClientRow.NextSession" = "Следующая: %@ • %@";
+
+/* Exercise set row */
+"ExerciseSetRow.SetTitle" = "Сет %d:";
+"ExerciseSetRow.ActualTitle" = "Факт:";
+"ExerciseSetRow.RPE" = "RPE:";
+"ExerciseSetRow.NotePlaceholder" = "Заметка к сету";
+
+/* Approach set view */
+"ApproachSetView.Title" = "Подход %d:";
+"ApproachSetView.DropLabel" = "Дроп %d:";
+
+/* Drop set view */
+"DropSetView.Title" = "Подход %d";
+"DropSetView.MainStep" = "Основной";
+"DropSetView.DropStep" = "Дроп %d";
+
+/* Superset approach view */
+"SupersetApproachView.Title" = "Подход %d";
+
+/* Workout set group */
+"WorkoutSetGroup.RepsMultiplier" = "×%d";
+"WorkoutSetGroup.EmptySuperset" = "Нет подходов в суперсете";
+"WorkoutSetGroup.EmptyDropset" = "Нет дропсета";
+
+/* Search bar */
+"SearchBar.DefaultPlaceholder" = "Search...";
+
+/* Date formatter */
+"DateFormatter.Today" = "Сегодня";
+"DateFormatter.Yesterday" = "Вчера";
+
+/* Date extensions */
+"DateExtensions.Today" = "сегодня";
+"DateExtensions.Yesterday" = "вчера";
+"DateExtensions.DaysAgoSuffix" = "дн. назад";
+
+/* Client model */
+"ClientModel.PlaceholderName" = "Клиент";
+
+/* Session status labels */
+"SessionStatus.PlannedLabel" = "Запланировано";
+"SessionStatus.InProgressLabel" = "В процессе";
+"SessionStatus.CompletedLabel" = "Выполнено";
+"SessionStatus.CancelledLabel" = "Отменено";
+
+/* Set group types */
+"SetGroupType.Superset" = "Суперсет";
+"SetGroupType.Dropset" = "Дропсет";
+"SetGroupType.Circuit" = "Круг";
+"SetGroupType.Pyramid" = "Пирамида";
+
+/* Exercise metric types */
+"ExerciseMetricType.Reps" = "Повторы";
+"ExerciseMetricType.Weight" = "Вес";
+"ExerciseMetricType.Time" = "Время";
+"ExerciseMetricType.Distance" = "Дистанция";
+"ExerciseMetricType.Calories" = "Калории";
+
+/* Unit types */
+"UnitType.Kilogram" = "кг";
+"UnitType.Pound" = "фунты";
+"UnitType.Second" = "сек";
+"UnitType.Minute" = "мин";
+"UnitType.Meter" = "м";
+"UnitType.Kilometer" = "км";
+"UnitType.Repetition" = "повт.";
+"UnitType.Calorie" = "ккал";
+
+/* Muscle groups */
+"MuscleGroup.Chest" = "Грудные";
+"MuscleGroup.Back" = "Спина";
+"MuscleGroup.Shoulders" = "Плечи";
+"MuscleGroup.Biceps" = "Бицепс";
+"MuscleGroup.Triceps" = "Трицепс";
+"MuscleGroup.Legs" = "Ноги";
+"MuscleGroup.Glutes" = "Ягодицы";
+"MuscleGroup.Abs" = "Пресс";
+"MuscleGroup.Core" = "Кор";
+"MuscleGroup.Calves" = "Икры";
+"MuscleGroup.Forearms" = "Предплечья";
+"MuscleGroup.Traps" = "Трапеции";
+"MuscleGroup.Cardio" = "Кардио";
+"MuscleGroup.Mobility" = "Мобильность";
+"MuscleGroup.FullBody" = "Всё тело";

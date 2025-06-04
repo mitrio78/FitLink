@@ -41,12 +41,18 @@ enum ExerciseMetricType: Codable, CaseIterable, Equatable, Hashable {
 
     var displayName: String {
         switch self {
-        case .reps: return "Повторы"
-        case .weight: return "Вес"
-        case .time: return "Время"
-        case .distance: return "Дистанция"
-        case .calories: return "Калории"
-        case .custom(let value): return value
+        case .reps:
+            return NSLocalizedString("ExerciseMetricType.Reps", comment: "Повторы")
+        case .weight:
+            return NSLocalizedString("ExerciseMetricType.Weight", comment: "Вес")
+        case .time:
+            return NSLocalizedString("ExerciseMetricType.Time", comment: "Время")
+        case .distance:
+            return NSLocalizedString("ExerciseMetricType.Distance", comment: "Дистанция")
+        case .calories:
+            return NSLocalizedString("ExerciseMetricType.Calories", comment: "Калории")
+        case .custom(let value):
+            return value
         }
     }
     
@@ -82,15 +88,24 @@ enum UnitType: Codable, CaseIterable, Equatable, Hashable {
 
     var displayName: String {
         switch self {
-        case .kilogram: return "кг"
-        case .pound: return "фунты"
-        case .second: return "сек"
-        case .minute: return "мин"
-        case .meter: return "м"
-        case .kilometer: return "км"
-        case .repetition: return "повт."
-        case .calorie: return "ккал"
-        case .custom(let value): return value
+        case .kilogram:
+            return NSLocalizedString("UnitType.Kilogram", comment: "кг")
+        case .pound:
+            return NSLocalizedString("UnitType.Pound", comment: "фунты")
+        case .second:
+            return NSLocalizedString("UnitType.Second", comment: "сек")
+        case .minute:
+            return NSLocalizedString("UnitType.Minute", comment: "мин")
+        case .meter:
+            return NSLocalizedString("UnitType.Meter", comment: "м")
+        case .kilometer:
+            return NSLocalizedString("UnitType.Kilometer", comment: "км")
+        case .repetition:
+            return NSLocalizedString("UnitType.Repetition", comment: "повт.")
+        case .calorie:
+            return NSLocalizedString("UnitType.Calorie", comment: "ккал")
+        case .custom(let value):
+            return value
         }
     }
     

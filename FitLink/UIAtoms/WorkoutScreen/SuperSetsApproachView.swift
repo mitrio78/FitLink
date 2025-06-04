@@ -14,7 +14,7 @@ struct SupersetApproachView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Подход \(index + 1)")
+                Text(String(format: NSLocalizedString("SupersetApproachView.Title", comment: "Подход %d"), index + 1))
                     .font(.headline)
                     .foregroundColor(Color.blue)
                 Spacer()

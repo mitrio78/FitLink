@@ -15,13 +15,13 @@ struct ListModeView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text("Сессии на сегодня")
+                Text(NSLocalizedString("ScheduleList.TodayTitle", comment: "Сессии на сегодня"))
                     .font(.headline)
                 Spacer()
                 Button(action: {
                     // Новая сессия на сегодня
                 }) {
-                    Label("Новая сессия", systemImage: "plus")
+                    Label(NSLocalizedString("ScheduleList.NewSession", comment: "Новая сессия"), systemImage: "plus")
                         .font(.subheadline.bold())
                         .foregroundColor(.blue)
                 }
@@ -30,7 +30,7 @@ struct ListModeView: View {
             .padding(.bottom, 16)
 
             if todaySessions.isEmpty {
-                Text("Нет сессий на сегодня")
+                Text(NSLocalizedString("ScheduleList.Empty", comment: "Нет сессий на сегодня"))
                     .foregroundColor(.gray)
                     .padding()
             } else {

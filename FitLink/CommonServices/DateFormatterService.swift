@@ -36,9 +36,9 @@ final class DateFormatterService {
     /// "Сегодня", "Вчера", "30 мая 2025"
     func formattedDate(_ date: Date) -> String {
         if Calendar.current.isDateInToday(date) {
-            return "Сегодня"
+            return NSLocalizedString("DateFormatter.Today", comment: "Сегодня")
         } else if Calendar.current.isDateInYesterday(date) {
-            return "Вчера"
+            return NSLocalizedString("DateFormatter.Yesterday", comment: "Вчера")
         } else {
             return dateFormatter.string(from: date)
         }
