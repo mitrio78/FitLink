@@ -23,7 +23,7 @@ struct ExerciseBlockCard: View {
                         }
                         // Названия упражнений — всегда с новой строки
                         if group.type == .superset {
-                            ForEach(exerciseInstances, id: \ .id) { ex in
+                            ForEach(exerciseInstances, id: \.id) { ex in
                                 Text(ex.exercise.name)
                                     .font(.headline)
                                     .foregroundColor(.primary)
