@@ -1,0 +1,133 @@
+/* WorkoutSession header with client name */
+"WorkoutSession.Header" = "Training for %@";
+"WorkoutSession.ClientPlaceholder" = "Client";
+"WorkoutSession.Title" = "Training";
+
+/* Schedule screen */
+"Schedule.Header" = "Classes";
+"Schedule.SearchPlaceholder" = "Search Clients ...";
+
+/* Exercise library */
+"ExerciseLibrary.Header" = "Exercises";
+"ExerciseLibrary.SearchPlaceholder" = "Search for exercises ...";
+"ExerciseLibrary.FilterTitle" = "Choose a muscle group";
+"ExerciseLibrary.FilterAll" = "All";
+
+/* Dashboard */
+"Dashboard.Greeting" = "Hello Yuri!";
+"Dashboard.SearchPlaceholder" = "Client search ...";
+"Dashboard.FilterTitle" = "Filter by";
+"Dashboard.Filter.None" = "Clean the filter";
+"Dashboard.Filter.NextSessionDate" = "By the date of the next training";
+"Dashboard.Filter.NextSessionType" = "By type of training";
+"Dashboard.Stats.TotalClients" = "All customers";
+"Dashboard.Stats.InProgress" = "There is now";
+"Dashboard.Stats.Feedback" = "Reviews";
+
+/* Main tabs */
+"Main.Tab.Dashboard" = "Dashboard";
+"Main.Tab.Exercises" = "Exercises";
+"Main.Tab.Schedule" = "Schedule";
+"Main.Tab.Workouts" = "Workouts";
+"Main.Tab.Profile" = "Profile";
+
+/* Schedule calendar */
+"ScheduleCalendar.Empty" = "No classes for this date";
+
+/* Schedule list */
+"ScheduleList.TodayTitle" = "Sessions for today";
+"ScheduleList.NewSession" = "New session";
+"ScheduleList.Empty" = "No sessions for today";
+
+/* Calendar mode */
+"CalendarMode.AddSession" = "Add the session";
+"CalendarMode.Empty" = "There are no planned sessions";
+"Calendar.MoreIndicator" = "+";
+
+/* Client row */
+"ClientRow.LastSession" = "Last: %@ • %@";
+"ClientRow.NextSession" = "The following: %@ • %@";
+
+/* Exercise set row */
+"ExerciseSetRow.SetTitle" = "Set %d:";
+"ExerciseSetRow.ActualTitle" = "Fact:";
+"ExerciseSetRow.RPE" = "RPE:";
+"ExerciseSetRow.NotePlaceholder" = "Note to set";
+
+/* Approach set view */
+"ApproachSetView.Title" = "Approach %d:";
+"ApproachSetView.DropLabel" = "Drop %d:";
+
+/* Drop set view */
+"DropSetView.Title" = "Approach %d";
+"DropSetView.MainStep" = "Basic";
+"DropSetView.DropStep" = "Drop %d";
+
+/* Superset approach view */
+"SupersetApproachView.Title" = "Approach %d";
+
+/* Workout set group */
+"WorkoutSetGroup.RepsMultiplier" = "× %d";
+"WorkoutSetGroup.EmptySuperset" = "No approaches in the super store";
+"WorkoutSetGroup.EmptyDropset" = "There is no dropset";
+
+/* Search bar */
+"SearchBar.DefaultPlaceholder" = "Search ...";
+
+/* Date formatter */
+"DateFormatter.Today" = "Today";
+"DateFormatter.Yesterday" = "Yesterday";
+
+/* Date extensions */
+"DateExtensions.Today" = "Today";
+"DateExtensions.Yesterday" = "yesterday";
+"DateExtensions.DaysAgoSuffix" = "DN.back";
+
+/* Client model */
+"ClientModel.PlaceholderName" = "Client";
+
+/* Session status labels */
+"SessionStatus.PlannedLabel" = "Planned";
+"SessionStatus.InProgressLabel" = "In progress";
+"SessionStatus.CompletedLabel" = "Performed";
+"SessionStatus.CancelledLabel" = "Canceled";
+
+/* Set group types */
+"SetGroupType.Superset" = "SuperSet";
+"SetGroupType.Dropset" = "Dropset";
+"SetGroupType.Circuit" = "Circle";
+"SetGroupType.Pyramid" = "Pyramid";
+
+/* Exercise metric types */
+"ExerciseMetricType.Reps" = "Repetitions";
+"ExerciseMetricType.Weight" = "Weight";
+"ExerciseMetricType.Time" = "Time";
+"ExerciseMetricType.Distance" = "Distance";
+"ExerciseMetricType.Calories" = "Calories";
+
+/* Unit types */
+"UnitType.Kilogram" = "kg";
+"UnitType.Pound" = "pounds";
+"UnitType.Second" = "sec";
+"UnitType.Minute" = "min";
+"UnitType.Meter" = "m";
+"UnitType.Kilometer" = "km";
+"UnitType.Repetition" = "Pot.";
+"UnitType.Calorie" = "kcal";
+
+/* Muscle groups */
+"MuscleGroup.Chest" = "Thoracic";
+"MuscleGroup.Back" = "Back";
+"MuscleGroup.Shoulders" = "Shoulders";
+"MuscleGroup.Biceps" = "Biceps";
+"MuscleGroup.Triceps" = "Triceps";
+"MuscleGroup.Legs" = "Legs";
+"MuscleGroup.Glutes" = "Buttocks";
+"MuscleGroup.Abs" = "Press";
+"MuscleGroup.Core" = "Cor";
+"MuscleGroup.Calves" = "Caviar";
+"MuscleGroup.Forearms" = "Forearm";
+"MuscleGroup.Traps" = "Trapezia";
+"MuscleGroup.Cardio" = "Cardio";
+"MuscleGroup.Mobility" = "Mobility";
+"MuscleGroup.FullBody" = "The whole body";
