@@ -58,7 +58,7 @@ struct ExerciseLibraryView: View {
             .simultaneousGesture(
                 TapGesture().onEnded { _ in hideKeyboard() }
             )
-            .background(Color(.systemBackground))
+            .background(Theme.color.background)
             .navigationBarHidden(true)
         }
     }

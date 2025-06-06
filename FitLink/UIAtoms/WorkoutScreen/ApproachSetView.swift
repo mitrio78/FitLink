@@ -13,57 +13,57 @@ struct ApproachSetView: View {
     let metrics: [ExerciseMetric]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: Theme.spacing.small / 2) {
             // Основной сет
             HStack {
                 Text(String(format: NSLocalizedString("ApproachSetView.Title", comment: "Подход %d:"), index + 1))
-                    .font(.body)
+                    .font(Theme.font.body)
                     .foregroundColor(.primary)
                 Spacer()
                 ForEach(metrics, id: \.type) { metric in
                     if let value = set.metricValues[metric.type] {
-                        HStack(spacing: 4) {
+                        HStack(spacing: Theme.spacing.small / 2) {
                             if let icon = metric.iconName {
                                 Image(systemName: icon)
-                                    .font(.system(size: 13))
+                                    .font(Theme.font.metadata)
                                     .foregroundColor(.secondary)
                             }
                             Text(ExerciseMetric.formattedMetric(value, metric: metric))
-                                .font(.body)
+                                .font(Theme.font.body)
                                 .foregroundColor(.primary)
                         }
                     }
                 }
             }
-            .padding(.vertical, 2)
+            .padding(.vertical, Theme.spacing.small / 4)
 
             // Дропы, если есть
             if let drops = set.drops, !drops.isEmpty {
                 ForEach(Array(drops.enumerated()), id: \.element.id) { i, drop in
                     HStack {
                         Circle()
-                            .fill(Color.orange.opacity(0.5))
-                            .frame(width: 8, height: 8)
+                            .fill(Theme.color.accent.opacity(0.5))
+                            .frame(width: Theme.spacing.small, height: Theme.spacing.small)
                         Text(String(format: NSLocalizedString("ApproachSetView.DropLabel", comment: "Дроп %d:"), i + 1))
-                            .font(.caption2)
-                            .foregroundColor(.orange)
+                            .font(Theme.font.metadata)
+                            .foregroundColor(Theme.color.accent)
                             .frame(width: 60, alignment: .leading)
                         ForEach(metrics, id: \.type) { metric in
                             if let value = drop.metricValues[metric.type] {
                                 HStack(spacing: 4) {
                                     if let icon = metric.iconName {
                                         Image(systemName: icon)
-                                            .font(.system(size: 11))
+                                            .font(Theme.font.metadata)
                                             .foregroundColor(.secondary)
                                     }
                                     Text(ExerciseMetric.formattedMetric(value, metric: metric))
-                                        .font(.caption)
+                                        .font(Theme.font.caption)
                                         .foregroundColor(.primary)
                                 }
                             }
                         }
                     }
-                    .padding(.vertical, 1)
+                    .padding(.vertical, Theme.spacing.small / 8)
                 }
             }
         }

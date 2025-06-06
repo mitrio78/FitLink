@@ -12,31 +12,31 @@ struct SupersetApproachView: View {
     let approach: SupersetApproach
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: Theme.spacing.small) {
             HStack {
                 Text(String(format: NSLocalizedString("SupersetApproachView.Title", comment: "Подход %d"), index + 1))
-                    .font(.headline)
-                    .foregroundColor(Color.blue)
+                    .font(Theme.font.titleSmall)
+                    .foregroundColor(Theme.color.accent)
                 Spacer()
             }
             ForEach(approach.exercises) { result in
-                HStack(spacing: 8) {
+                HStack(spacing: Theme.spacing.small) {
                     Text(result.exerciseName)
-                        .font(.body.bold())
+                        .font(Theme.font.body.bold())
                         .lineLimit(2)
                         .minimumScaleFactor(0.9)
                     Spacer()
-                    HStack(spacing: 8) {
+                    HStack(spacing: Theme.spacing.small) {
                         ForEach(result.metricValues, id: \.displayName) { metric in
-                            HStack(spacing: 4) {
+                            HStack(spacing: Theme.spacing.small / 2) {
                                 if let icon = metric.iconName {
                                     Image(systemName: icon)
-                                        .font(.system(size: 13))
-                                        .foregroundColor(.secondary)
+                                        .font(Theme.font.metadata)
+                                        .foregroundColor(Theme.color.textSecondary)
                                 }
                                 Text(metric.value)
-                                    .font(.body)
-                                    .foregroundColor(.primary)
+                                    .font(Theme.font.body)
+                                    .foregroundColor(Theme.color.textPrimary)
                             }
                         }
                     }

@@ -11,7 +11,7 @@ struct CheckboxToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         Button(action: { configuration.isOn.toggle() }) {
             Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
-                .foregroundColor(configuration.isOn ? .accentColor : .secondary)
+                .foregroundColor(configuration.isOn ? Theme.color.accent : Theme.color.textSecondary)
                 .imageScale(.large)
         }
         .buttonStyle(.plain)
