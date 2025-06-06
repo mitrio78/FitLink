@@ -48,10 +48,11 @@ struct WorkoutSessionView: View {
                 workoutSectionView(title: WorkoutSection.main.displayName, exercises: mainExercises)
                 workoutSectionView(title: WorkoutSection.coolDown.displayName, exercises: coolDownExercises)
 
-                PrimaryButton(title: WorkoutSessionAction.addExercise.label) {}
+                PrimaryButton(title: NSLocalizedString("WorkoutSession.AddExercise", comment: "")) {}
                     .padding(.top, Theme.spacing.extraLarge)
             }
             .padding(Theme.spacing.medium)
+            .padding(.bottom, Theme.spacing.medium)
         }
         .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
         .presentationDetents([.medium, .large])
@@ -59,22 +60,24 @@ struct WorkoutSessionView: View {
 
     @ViewBuilder
     private func workoutSectionView(title: String, exercises: [ExerciseInstance]) -> some View {
-        VStack(alignment: .leading, spacing: Theme.spacing.small) {
-            WorkoutSectionHeaderView(title: title)
+        if !exercises.isEmpty {
+            VStack(alignment: .leading, spacing: 0) {
+                WorkoutSectionHeaderView(title: title)
 
-            VStack(spacing: Theme.spacing.medium) {
-                ForEach(exercises) { ex in
-                    if let group = session.setGroups?.first(where: { $0.exerciseInstanceIds.contains(ex.id) }),
-                       group.exerciseInstanceIds.first == ex.id {
-                        let groupExercises = session.exerciseInstances.filter { group.exerciseInstanceIds.contains($0.id) }
-                        ExerciseBlockCard(group: group, exerciseInstances: groupExercises)
-                    } else if !(session.setGroups ?? []).contains(where: { $0.exerciseInstanceIds.contains(ex.id) }) {
-                        ExerciseBlockCard(group: nil, exerciseInstances: [ex])
+                VStack(spacing: Theme.spacing.medium) {
+                    ForEach(exercises) { ex in
+                        if let group = session.setGroups?.first(where: { $0.exerciseInstanceIds.contains(ex.id) }),
+                           group.exerciseInstanceIds.first == ex.id {
+                            let groupExercises = session.exerciseInstances.filter { group.exerciseInstanceIds.contains($0.id) }
+                            ExerciseBlockCard(group: group, exerciseInstances: groupExercises)
+                        } else if !(session.setGroups ?? []).contains(where: { $0.exerciseInstanceIds.contains(ex.id) }) {
+                            ExerciseBlockCard(group: nil, exerciseInstances: [ex])
+                        }
                     }
                 }
             }
+            .padding(.bottom, Theme.spacing.large)
         }
-        .padding(.bottom, Theme.spacing.large)
     }
 }
 
