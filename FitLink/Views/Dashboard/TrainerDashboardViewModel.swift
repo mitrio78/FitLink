@@ -43,9 +43,9 @@ final class TrainerDashboardViewModel: ObservableObject {
     // Моки clientStats (оставь если нужны карточки-статистики)
     var clientStats: [StatSummary] {
         [
-            StatSummary(id: "clients", title: "Всего клиентов", value: "\(clients.count)", icon: "person.2", hasDot: false),
-            StatSummary(id: "active", title: "Идёт сейчас", value: "\(currentSessionsCount)", icon: "flame", hasDot: currentSessionsCount > 0),
-            StatSummary(id: "feedback", title: "Отзывов", value: "\(feedbackCount)", icon: "bubble.left", hasDot: false)
+            StatSummary(id: "clients", title: NSLocalizedString("Dashboard.Stats.TotalClients", comment: "Всего клиентов"), value: "\(clients.count)", icon: "person.2", hasDot: false),
+            StatSummary(id: "active", title: NSLocalizedString("Dashboard.Stats.InProgress", comment: "Идёт сейчас"), value: "\(currentSessionsCount)", icon: "flame", hasDot: currentSessionsCount > 0),
+            StatSummary(id: "feedback", title: NSLocalizedString("Dashboard.Stats.Feedback", comment: "Отзывов"), value: "\(feedbackCount)", icon: "bubble.left", hasDot: false)
         ]
     }
     

@@ -18,7 +18,7 @@ struct ExerciseSetRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Text("Сет \(index + 1):")
+                Text(String(format: NSLocalizedString("ExerciseSetRow.SetTitle", comment: "Сет %d:"), index + 1))
                     .font(.caption)
                 Spacer()
                 Toggle("", isOn: $completed)
@@ -44,7 +44,7 @@ struct ExerciseSetRow: View {
             
             // Фактические значения: редактируются всегда
             HStack(spacing: 6) {
-                Text("Факт:")
+                Text(NSLocalizedString("ExerciseSetRow.ActualTitle", comment: "Факт:"))
                     .font(.caption2)
                 ForEach(metrics, id: \.type) { metric in
                     HStack(spacing: 2) {
@@ -72,7 +72,7 @@ struct ExerciseSetRow: View {
             // RPE если нужна (добавь в metrics ExerciseMetric(type: .custom("RPE"), ...))
             if metrics.contains(where: { $0.type == .custom("RPE") }) {
                 HStack {
-                    Text("RPE:")
+                    Text(NSLocalizedString("ExerciseSetRow.RPE", comment: "RPE:"))
                     Slider(value: Binding(
                         get: { actualValues[.custom("RPE")] ?? 5 },
                         set: { actualValues[.custom("RPE")] = $0 }
@@ -83,7 +83,7 @@ struct ExerciseSetRow: View {
             }
 
             // Редактируемые заметки к сету
-            TextField("Заметка к сету", text: $notes)
+            TextField(NSLocalizedString("ExerciseSetRow.NotePlaceholder", comment: "Заметка к сету"), text: $notes)
                 .font(.caption2)
                 .foregroundColor(.yellow)
         }

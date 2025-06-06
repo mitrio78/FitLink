@@ -27,22 +27,38 @@ enum MuscleGroup: Codable, Equatable, Hashable {
 
     var displayName: String {
         switch self {
-        case .chest: return "Грудные"
-        case .back: return "Спина"
-        case .shoulders: return "Плечи"
-        case .biceps: return "Бицепс"
-        case .triceps: return "Трицепс"
-        case .legs: return "Ноги"
-        case .glutes: return "Ягодицы"
-        case .abs: return "Пресс"
-        case .core: return "Кор"
-        case .calves: return "Икры"
-        case .forearms: return "Предплечья"
-        case .traps: return "Трапеции"
-        case .cardio: return "Кардио"
-        case .mobility: return "Мобильность"
-        case .fullBody: return "Всё тело"
-        case .custom(let value): return value
+        case .chest:
+            return NSLocalizedString("MuscleGroup.Chest", comment: "Грудные")
+        case .back:
+            return NSLocalizedString("MuscleGroup.Back", comment: "Спина")
+        case .shoulders:
+            return NSLocalizedString("MuscleGroup.Shoulders", comment: "Плечи")
+        case .biceps:
+            return NSLocalizedString("MuscleGroup.Biceps", comment: "Бицепс")
+        case .triceps:
+            return NSLocalizedString("MuscleGroup.Triceps", comment: "Трицепс")
+        case .legs:
+            return NSLocalizedString("MuscleGroup.Legs", comment: "Ноги")
+        case .glutes:
+            return NSLocalizedString("MuscleGroup.Glutes", comment: "Ягодицы")
+        case .abs:
+            return NSLocalizedString("MuscleGroup.Abs", comment: "Пресс")
+        case .core:
+            return NSLocalizedString("MuscleGroup.Core", comment: "Кор")
+        case .calves:
+            return NSLocalizedString("MuscleGroup.Calves", comment: "Икры")
+        case .forearms:
+            return NSLocalizedString("MuscleGroup.Forearms", comment: "Предплечья")
+        case .traps:
+            return NSLocalizedString("MuscleGroup.Traps", comment: "Трапеции")
+        case .cardio:
+            return NSLocalizedString("MuscleGroup.Cardio", comment: "Кардио")
+        case .mobility:
+            return NSLocalizedString("MuscleGroup.Mobility", comment: "Мобильность")
+        case .fullBody:
+            return NSLocalizedString("MuscleGroup.FullBody", comment: "Всё тело")
+        case .custom(let value):
+            return value
         }
     }
 
