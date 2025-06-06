@@ -44,17 +44,19 @@ struct WorkoutSessionView: View {
                         .padding(.vertical, Theme.spacing.small / 2)
                 }
 
-                workoutSectionView(title: WorkoutSection.warmUp.title, exercises: warmUpExercises)
-                workoutSectionView(title: WorkoutSection.main.title, exercises: mainExercises)
-                workoutSectionView(title: WorkoutSection.coolDown.title, exercises: coolDownExercises)
+                workoutSectionView(title: WorkoutSection.warmUp.displayName, exercises: warmUpExercises)
+                workoutSectionView(title: WorkoutSection.main.displayName, exercises: mainExercises)
+                workoutSectionView(title: WorkoutSection.coolDown.displayName, exercises: coolDownExercises)
 
                 VStack(spacing: Theme.spacing.medium) {
-                    WorkoutActionButton(label: NSLocalizedString("WorkoutSession.AddGroupedExercise", comment: "")) {}
-                    WorkoutActionButton(label: NSLocalizedString("WorkoutSession.AddBlock", comment: "")) {}
-                    WorkoutActionButton(label: NSLocalizedString("WorkoutSession.ClonePrevious", comment: "")) {}
-                    WorkoutActionButton(label: NSLocalizedString("WorkoutSession.Save", comment: ""), filled: true) {}
+                    WorkoutActionButton(label: WorkoutSessionAction.addGroupedExercise.label) {}
+                    WorkoutActionButton(label: WorkoutSessionAction.addBlock.label) {}
+                    WorkoutActionButton(label: WorkoutSessionAction.clonePrevious.label) {}
+                    WorkoutActionButton(label: WorkoutSessionAction.save.label, filled: true) {}
+                        .padding(Theme.spacing.medium)
                 }
-                .padding(.top, Theme.spacing.large)
+                .multilineTextAlignment(.center)
+                .padding(.top, Theme.spacing.medium)
             }
             .padding(Theme.spacing.medium)
         }
@@ -79,9 +81,10 @@ struct WorkoutSessionView: View {
                 }
             }
 
-            WorkoutActionButton(label: NSLocalizedString("WorkoutSession.AddExercise", comment: "")) {}
-                .padding(.bottom, Theme.spacing.medium)
+            WorkoutActionButton(label: WorkoutSessionAction.addExercise.label) {}
+                .padding(.top, Theme.spacing.medium)
         }
+        .padding(.bottom, Theme.spacing.large)
     }
 }
 

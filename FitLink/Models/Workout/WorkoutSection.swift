@@ -6,7 +6,8 @@ enum WorkoutSection: String, Codable, CaseIterable, Hashable {
     case main
     case coolDown
 
-    var title: String {
+    /// Human friendly section name
+    var displayName: String {
         switch self {
         case .warmUp:
             return NSLocalizedString("WorkoutSection.WarmUp", comment: "Warm-up")
@@ -16,4 +17,7 @@ enum WorkoutSection: String, Codable, CaseIterable, Hashable {
             return NSLocalizedString("WorkoutSection.CoolDown", comment: "Cool-down")
         }
     }
+
+    @available(*, deprecated, renamed: "displayName")
+    var title: String { displayName }
 }
