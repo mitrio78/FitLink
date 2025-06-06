@@ -5,11 +5,11 @@ struct VariationTypeBadge: View {
     let color: Color
     var body: some View {
         Text(text)
-            .font(.caption2.bold())
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .font(Theme.font.metadata.bold())
+            .padding(.horizontal, Theme.spacing.small)
+            .padding(.vertical, Theme.spacing.small / 2)
             .background(color.opacity(0.15))
             .foregroundColor(color)
-            .cornerRadius(8)
+            .cornerRadius(Theme.radius.button)
     }
-} 
+}

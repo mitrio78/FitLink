@@ -15,26 +15,29 @@ struct SessionRow: View {
         HStack {
             InitialsCircle(initials: client.initials)
                 .frame(width: 44, height: 44)
-                .padding(.trailing, 8)
+                .padding(.trailing, Theme.spacing.small)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(client.name)
-                    .font(.body.bold())
+                    .font(Theme.font.body).bold()
                 Text(session.title)
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                    .font(Theme.font.caption)
+                    .foregroundColor(Theme.color.textSecondary)
             }
             Spacer()
             statusLabel
             Text(session.timeString)
-                .font(.subheadline.bold())
-                .padding(.leading, 12)
+                .font(Theme.font.subheading).bold()
+                .padding(.leading, Theme.spacing.medium)
         }
-        .padding(12)
-        .background(Color(.systemGray6))
-        .cornerRadius(14)
-        .shadow(color: Color(.systemGray4).opacity(0.10), radius: 3, x: 0, y: 1)
-        .padding(.bottom, 8)
+        .padding(Theme.spacing.medium)
+        .background(Theme.color.backgroundSecondary)
+        .cornerRadius(Theme.radius.card)
+        .shadow(color: Theme.shadow.card.color,
+                radius: Theme.shadow.card.radius,
+                x: Theme.shadow.card.x,
+                y: Theme.shadow.card.y)
+        .padding(.bottom, Theme.spacing.small)
     }
 
     @ViewBuilder
@@ -47,9 +50,9 @@ struct SessionRow: View {
             Label(session.status.labelText, systemImage: session.status.iconName)
                 .font(.caption2)
                 .foregroundColor(session.status.color)
-                .padding(6)
+                .padding(Theme.spacing.small)
                 .background(session.status.backgroundColor)
-                .cornerRadius(8)
+                .cornerRadius(Theme.radius.button)
         }
     }
 }
@@ -60,10 +63,10 @@ struct InitialsCircle: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(Color.accentColor.opacity(0.13))
+                .fill(Theme.color.accent.opacity(0.13))
             Text(initials.uppercased())
                 .font(.system(size: 20, weight: .bold))
-                .foregroundColor(.accentColor)
+                .foregroundColor(Theme.color.accent)
         }
     }
 }

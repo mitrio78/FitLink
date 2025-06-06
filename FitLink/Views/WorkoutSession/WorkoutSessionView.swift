@@ -26,16 +26,16 @@ struct WorkoutSessionView: View {
                         client?.name ?? NSLocalizedString("WorkoutSession.ClientPlaceholder", comment: "Клиента")
                     )
                 )
-                .font(.title2.bold())
+                .font(Theme.font.titleMedium).bold()
                 if let date = session.date {
                     Text("\(date.formatted(date: .long, time: .shortened))")
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Theme.color.textSecondary)
                 }
                 if let notes = session.notes, !notes.isEmpty {
                     Text(notes)
-                        .font(.body)
-                        .foregroundColor(.accentColor)
-                        .padding(.vertical, 4)
+                        .font(Theme.font.body)
+                        .foregroundColor(Theme.color.accent)
+                        .padding(.vertical, Theme.spacing.small / 2)
                 }
                 
                 // --- Универсальный список упражнений и групп ---
@@ -54,7 +54,7 @@ struct WorkoutSessionView: View {
                     }
                 }
             }
-            .padding()
+            .padding(Theme.spacing.medium)
         }
         .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
         .presentationDetents([.medium, .large])

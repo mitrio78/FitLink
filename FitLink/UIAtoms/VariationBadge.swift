@@ -11,11 +11,11 @@ struct VariationBadge: View {
 
     var body: some View {
         Text(variation)
-            .font(.caption2)
+            .font(Theme.font.metadata)
             .foregroundColor(.white)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 2)
-            .background(Color.accentColor.opacity(0.75))
+            .padding(.horizontal, Theme.spacing.small)
+            .padding(.vertical, Theme.spacing.small / 4)
+            .background(Theme.color.accent.opacity(0.75))
             .clipShape(Capsule())
     }
 }

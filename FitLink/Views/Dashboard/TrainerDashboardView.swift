@@ -9,37 +9,37 @@ struct TrainerDashboardView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
+            VStack(spacing: Theme.spacing.medium) {
                 // Header
                 HStack {
                     Text(NSLocalizedString("Dashboard.Greeting", comment: "Привет, Юрий!"))
-                        .font(.system(size: 22, weight: .bold))
-                        .foregroundColor(Color(.label))
+                        .font(Theme.font.titleMedium).bold()
+                        .foregroundColor(Theme.color.textPrimary)
                     Spacer()
                     Button(action: {}) {
                         ZStack(alignment: .topTrailing) {
                             Image(systemName: "bell")
-                                .font(.title2)
-                                .foregroundColor(Color(.secondaryLabel))
+                                .font(Theme.font.titleSmall)
+                                .foregroundColor(Theme.color.textSecondary)
                             Circle()
-                                .fill(Color.accentColor)
-                                .frame(width: 8, height: 8)
+                                .fill(Theme.color.accent)
+                                .frame(width: Theme.spacing.small, height: Theme.spacing.small)
                                 .offset(x: 7, y: -7)
                         }
                     }
                 }
-                .padding(.horizontal)
-                .padding(.top, 36)
+                .padding(.horizontal, Theme.spacing.medium)
+                .padding(.top, Theme.spacing.extraLarge + 4)
                 
                 // Stats tiles
-                HStack(spacing: 12) {
+                HStack(spacing: Theme.spacing.small + 4) {
                     ForEach(viewModel.clientStats) { stat in
                         StatSummaryCard(stat: stat)
                             .frame(maxWidth: .infinity)
                     }
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 8)
+                .padding(.horizontal, Theme.spacing.medium)
+                .padding(.bottom, Theme.spacing.small)
                 
                 // Search bar with filter
                 SearchBarWithFilter(
@@ -55,8 +55,8 @@ struct TrainerDashboardView: View {
                         }
                     }
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 4)
+                .padding(.horizontal, Theme.spacing.medium)
+                .padding(.bottom, Theme.spacing.small / 2)
                 
                 // Clients list
                 ScrollView {
@@ -67,13 +67,13 @@ struct TrainerDashboardView: View {
                                 lastSession: viewModel.lastSession(for: client),
                                 nextSession: viewModel.nextSession(for: client)
                             )
-                            .padding(.horizontal, 16)
+                            .padding(.horizontal, Theme.spacing.medium)
                         }
                     }
-                    .padding(.top, 8)
+                    .padding(.top, Theme.spacing.small)
                 }
             }
-            .background(Color(.systemBackground).ignoresSafeArea())
+            .background(Theme.color.background.ignoresSafeArea())
             .simultaneousGesture(
                 TapGesture().onEnded { _ in
                     hideKeyboard()

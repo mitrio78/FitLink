@@ -11,19 +11,19 @@ struct WorkoutExerciseRow: View {
     let exerciseInstance: ExerciseInstance
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: Theme.spacing.small + 2) {
             HStack {
                 Text(exerciseInstance.exercise.name)
-                    .font(.headline)
+                    .font(Theme.font.titleSmall)
                 Spacer()
                 // например, иконка "развернуть" для перехода к редактированию
             }
             ExerciseApproachListView(exerciseInstance: exerciseInstance)
         }
-        .padding()
+        .padding(Theme.spacing.medium)
         .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(Color(.secondarySystemBackground))
+            RoundedRectangle(cornerRadius: Theme.radius.card)
+                .fill(Theme.color.backgroundSecondary)
         )
         .onTapGesture {
             // открыть details или editor

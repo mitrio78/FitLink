@@ -12,26 +12,29 @@ struct StatSummaryCard: View {
     let stat: StatSummary
     
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: Theme.spacing.small / 2) {
             HStack {
                 Image(systemName: stat.icon ?? "")
-                    .foregroundColor(.accentMain)
+                    .foregroundColor(Theme.color.accent)
                 Text("\(stat.value)")
-                    .font(.title3.bold())
-                    .foregroundColor(Color(.label))
+                    .font(Theme.font.titleSmall).bold()
+                    .foregroundColor(Theme.color.textPrimary)
             }
             Text(stat.title)
-                .font(.footnote)
-                .foregroundColor(Color(.secondaryLabel))
+                .font(Theme.font.caption)
+                .foregroundColor(Theme.color.textSecondary)
         }
-        .frame(height: 64)
+        .frame(height: Theme.spacing.extraLarge * 2)
         .frame(maxWidth: .infinity)
-        .background(Color(.tertiarySystemBackground))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 3, y: 1)
+        .background(Theme.color.backgroundSecondary)
+        .cornerRadius(Theme.radius.card)
+        .shadow(color: Theme.shadow.card.color,
+                radius: Theme.shadow.card.radius,
+                x: Theme.shadow.card.x,
+                y: Theme.shadow.card.y)
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color(.systemGray5), lineWidth: 1)
+            RoundedRectangle(cornerRadius: Theme.radius.card)
+                .stroke(Theme.color.border, lineWidth: 1)
         )
     }
 }
