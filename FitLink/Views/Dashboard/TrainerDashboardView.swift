@@ -12,7 +12,7 @@ struct TrainerDashboardView: View {
             VStack(spacing: 16) {
                 // Header
                 HStack {
-                    Text("Привет, Юрий!")
+                    Text(NSLocalizedString("Dashboard.Greeting", comment: "Привет, Юрий!"))
                         .font(.system(size: 22, weight: .bold))
                         .foregroundColor(Color(.label))
                     Spacer()
@@ -44,12 +44,12 @@ struct TrainerDashboardView: View {
                 // Search bar with filter
                 SearchBarWithFilter(
                     text: $viewModel.searchText,
-                    placeholder: "Поиск клиента...",
+                    placeholder: NSLocalizedString("Dashboard.SearchPlaceholder", comment: "Поиск клиента..."),
                     onFilterTapped: { showFilterDialog = true }
                 )
-                .confirmationDialog("Фильтровать по", isPresented: $showFilterDialog, titleVisibility: .visible) {
+                    .confirmationDialog(NSLocalizedString("Dashboard.FilterTitle", comment: "Фильтровать по"), isPresented: $showFilterDialog, titleVisibility: .visible) {
                     ForEach(FilterType.allCases) { filter in
-                        Button(filter.rawValue) {
+                        Button(filter.localized) {
                             selectedFilter = filter
                             viewModel.applyFilter(filter)
                         }
@@ -89,6 +89,17 @@ enum FilterType: String, CaseIterable, Identifiable {
     case nextSessionDate = "По дате следующей тренировки"
     case nextSessionType = "По типу тренировки"
     var id: String { rawValue }
+
+    var localized: String {
+        switch self {
+        case .none:
+            return NSLocalizedString("Dashboard.Filter.None", comment: "Очистить фильтр")
+        case .nextSessionDate:
+            return NSLocalizedString("Dashboard.Filter.NextSessionDate", comment: "По дате следующей тренировки")
+        case .nextSessionType:
+            return NSLocalizedString("Dashboard.Filter.NextSessionType", comment: "По типу тренировки")
+        }
+    }
 }
 
 #Preview {

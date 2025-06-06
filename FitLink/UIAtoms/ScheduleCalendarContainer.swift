@@ -35,7 +35,7 @@ struct ScheduleCalendarContainer: View {
 
             let daySessions = viewModel.sessionsByDate[Calendar.current.startOfDay(for: viewModel.selectedDate)] ?? []
             if daySessions.isEmpty {
-                Text("Нет занятий на эту дату")
+                Text(NSLocalizedString("ScheduleCalendar.Empty", comment: "Нет занятий на эту дату"))
                     .foregroundColor(.gray)
                     .padding()
             } else {

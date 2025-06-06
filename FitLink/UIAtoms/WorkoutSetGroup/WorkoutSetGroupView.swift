@@ -21,7 +21,7 @@ struct WorkoutSetGroupView: View {
                     .font(.headline.bold())
                     .foregroundColor(viewModel.group.type.color)
                 if let reps = viewModel.group.repeatCount, reps > 1 {
-                    Text("×\(reps)")
+                    Text(String(format: NSLocalizedString("WorkoutSetGroup.RepsMultiplier", comment: "×%d"), reps))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .padding(.leading, 6)
@@ -36,7 +36,7 @@ struct WorkoutSetGroupView: View {
                 if !viewModel.supersetApproaches.isEmpty {
                     SuperSetView(sets: viewModel.supersetApproaches)
                 } else {
-                    Text("Нет подходов в суперсете")
+                    Text(NSLocalizedString("WorkoutSetGroup.EmptySuperset", comment: "Нет подходов в суперсете"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -48,7 +48,7 @@ struct WorkoutSetGroupView: View {
                         approaches: viewModel.dropsetApproaches
                     )
                 } else {
-                    Text("Нет дропсета")
+                    Text(NSLocalizedString("WorkoutSetGroup.EmptyDropset", comment: "Нет дропсета"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }

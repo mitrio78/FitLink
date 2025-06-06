@@ -22,7 +22,7 @@ struct Client: Identifiable, Hashable {
 extension Client {
     static let placeholder = Client(
         id: UUID(),
-        name: "Клиент",
+        name: NSLocalizedString("ClientModel.PlaceholderName", comment: "Клиент"),
         avatarURL: nil
     )
 }

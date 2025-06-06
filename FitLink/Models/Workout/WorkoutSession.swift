@@ -37,10 +37,14 @@ enum SessionStatus: String, Codable, CaseIterable, Hashable {
 
     var labelText: String {
         switch self {
-        case .planned: return "Запланировано"
-        case .inProgress: return "В процессе"
-        case .completed: return "Выполнено"
-        case .cancelled: return "Отменено"
+        case .planned:
+            return NSLocalizedString("SessionStatus.PlannedLabel", comment: "Запланировано")
+        case .inProgress:
+            return NSLocalizedString("SessionStatus.InProgressLabel", comment: "В процессе")
+        case .completed:
+            return NSLocalizedString("SessionStatus.CompletedLabel", comment: "Выполнено")
+        case .cancelled:
+            return NSLocalizedString("SessionStatus.CancelledLabel", comment: "Отменено")
         }
     }
     

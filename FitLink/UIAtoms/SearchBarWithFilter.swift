@@ -10,7 +10,7 @@ import SwiftUI
 struct SearchBarWithFilter: View {
     @Binding var text: String
     @FocusState private var isFocused: Bool
-    var placeholder: String = "Search..."
+    var placeholder: String = NSLocalizedString("SearchBar.DefaultPlaceholder", comment: "Search...")
     var onFilterTapped: (() -> Void)? = nil
 
     var body: some View {
