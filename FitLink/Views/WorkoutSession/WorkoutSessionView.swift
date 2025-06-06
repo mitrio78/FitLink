@@ -24,7 +24,7 @@ struct WorkoutSessionView: View {
     
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: Theme.spacing.large) {
+            VStack(alignment: .leading, spacing: 0) {
                 // Заголовок
                 Text(
                     String(
@@ -49,11 +49,12 @@ struct WorkoutSessionView: View {
                 workoutSectionView(title: WorkoutSection.coolDown.title, exercises: coolDownExercises)
 
                 VStack(spacing: Theme.spacing.medium) {
-                    Button(NSLocalizedString("WorkoutSession.AddGroupedExercise", comment: "")) {}
-                    Button(NSLocalizedString("WorkoutSession.AddBlock", comment: "")) {}
-                    Button(NSLocalizedString("WorkoutSession.ClonePrevious", comment: "")) {}
-                    Button(NSLocalizedString("WorkoutSession.Save", comment: "")) {}
+                    WorkoutActionButton(label: NSLocalizedString("WorkoutSession.AddGroupedExercise", comment: "")) {}
+                    WorkoutActionButton(label: NSLocalizedString("WorkoutSession.AddBlock", comment: "")) {}
+                    WorkoutActionButton(label: NSLocalizedString("WorkoutSession.ClonePrevious", comment: "")) {}
+                    WorkoutActionButton(label: NSLocalizedString("WorkoutSession.Save", comment: ""), filled: true) {}
                 }
+                .padding(.top, Theme.spacing.large)
             }
             .padding(Theme.spacing.medium)
         }
@@ -64,22 +65,22 @@ struct WorkoutSessionView: View {
     @ViewBuilder
     private func workoutSectionView(title: String, exercises: [ExerciseInstance]) -> some View {
         VStack(alignment: .leading, spacing: Theme.spacing.small) {
-            Text(title)
-                .font(Theme.font.subheading).bold()
+            WorkoutSectionHeaderView(title: title)
 
-            ForEach(exercises) { ex in
-                if let group = session.setGroups?.first(where: { $0.exerciseInstanceIds.contains(ex.id) }),
-                   group.exerciseInstanceIds.first == ex.id {
-                    let groupExercises = session.exerciseInstances.filter { group.exerciseInstanceIds.contains($0.id) }
-                    ExerciseBlockCard(group: group, exerciseInstances: groupExercises)
-                } else if !(session.setGroups ?? []).contains(where: { $0.exerciseInstanceIds.contains(ex.id) }) {
-                    ExerciseBlockCard(group: nil, exerciseInstances: [ex])
+            VStack(spacing: Theme.spacing.medium) {
+                ForEach(exercises) { ex in
+                    if let group = session.setGroups?.first(where: { $0.exerciseInstanceIds.contains(ex.id) }),
+                       group.exerciseInstanceIds.first == ex.id {
+                        let groupExercises = session.exerciseInstances.filter { group.exerciseInstanceIds.contains($0.id) }
+                        ExerciseBlockCard(group: group, exerciseInstances: groupExercises)
+                    } else if !(session.setGroups ?? []).contains(where: { $0.exerciseInstanceIds.contains(ex.id) }) {
+                        ExerciseBlockCard(group: nil, exerciseInstances: [ex])
+                    }
                 }
             }
 
-            Button(NSLocalizedString("WorkoutSession.AddExercise", comment: "")) {}
-                .font(Theme.font.body)
-                .foregroundColor(Theme.color.accent)
+            WorkoutActionButton(label: NSLocalizedString("WorkoutSession.AddExercise", comment: "")) {}
+                .padding(.bottom, Theme.spacing.medium)
         }
     }
 }
