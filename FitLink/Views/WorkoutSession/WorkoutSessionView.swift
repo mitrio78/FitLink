@@ -48,15 +48,8 @@ struct WorkoutSessionView: View {
                 workoutSectionView(title: WorkoutSection.main.displayName, exercises: mainExercises)
                 workoutSectionView(title: WorkoutSection.coolDown.displayName, exercises: coolDownExercises)
 
-                VStack(spacing: Theme.spacing.medium) {
-                    WorkoutActionButton(label: WorkoutSessionAction.addGroupedExercise.label) {}
-                    WorkoutActionButton(label: WorkoutSessionAction.addBlock.label) {}
-                    WorkoutActionButton(label: WorkoutSessionAction.clonePrevious.label) {}
-                    WorkoutActionButton(label: WorkoutSessionAction.save.label, filled: true) {}
-                        .padding(Theme.spacing.medium)
-                }
-                .multilineTextAlignment(.center)
-                .padding(.top, Theme.spacing.medium)
+                PrimaryButton(title: WorkoutSessionAction.addExercise.label) {}
+                    .padding(.top, Theme.spacing.extraLarge)
             }
             .padding(Theme.spacing.medium)
         }
@@ -80,9 +73,6 @@ struct WorkoutSessionView: View {
                     }
                 }
             }
-
-            WorkoutActionButton(label: WorkoutSessionAction.addExercise.label) {}
-                .padding(.top, Theme.spacing.medium)
         }
         .padding(.bottom, Theme.spacing.large)
     }

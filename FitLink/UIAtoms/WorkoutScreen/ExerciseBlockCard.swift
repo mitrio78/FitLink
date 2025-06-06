@@ -38,9 +38,9 @@ struct ExerciseBlockCard: View {
 
     private var summary: String {
         guard let first = exerciseInstances.first else {
-            return "\(setCount) sets"
+            return "\(setCount) \(setsText)"
         }
-        var parts: [String] = ["\(setCount) sets"]
+        var parts: [String] = ["\(setCount) \(setsText)"]
         if let approach = first.approaches.first {
             for metric in first.exercise.metrics {
                 if let value = approach.set.metricValues[metric.type] {
@@ -49,6 +49,16 @@ struct ExerciseBlockCard: View {
             }
         }
         return parts.joined(separator: " \u{00b7} ")
+    }
+
+    private var setsText: String {
+        let mod100 = setCount % 100
+        if mod100 >= 11 && mod100 <= 14 { return "подходов" }
+        switch setCount % 10 {
+        case 1: return "подход"
+        case 2,3,4: return "подхода"
+        default: return "подходов"
+        }
     }
 
     private var setCount: Int {
