@@ -142,7 +142,7 @@ func makeSupersetApproaches(
 }
 
 // --- ДОБАВЛЯЕМ ОДИНОЧНЫЕ УПРАЖНЕНИЯ ДЛЯ ПРИМЕРА ---
-func makeRegularInstance(exIndex: Int, reps: [Int], weights: [Double]) -> ExerciseInstance {
+func makeRegularInstance(exIndex: Int, reps: [Int], weights: [Double], section: WorkoutSection = .main) -> ExerciseInstance {
     let ex = exercisesCatalog[exIndex]
     let approaches = zip(reps, weights).map { (rep, weight) in
         Approach(
@@ -159,7 +159,8 @@ func makeRegularInstance(exIndex: Int, reps: [Int], weights: [Double]) -> Exerci
         exercise: ex,
         approaches: approaches,
         groupId: nil,
-        notes: nil
+        notes: nil,
+        section: section
     )
 }
 

@@ -13,4 +13,5 @@ struct ExerciseInstance: Identifiable, Codable, Equatable, Hashable {
     var approaches: [Approach]     // Вместо sets!
     var groupId: UUID?
     var notes: String?
+    var section: WorkoutSection = .main
 }
