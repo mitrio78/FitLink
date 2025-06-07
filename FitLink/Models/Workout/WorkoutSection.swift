@@ -18,6 +18,18 @@ enum WorkoutSection: String, Codable, CaseIterable, Hashable {
         }
     }
 
+    /// Display title used in UI labels
+    var displayTitle: String {
+        switch self {
+        case .warmUp:
+            return NSLocalizedString("WorkoutSection.WarmUp", comment: "Разминка")
+        case .main:
+            return NSLocalizedString("WorkoutSection.Main", comment: "Основная часть")
+        case .coolDown:
+            return NSLocalizedString("WorkoutSection.CoolDown", comment: "Заминка")
+        }
+    }
+
     @available(*, deprecated, renamed: "displayName")
     var title: String { displayName }
 }

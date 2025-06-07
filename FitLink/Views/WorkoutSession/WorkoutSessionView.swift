@@ -44,11 +44,11 @@ struct WorkoutSessionView: View {
                         .padding(.vertical, Theme.spacing.small / 2)
                 }
 
-                workoutSectionView(title: WorkoutSection.warmUp.displayName, exercises: warmUpExercises)
-                workoutSectionView(title: WorkoutSection.main.displayName, exercises: mainExercises)
-                workoutSectionView(title: WorkoutSection.coolDown.displayName, exercises: coolDownExercises)
+                workoutSectionView(title: WorkoutSection.warmUp.displayTitle, exercises: warmUpExercises)
+                workoutSectionView(title: WorkoutSection.main.displayTitle, exercises: mainExercises)
+                workoutSectionView(title: WorkoutSection.coolDown.displayTitle, exercises: coolDownExercises)
 
-                PrimaryButton(title: NSLocalizedString("WorkoutSession.AddExercise", comment: "")) {}
+                PrimaryButton(title: WorkoutSessionAction.addExercise.buttonTitle) {}
                     .padding(.top, Theme.spacing.extraLarge)
             }
             .padding(Theme.spacing.medium)
