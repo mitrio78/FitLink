@@ -12,4 +12,7 @@ enum WorkoutSessionAction: String, CaseIterable, Hashable {
     var label: String {
         NSLocalizedString(rawValue, comment: "")
     }
+
+    /// Title used for action buttons
+    var buttonTitle: String { label }
 }
