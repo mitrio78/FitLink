@@ -53,5 +53,5 @@ struct ClientRow: View {
 }
 
 #Preview {
-    ClientRow(client: .init(id: UUID(), name: "Joe", avatarURL: nil), lastSession: nil, nextSession: nil)
+    ClientRow(client: .init(id: UUID(), name: "Joe", avatarURL: nil), lastSession: .some(.init(id: UUID(), clientId: UUID(), title: "", exerciseInstances: [], status: .completed)), nextSession: .some(.init(id: UUID(), clientId: UUID(), title: "", exerciseInstances: [], status: .planned)))
 }
