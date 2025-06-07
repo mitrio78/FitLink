@@ -141,3 +141,17 @@
 "WorkoutSession.AddBlock" = "Add Block";
 "WorkoutSession.ClonePrevious" = "Clone Previous Session";
 "WorkoutSession.Save" = "Save Workout";
+
+/* WorkoutExerciseEdit */
+"WorkoutExerciseEdit.EditTitle" = "Edit Exercise";
+"WorkoutExerciseEdit.AddTitle" = "Add Exercise";
+"WorkoutExerciseEdit.Change" = "Replace";
+"WorkoutExerciseEdit.SelectExercise" = "Select Exercise";
+"WorkoutExerciseEdit.Sets" = "Sets";
+"WorkoutExerciseEdit.AddSet" = "Add Set";
+"WorkoutExerciseEdit.AddMetric" = "Add Metric";
+"WorkoutExerciseEdit.Phase" = "Phase %d";
+"WorkoutExerciseEdit.AddPhase" = "Add Phase";
+"WorkoutExerciseEdit.DuplicateSet" = "Duplicate";
+"WorkoutExerciseEdit.DeleteSet" = "Delete";
+"WorkoutExerciseEdit.SelectMetric" = "Select metric";

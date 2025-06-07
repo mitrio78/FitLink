@@ -141,3 +141,17 @@
 "WorkoutSession.AddBlock" = "Добавить блок";
 "WorkoutSession.ClonePrevious" = "Клонировать прошлую";
 "WorkoutSession.Save" = "Сохранить тренировку";
+
+/* WorkoutExerciseEdit */
+"WorkoutExerciseEdit.EditTitle" = "Редактировать упражнение";
+"WorkoutExerciseEdit.AddTitle" = "Добавить упражнение";
+"WorkoutExerciseEdit.Change" = "Заменить";
+"WorkoutExerciseEdit.SelectExercise" = "Выберите упражнение";
+"WorkoutExerciseEdit.Sets" = "Подходы";
+"WorkoutExerciseEdit.AddSet" = "Добавить сет";
+"WorkoutExerciseEdit.AddMetric" = "Добавить метрику";
+"WorkoutExerciseEdit.Phase" = "Фаза %d";
+"WorkoutExerciseEdit.AddPhase" = "Добавить фазу";
+"WorkoutExerciseEdit.DuplicateSet" = "Дублировать";
+"WorkoutExerciseEdit.DeleteSet" = "Удалить";
+"WorkoutExerciseEdit.SelectMetric" = "Выберите метрику";

@@ -10,6 +10,8 @@ struct WorkoutSessionView: View {
     let session: WorkoutSession
     let client: Client?
 
+    @State private var showExerciseEdit = false
+
     private var warmUpExercises: [ExerciseInstance] {
         session.exerciseInstances.filter { $0.section == .warmUp }
     }
@@ -49,7 +51,9 @@ struct WorkoutSessionView: View {
                 workoutSectionView(title: WorkoutSection.main.displayTitle, exercises: mainExercises)
                 workoutSectionView(title: WorkoutSection.coolDown.displayTitle, exercises: coolDownExercises)
 
-                PrimaryButton(title: WorkoutSessionAction.addExercise.buttonTitle) {}
+                PrimaryButton(title: WorkoutSessionAction.addExercise.buttonTitle) {
+                    showExerciseEdit = true
+                }
                     .padding(.top, Theme.spacing.extraLarge)
             }
             .padding(Theme.spacing.medium)
@@ -57,6 +61,9 @@ struct WorkoutSessionView: View {
         }
         .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
         .presentationDetents([.medium, .large])
+        .sheet(isPresented: $showExerciseEdit) {
+            WorkoutExerciseEditView(sessionStore: WorkoutStore(), sessionId: session.id)
+        }
     }
 
     @ViewBuilder
