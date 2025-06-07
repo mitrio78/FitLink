@@ -17,34 +17,34 @@ struct ScheduleView: View {
                 HStack {
                     Spacer()
                     Text(NSLocalizedString("Schedule.Header", comment: "Занятия"))
-                        .font(.title2.bold())
+                        .font(Theme.font.titleMedium).bold()
                     Spacer()
-                    HStack(spacing: 16) {
+                    HStack(spacing: Theme.spacing.medium) {
                         Button(action: {
                             withAnimation { viewModel.isCalendarMode = true }
                         }) {
                             Image(systemName: "calendar")
-                                .font(.system(size: 28, weight: .semibold))
-                                .foregroundColor(viewModel.isCalendarMode ? .blue : .gray)
-                                .padding(8)
-                                .background(viewModel.isCalendarMode ? Color(.systemGray6) : Color.clear)
+                                .font(Theme.font.titleLarge)
+                                .foregroundColor(viewModel.isCalendarMode ? Theme.color.accent : Theme.color.textSecondary)
+                                .padding(Theme.spacing.small)
+                                .background(viewModel.isCalendarMode ? Theme.color.backgroundSecondary : Color.clear)
                                 .clipShape(Circle())
                         }
                         Button(action: {
                             withAnimation { viewModel.isCalendarMode = false }
                         }) {
                             Image(systemName: "checklist.checked")
-                                .font(.system(size: 28, weight: .semibold))
-                                .foregroundColor(!viewModel.isCalendarMode ? .blue : .gray)
-                                .padding(8)
-                                .background(!viewModel.isCalendarMode ? Color(.systemGray6) : Color.clear)
+                                .font(Theme.font.titleLarge)
+                                .foregroundColor(!viewModel.isCalendarMode ? Theme.color.accent : Theme.color.textSecondary)
+                                .padding(Theme.spacing.small)
+                                .background(!viewModel.isCalendarMode ? Theme.color.backgroundSecondary : Color.clear)
                                 .clipShape(Circle())
                         }
                     }
                 }
-                .padding(.horizontal)
-                .padding(.top, 12)
-                .padding(.bottom, 8)
+                .padding(.horizontal, Theme.spacing.medium)
+                .padding(.top, Theme.spacing.medium - 4)
+                .padding(.bottom, Theme.spacing.small)
                 
                 // Search
                 SearchBarWithFilter(
@@ -54,12 +54,12 @@ struct ScheduleView: View {
                         // Тут future: фильтр по статусу, тренеру и т.д.
                     }
                 )
-                .padding(.horizontal)
-                .padding(.bottom, 16)
+                .padding(.horizontal, Theme.spacing.medium)
+                .padding(.bottom, Theme.spacing.medium)
                 
                 
                 Divider()
-                    .padding(.bottom, 16)
+                    .padding(.bottom, Theme.spacing.medium)
                 
                 ScrollView {
                     // Content
@@ -69,21 +69,21 @@ struct ScheduleView: View {
                             selectedSession: $selectedSession,
                             clients: viewModel.clients
                         )
-                        .padding(.bottom, 8)
+                        .padding(.bottom, Theme.spacing.small)
                     } else {
                         ListModeView(
                             todaySessions: viewModel.todaySessions,
                             clients: viewModel.clients,
                             selectedSession: $selectedSession
                         )
-                        .padding(.bottom, 8)
+                        .padding(.bottom, Theme.spacing.small)
                     }
                 }
             }
             .simultaneousGesture(
                 TapGesture().onEnded { _ in hideKeyboard() }
             )
-            .background(Color(.systemBackground))
+            .background(Theme.color.background)
             .navigationDestination(item: $selectedSession) { session in
                 let client = session.clientId.flatMap { viewModel.clients[$0] }
                 WorkoutSessionView(session: session, client: client)

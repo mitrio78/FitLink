@@ -16,10 +16,10 @@ struct SearchBarWithFilter: View {
     var body: some View {
         HStack {
             TextField(placeholder, text: $text)
-                .padding(10)
-                .background(Color(.systemGray6))
-                .cornerRadius(10)
-                .font(.subheadline)
+                .padding(Theme.spacing.small)
+                .background(Theme.color.backgroundSecondary)
+                .cornerRadius(Theme.radius.button)
+                .font(Theme.font.subheading)
                 .onSubmit {
                     isFocused = false // теряем фокус
                     hideKeyboard()
@@ -29,10 +29,10 @@ struct SearchBarWithFilter: View {
                 onFilterTapped?()
             }) {
                 Image(systemName: "slider.horizontal.3")
-                    .font(.title2)
-                    .foregroundColor(.blue)
+                    .font(Theme.font.titleSmall)
+                    .foregroundColor(Theme.color.accent)
             }
-            .padding(.leading, 2)
+            .padding(.leading, Theme.spacing.small / 4)
         }
     }
 }

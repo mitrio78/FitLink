@@ -131,3 +131,13 @@
 "MuscleGroup.Cardio" = "Кардио";
 "MuscleGroup.Mobility" = "Мобильность";
 "MuscleGroup.FullBody" = "Всё тело";
+/* Workout sections */
+"WorkoutSection.WarmUp" = "Разминка";
+"WorkoutSection.Main" = "Основная часть";
+"WorkoutSection.CoolDown" = "Заминка";
+/* Workout actions */
+"WorkoutSession.AddExercise" = "Добавить упражнение";
+"WorkoutSession.AddGroupedExercise" = "Добавить групповое упражнение";
+"WorkoutSession.AddBlock" = "Добавить блок";
+"WorkoutSession.ClonePrevious" = "Клонировать прошлую";
+"WorkoutSession.Save" = "Сохранить тренировку";

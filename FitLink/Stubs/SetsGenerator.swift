@@ -36,12 +36,13 @@ func generateRegularApproaches(for exercise: Exercise, count: Int) -> [Approach]
 }
 
 
-func makeInstance(exercise: Exercise, approachesCount: Int = 3) -> ExerciseInstance {
+func makeInstance(exercise: Exercise, approachesCount: Int = 3, section: WorkoutSection = .main) -> ExerciseInstance {
     ExerciseInstance(
         id: UUID(),
         exercise: exercise,
         approaches: generateRegularApproaches(for: exercise, count: approachesCount),
         groupId: nil,
-        notes: nil
+        notes: nil,
+        section: section
     )
 }

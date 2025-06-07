@@ -13,45 +13,45 @@ struct ClientRow: View {
     let nextSession: WorkoutSession?
     
     var body: some View {
-        HStack(alignment: .center, spacing: 14) {
+        HStack(alignment: .center, spacing: Theme.spacing.medium - 2) {
             AvatarView(initials: client.initials)
                 .frame(width: 44, height: 44)
             
             VStack(alignment: .leading, spacing: 6) {
                 Text(client.name)
-                    .font(.body.bold())
-                    .foregroundColor(.primary)
+                    .font(Theme.font.body).bold()
+                    .foregroundColor(Theme.color.textPrimary)
                 
                 if let lastSession = lastSession {
                     Text(String(format: NSLocalizedString("ClientRow.LastSession", comment: "Последняя: %@ • %@"), lastSession.timeString, lastSession.date?.formattedHuman() ?? ""))
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .font(Theme.font.caption)
+                        .foregroundColor(Theme.color.textSecondary)
                 }
                 
                 if let nextSession = nextSession {
                     Text(String(format: NSLocalizedString("ClientRow.NextSession", comment: "Следующая: %@ • %@"), nextSession.timeString, nextSession.date?.formattedHuman() ?? ""))
-                        .font(.caption)
-                        .foregroundColor(Color(.label))
-                        .padding(.vertical, 2)
-                        .padding(.horizontal, 6)
-                        .background(Color(.systemOrange).opacity(0.13))
-                        .cornerRadius(8)
+                        .font(Theme.font.caption)
+                        .foregroundColor(Theme.color.textPrimary)
+                        .padding(.vertical, Theme.spacing.small / 4)
+                        .padding(.horizontal, Theme.spacing.small - 2)
+                        .background(Theme.color.accent.opacity(0.13))
+                        .cornerRadius(Theme.radius.button)
                 }
             }
             Spacer()
         }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 10)
-        .background(Color(.tertiarySystemBackground))
-        .cornerRadius(16)
+        .padding(.vertical, Theme.spacing.small + 2)
+        .padding(.horizontal, Theme.spacing.small + 2)
+        .background(Theme.color.backgroundSecondary)
+        .cornerRadius(Theme.radius.card)
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color(.systemGray5), lineWidth: 1)
+            RoundedRectangle(cornerRadius: Theme.radius.card)
+                .stroke(Theme.color.border, lineWidth: 1)
         )
         //.frame(minHeight: 86)
     }
 }
 
 #Preview {
-    ClientRow(client: .init(id: UUID(), name: "Joe", avatarURL: nil), lastSession: nil, nextSession: nil)
+    ClientRow(client: .init(id: UUID(), name: "Joe", avatarURL: nil), lastSession: .some(.init(id: UUID(), clientId: UUID(), title: "", exerciseInstances: [], status: .completed)), nextSession: .some(.init(id: UUID(), clientId: UUID(), title: "", exerciseInstances: [], status: .planned)))
 }
