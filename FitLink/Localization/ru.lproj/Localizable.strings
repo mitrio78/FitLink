@@ -131,11 +131,11 @@
 "MuscleGroup.Cardio" = "Кардио";
 "MuscleGroup.Mobility" = "Мобильность";
 "MuscleGroup.FullBody" = "Всё тело";
-\n/* Workout sections */
+/* Workout sections */
 "WorkoutSection.WarmUp" = "Разминка";
 "WorkoutSection.Main" = "Основная часть";
 "WorkoutSection.CoolDown" = "Заминка";
-\n/* Workout actions */
+/* Workout actions */
 "WorkoutSession.AddExercise" = "Добавить упражнение";
 "WorkoutSession.AddGroupedExercise" = "Добавить групповое упражнение";
 "WorkoutSession.AddBlock" = "Добавить блок";

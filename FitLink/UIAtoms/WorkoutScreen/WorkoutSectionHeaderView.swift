@@ -4,12 +4,14 @@ import SwiftUI
 struct WorkoutSectionHeaderView: View {
     let title: String
     var body: some View {
+        Divider()
         Text(title)
             .font(Theme.font.subheading)
-            .foregroundColor(Theme.color.textPrimary)
+            .foregroundColor(Theme.color.textSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, Theme.spacing.large)
-            .padding(.bottom, Theme.spacing.medium)
+            .padding(.top, Theme.spacing.small)
+            .padding(.bottom, Theme.spacing.small)
+            .padding(.leading, Theme.spacing.small)
     }
 }
 

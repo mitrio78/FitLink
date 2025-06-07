@@ -33,6 +33,7 @@ struct WorkoutSessionView: View {
                     )
                 )
                 .font(Theme.font.titleMedium).bold()
+                .padding(.vertical)
                 if let date = session.date {
                     Text("\(date.formatted(date: .long, time: .shortened))")
                         .foregroundColor(Theme.color.textSecondary)
@@ -41,7 +42,7 @@ struct WorkoutSessionView: View {
                     Text(notes)
                         .font(Theme.font.body)
                         .foregroundColor(Theme.color.accent)
-                        .padding(.vertical, Theme.spacing.small / 2)
+                        .padding(.vertical, Theme.spacing.small)
                 }
 
                 workoutSectionView(title: WorkoutSection.warmUp.displayTitle, exercises: warmUpExercises)
@@ -64,7 +65,7 @@ struct WorkoutSessionView: View {
             VStack(alignment: .leading, spacing: 0) {
                 WorkoutSectionHeaderView(title: title)
 
-                VStack(spacing: Theme.spacing.medium) {
+                VStack(spacing: Theme.spacing.small) {
                     ForEach(exercises) { ex in
                         if let group = session.setGroups?.first(where: { $0.exerciseInstanceIds.contains(ex.id) }),
                            group.exerciseInstanceIds.first == ex.id {
@@ -76,7 +77,6 @@ struct WorkoutSessionView: View {
                     }
                 }
             }
-            .padding(.bottom, Theme.spacing.large)
         }
     }
 }

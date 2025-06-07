@@ -131,11 +131,11 @@
 "MuscleGroup.Cardio" = "Cardio";
 "MuscleGroup.Mobility" = "Mobility";
 "MuscleGroup.FullBody" = "The whole body";
-\n/* Workout sections */
+/* Workout sections */
 "WorkoutSection.WarmUp" = "Warm-up";
 "WorkoutSection.Main" = "Main Set";
 "WorkoutSection.CoolDown" = "Cool-down";
-\n/* Workout actions */
+/* Workout actions */
 "WorkoutSession.AddExercise" = "Add Exercise";
 "WorkoutSession.AddGroupedExercise" = "Add Grouped Exercise";
 "WorkoutSession.AddBlock" = "Add Block";
