@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Screen for adding a new exercise to a workout session or editing an existing one
-struct ExerciseEditView: View {
+struct WorkoutExerciseEditView: View {
     @ObservedObject var sessionStore: WorkoutStore
     var sessionId: UUID
     var existingExercise: ExerciseInstance? = nil
@@ -24,7 +24,7 @@ struct ExerciseEditView: View {
                 }
                 .padding(Theme.spacing.medium)
             }
-            .navigationTitle(isEditing ? NSLocalizedString("ExerciseEdit.EditTitle", comment: "Edit Exercise") : NSLocalizedString("ExerciseEdit.AddTitle", comment: "Add Exercise"))
+            .navigationTitle(isEditing ? NSLocalizedString("WorkoutExerciseEdit.EditTitle", comment: "Edit Exercise") : NSLocalizedString("WorkoutExerciseEdit.AddTitle", comment: "Add Exercise"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -43,7 +43,7 @@ struct ExerciseEditView: View {
                     }
                 }
             }
-            .confirmationDialog("Select metric", isPresented: Binding(get: { metricPickerForSet != nil }, set: { if !$0 { metricPickerForSet = nil } })) {
+            .confirmationDialog(NSLocalizedString("WorkoutExerciseEdit.SelectMetric", comment: "Select metric"), isPresented: Binding(get: { metricPickerForSet != nil }, set: { if !$0 { metricPickerForSet = nil } })) {
                 if let index = metricPickerForSet, index < approaches.count, let exercise = selectedExercise {
                     let available = ExerciseMetricType.allCases.filter { approaches[index].set.metricValues[$0] == nil }
                     ForEach(available, id: \.self) { type in
@@ -71,7 +71,7 @@ struct ExerciseEditView: View {
                         Text(exercise.name)
                             .font(Theme.font.titleMedium.bold())
                         Spacer()
-                        Text(NSLocalizedString("ExerciseEdit.Change", comment: "Replace"))
+                        Text(NSLocalizedString("WorkoutExerciseEdit.Change", comment: "Replace"))
                             .font(Theme.font.body)
                             .foregroundColor(.secondary)
                     }
@@ -82,7 +82,7 @@ struct ExerciseEditView: View {
                 }
             } else {
                 Button(action: { showLibrary = true }) {
-                    Text("+ " + NSLocalizedString("ExerciseEdit.SelectExercise", comment: "Select Exercise"))
+                    Text("+ " + NSLocalizedString("WorkoutExerciseEdit.SelectExercise", comment: "Select Exercise"))
                         .font(Theme.font.titleMedium)
                         .frame(maxWidth: .infinity, minHeight: 120)
                         .foregroundColor(Theme.color.accent)
@@ -96,17 +96,17 @@ struct ExerciseEditView: View {
     private var setsSection: some View {
         VStack(alignment: .leading, spacing: Theme.spacing.medium) {
             HStack {
-                Text(NSLocalizedString("ExerciseEdit.Sets", comment: "Sets"))
+                Text(NSLocalizedString("WorkoutExerciseEdit.Sets", comment: "Sets"))
                     .font(Theme.font.titleSmall)
                 Spacer()
                 if !approaches.isEmpty {
-                    Button("+" + NSLocalizedString("ExerciseEdit.AddSet", comment: "Add Set")) { addSet() }
+                    Button("+" + NSLocalizedString("WorkoutExerciseEdit.AddSet", comment: "Add Set")) { addSet() }
                         .font(Theme.font.body)
                 }
             }
 
             if approaches.isEmpty {
-                Button("+" + NSLocalizedString("ExerciseEdit.AddSet", comment: "Add Set")) { addSet() }
+                Button("+" + NSLocalizedString("WorkoutExerciseEdit.AddSet", comment: "Add Set")) { addSet() }
                     .frame(maxWidth: .infinity, minHeight: 60)
                     .background(Theme.color.backgroundSecondary)
                     .cornerRadius(Theme.radius.card)
@@ -197,23 +197,23 @@ private struct ExerciseSetCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.spacing.small) {
             metricFields(for: $approach.set)
-            Button("+" + NSLocalizedString("ExerciseEdit.AddMetric", comment: "Add Metric"), action: onAddMetric)
+            Button("+" + NSLocalizedString("WorkoutExerciseEdit.AddMetric", comment: "Add Metric"), action: onAddMetric)
                 .font(Theme.font.metadata)
             if !approach.drops.isEmpty {
                 ForEach(approach.drops.indices, id: \.self) { idx in
                     VStack(alignment: .leading) {
-                        Text(String(format: NSLocalizedString("ExerciseEdit.Phase", comment: "Phase %d"), idx + 1))
+                        Text(String(format: NSLocalizedString("WorkoutExerciseEdit.Phase", comment: "Phase %d"), idx + 1))
                             .font(Theme.font.metadata)
                         metricFields(for: $approach.drops[idx])
                     }
                 }
             }
-            Button("+" + NSLocalizedString("ExerciseEdit.AddPhase", comment: "Add Phase"), action: onAddPhase)
+            Button("+" + NSLocalizedString("WorkoutExerciseEdit.AddPhase", comment: "Add Phase"), action: onAddPhase)
                 .font(Theme.font.metadata)
             HStack {
-                Button(NSLocalizedString("ExerciseEdit.DuplicateSet", comment: "Duplicate"), action: onDuplicate)
+                Button(NSLocalizedString("WorkoutExerciseEdit.DuplicateSet", comment: "Duplicate"), action: onDuplicate)
                 Spacer()
-                Button(NSLocalizedString("ExerciseEdit.DeleteSet", comment: "Delete"), action: onDelete)
+                Button(NSLocalizedString("WorkoutExerciseEdit.DeleteSet", comment: "Delete"), action: onDelete)
                     .foregroundColor(.red)
             }
             .font(Theme.font.metadata)
@@ -270,6 +270,6 @@ private struct ExerciseMetricField: View {
 }
 
 #Preview {
-    ExerciseEditView(sessionStore: WorkoutStore(), sessionId: MockData.complexMockSessions[0].id)
+    WorkoutExerciseEditView(sessionStore: WorkoutStore(), sessionId: MockData.complexMockSessions[0].id)
 }
 
