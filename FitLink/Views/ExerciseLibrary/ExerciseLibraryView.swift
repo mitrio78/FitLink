@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ExerciseLibraryView: View {
+    var onSelect: ((Exercise) -> Void)? = nil
+
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = ExerciseLibraryViewModel()
     @State private var showFilterDialog = false
 
@@ -48,7 +51,8 @@ struct ExerciseLibraryView: View {
                         ForEach(viewModel.filteredExercises) { exercise in
                             ExerciseRow(exercise: exercise)
                                 .onTapGesture {
-                                    // Переход к деталям упражнения
+                                    onSelect?(exercise)
+                                    if onSelect != nil { dismiss() }
                                 }
                         }
                     }
