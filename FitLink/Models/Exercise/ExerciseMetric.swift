@@ -23,7 +23,9 @@ struct ExerciseMetric: Codable, Equatable, Hashable {
     
     static func formattedMetric(_ value: Double, metric: ExerciseMetric) -> String {
         let intValue = value == floor(value) ? String(Int(value)) : String(format: "%.1f", value)
-        if let unit = metric.unit?.displayName, !unit.isEmpty {
+        if metric.type == .reps, let unit = metric.unit?.displayName, !unit.isEmpty {
+            return " \(unit) \(intValue)"
+        } else if let unit = metric.unit?.displayName, !unit.isEmpty {
             return "\(intValue) \(unit)"
         }
         return intValue

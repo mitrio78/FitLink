@@ -34,9 +34,8 @@ struct ExerciseBlockCard: View {
     private var title: String {
         let names = exerciseInstances.map { $0.exercise.name }
         if let group, group.type == .superset {
-            return names.joined(separator: " + ")
+            return names.joined(separator: "\n+ ")
         }
         return names.joined(separator: " \u{2022} ")
     }
-
 }

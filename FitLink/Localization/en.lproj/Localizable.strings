@@ -112,7 +112,7 @@
 "UnitType.Minute" = "min";
 "UnitType.Meter" = "m";
 "UnitType.Kilometer" = "km";
-"UnitType.Repetition" = "Pot.";
+"UnitType.Repetition" = "x";
 "UnitType.Calorie" = "kcal";
 
 /* Muscle groups */
