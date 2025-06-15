@@ -47,8 +47,8 @@ struct SessionRow: View {
                 .foregroundColor(session.status.color)
                 .font(.title3)
         } else {
-            Label(session.status.labelText, systemImage: session.status.iconName)
-                .font(.caption2)
+            Image(systemName: session.status.iconName)
+                .font(.title2)
                 .foregroundColor(session.status.color)
                 .padding(Theme.spacing.small)
                 .background(session.status.backgroundColor)
@@ -74,7 +74,7 @@ struct InitialsCircle: View {
 #if DEBUG
 struct SessionRow_Previews: PreviewProvider {
     static var previews: some View {
-        let session = WorkoutSession(id: UUID(), clientId: nil, title: "Тренировка", date: Date(), exerciseInstances: [], setGroups: nil, notes: nil, status: .planned)
+        let session = WorkoutSession(id: UUID(), clientId: nil, title: "Очень важная тренировка", date: Date(), exerciseInstances: [], setGroups: nil, notes: nil, status: .planned)
         let client = Client(id: UUID(), name: "Иван Петров", avatarURL: nil)
         SessionRow(session: session, client: client)
             .padding()
