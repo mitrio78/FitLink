@@ -12,6 +12,10 @@ struct WorkoutSessionView: View {
 
     @State private var showExerciseEdit = false
 
+    private func addExerciseTapped() {
+        showExerciseEdit = true
+    }
+
     private var warmUpExercises: [ExerciseInstance] {
         session.exerciseInstances.filter { $0.section == .warmUp }
     }
@@ -50,16 +54,25 @@ struct WorkoutSessionView: View {
                 workoutSectionView(title: WorkoutSection.warmUp.displayTitle, exercises: warmUpExercises)
                 workoutSectionView(title: WorkoutSection.main.displayTitle, exercises: mainExercises)
                 workoutSectionView(title: WorkoutSection.coolDown.displayTitle, exercises: coolDownExercises)
-
-                PrimaryButton(title: WorkoutSessionAction.addExercise.buttonTitle) {
-                    showExerciseEdit = true
-                }
-                    .padding(.top, Theme.spacing.extraLarge)
             }
             .padding(Theme.spacing.medium)
             .padding(.bottom, Theme.spacing.medium)
         }
         .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: addExerciseTapped) {
+                    Image(systemName: "plus")
+                        .padding(6)
+                        .background(Color.accentColor.opacity(0.15))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+                .controlSize(.large)
+                .foregroundColor(Color.accentColor)
+                .accessibilityLabel(NSLocalizedString("WorkoutDetail.AddExercise", comment: ""))
+                .accessibilityIdentifier("WorkoutDetail.AddExerciseButton")
+            }
+        }
         .presentationDetents([.medium, .large])
         .sheet(isPresented: $showExerciseEdit) {
             WorkoutExerciseEditView(sessionStore: WorkoutStore(), sessionId: session.id)
@@ -89,6 +102,15 @@ struct WorkoutSessionView: View {
 }
 
 
-#Preview {
-    WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0])
+#Preview("Light") {
+    NavigationStack {
+        WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0])
+    }
+}
+
+#Preview("Dark") {
+    NavigationStack {
+        WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0])
+    }
+    .preferredColorScheme(.dark)
 }

@@ -137,6 +137,7 @@
 "WorkoutSection.CoolDown" = "Cool-down";
 /* Workout actions */
 "WorkoutSession.AddExercise" = "Add Exercise";
+"WorkoutDetail.AddExercise" = "Add Exercise";
 "WorkoutSession.AddGroupedExercise" = "Add Grouped Exercise";
 "WorkoutSession.AddBlock" = "Add Block";
 "WorkoutSession.ClonePrevious" = "Clone Previous Session";
