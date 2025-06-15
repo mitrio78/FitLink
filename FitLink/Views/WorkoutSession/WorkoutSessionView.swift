@@ -90,7 +90,11 @@ struct WorkoutSessionView: View {
                         if let group = session.setGroups?.first(where: { $0.exerciseInstanceIds.contains(ex.id) }),
                            group.exerciseInstanceIds.first == ex.id {
                             let groupExercises = session.exerciseInstances.filter { group.exerciseInstanceIds.contains($0.id) }
-                            ExerciseBlockCard(group: group, exerciseInstances: groupExercises)
+                            if group.type == .superset {
+                                SupersetCell(group: group, exercises: groupExercises)
+                            } else {
+                                ExerciseBlockCard(group: group, exerciseInstances: groupExercises)
+                            }
                         } else if !(session.setGroups ?? []).contains(where: { $0.exerciseInstanceIds.contains(ex.id) }) {
                             ExerciseBlockCard(group: nil, exerciseInstances: [ex])
                         }
