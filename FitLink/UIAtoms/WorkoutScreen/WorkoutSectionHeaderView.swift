@@ -21,5 +21,4 @@ struct WorkoutSectionHeaderView: View {
         Spacer()
     }
     .padding()
-    .previewLayout(.sizeThatFits)
 }
