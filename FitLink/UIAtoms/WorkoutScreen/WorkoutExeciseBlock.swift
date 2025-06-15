@@ -35,8 +35,9 @@ struct WorkoutExerciseRow: View {
 struct WorkoutExerciseRow_Previews: PreviewProvider {
     static var previews: some View {
         let metrics = [ExerciseMetric(type: .reps, isRequired: true), ExerciseMetric(type: .weight, isRequired: false)]
-        let set = ExerciseSet(id: UUID(), metricValues: [.reps: 10, .weight: 50], notes: nil, drops: nil)
-        let approach = Approach(set: set, drops: [])
+        let approach = Approach(sets: [
+            ExerciseSet(id: UUID(), metricValues: [.reps: 10, .weight: 50], notes: nil, drops: nil)
+        ])
         let exercise = ExerciseInstance(id: UUID(), exercise: Exercise(id: UUID(), name: "Становая тяга", description: "", mediaURL: nil, variations: [], muscleGroups: [], metrics: metrics), approaches: [approach, approach], groupId: nil, notes: nil)
         WorkoutExerciseRow(exerciseInstance: exercise)
             .padding()

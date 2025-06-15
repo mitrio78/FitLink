@@ -23,11 +23,11 @@ struct ExerciseApproachListView: View {
         if let _ = exerciseInstance.groupId {
             DropSetView(
                 exercise: exerciseInstance,
-                approaches: [DropSetApproach(steps: [approach.set] + approach.drops)]
+                approaches: [DropSetApproach(steps: approach.sets)]
             )
         } else {
             ApproachSetView(
-                set: approach.setWithDrops,
+                approach: approach,
                 index: index,
                 metrics: exerciseInstance.exercise.metrics
             )
@@ -39,8 +39,9 @@ struct ExerciseApproachListView: View {
 struct ExerciseApproachListView_Previews: PreviewProvider {
     static var previews: some View {
         let metrics = [ExerciseMetric(type: .reps, isRequired: true), ExerciseMetric(type: .weight, isRequired: false)]
-        let set = ExerciseSet(id: UUID(), metricValues: [.reps: 10, .weight: 50], notes: nil, drops: nil)
-        let approach = Approach(set: set, drops: [])
+        let approach = Approach(sets: [
+            ExerciseSet(id: UUID(), metricValues: [.reps: 10, .weight: 50], notes: nil, drops: nil)
+        ])
         let exercise = ExerciseInstance(id: UUID(), exercise: Exercise(id: UUID(), name: "Становая тяга", description: "", mediaURL: nil, variations: [], muscleGroups: [], metrics: metrics), approaches: [approach, approach], groupId: nil, notes: nil)
         ExerciseApproachListView(exerciseInstance: exercise)
             .padding()

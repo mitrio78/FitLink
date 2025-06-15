@@ -8,38 +8,40 @@
 import SwiftUI
 
 struct ApproachSetView: View {
-    let set: ExerciseSet
+    let approach: Approach
     let index: Int
     let metrics: [ExerciseMetric]
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.spacing.small / 2) {
             // Основной сет
-            HStack {
-                Text(String(format: NSLocalizedString("ApproachSetView.Title", comment: "Подход %d:"), index + 1))
-                    .font(Theme.font.body)
-                    .foregroundColor(.primary)
-                Spacer()
-                ForEach(metrics, id: \.type) { metric in
-                    if let value = set.metricValues[metric.type] {
-                        HStack(spacing: Theme.spacing.small / 2) {
-                            if let icon = metric.iconName {
-                                Image(systemName: icon)
-                                    .font(Theme.font.metadata)
-                                    .foregroundColor(.secondary)
+            if let mainSet = approach.sets.first {
+                HStack {
+                    Text(String(format: NSLocalizedString("ApproachSetView.Title", comment: "Подход %d:"), index + 1))
+                        .font(Theme.font.body)
+                        .foregroundColor(.primary)
+                    Spacer()
+                    ForEach(metrics, id: \.type) { metric in
+                        if let value = mainSet.metricValues[metric.type] {
+                            HStack(spacing: Theme.spacing.small / 2) {
+                                if let icon = metric.iconName {
+                                    Image(systemName: icon)
+                                        .font(Theme.font.metadata)
+                                        .foregroundColor(.secondary)
+                                }
+                                Text(ExerciseMetric.formattedMetric(value, metric: metric))
+                                    .font(Theme.font.body)
+                                    .foregroundColor(.primary)
                             }
-                            Text(ExerciseMetric.formattedMetric(value, metric: metric))
-                                .font(Theme.font.body)
-                                .foregroundColor(.primary)
                         }
                     }
                 }
+                .padding(.vertical, Theme.spacing.small / 4)
             }
-            .padding(.vertical, Theme.spacing.small / 4)
 
             // Дропы, если есть
-            if let drops = set.drops, !drops.isEmpty {
-                ForEach(Array(drops.enumerated()), id: \.element.id) { i, drop in
+            if approach.sets.count > 1 {
+                ForEach(Array(approach.sets.dropFirst().enumerated()), id: \.element.id) { i, drop in
                     HStack {
                         Circle()
                             .fill(Theme.color.accent.opacity(0.5))
@@ -74,8 +76,11 @@ struct ApproachSetView: View {
 struct ApproachSetView_Previews: PreviewProvider {
     static var previews: some View {
         let metrics = [ExerciseMetric(type: .reps, isRequired: true), ExerciseMetric(type: .weight, isRequired: false)]
-        let set = ExerciseSet(id: UUID(), metricValues: [.reps: 10, .weight: 50], notes: nil, drops: [.init(id: UUID(), metricValues: [.reps:2])])
-        ApproachSetView(set: set, index: 0, metrics: metrics)
+        let approach = Approach(sets: [
+            ExerciseSet(id: UUID(), metricValues: [.reps: 10, .weight: 50], notes: nil, drops: nil),
+            ExerciseSet(id: UUID(), metricValues: [.reps: 2], notes: nil, drops: nil)
+        ])
+        ApproachSetView(approach: approach, index: 0, metrics: metrics)
             .padding()
             .previewLayout(.sizeThatFits)
     }

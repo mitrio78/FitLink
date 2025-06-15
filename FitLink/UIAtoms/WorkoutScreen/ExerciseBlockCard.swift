@@ -20,7 +20,11 @@ struct ExerciseBlockCard: View {
 
             if let main = exerciseInstances.first {
                 ExerciseSetMetricsView(
-                    sets: main.approaches.map { $0.setWithDrops },
+                    sets: main.approaches.map { approach in
+                        var first = approach.sets.first ?? ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil)
+                        first.drops = Array(approach.sets.dropFirst())
+                        return first
+                    },
                     metrics: main.exercise.metrics
                 )
             }
