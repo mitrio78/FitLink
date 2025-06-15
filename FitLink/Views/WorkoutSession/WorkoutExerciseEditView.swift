@@ -44,11 +44,11 @@ struct WorkoutExerciseEditView: View {
                 }
             }
             .confirmationDialog(NSLocalizedString("WorkoutExerciseEdit.SelectMetric", comment: "Select metric"), isPresented: Binding(get: { metricPickerForSet != nil }, set: { if !$0 { metricPickerForSet = nil } })) {
-                if let index = metricPickerForSet, index < approaches.count, let exercise = selectedExercise {
-                    let available = ExerciseMetricType.allCases.filter { approaches[index].set.metricValues[$0] == nil }
+                if let index = metricPickerForSet, index < approaches.count {
+                    let available = ExerciseMetricType.allCases.filter { approaches[index].sets.first!.metricValues[$0] == nil }
                     ForEach(available, id: \.self) { type in
                         Button(type.displayName) {
-                            approaches[index].set.metricValues[type] = 0
+                            approaches[index].sets[0].metricValues[type] = 0
                             metricPickerForSet = nil
                         }
                     }
@@ -141,15 +141,14 @@ struct WorkoutExerciseEditView: View {
     private func addSet() {
         approaches.append(
             Approach(
-                set: ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: []),
-                drops: []
+                sets: [ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil)]
             )
         )
     }
 
     private func addPhase(to index: Int) {
         guard index < approaches.count else { return }
-        approaches[index].drops.append(
+        approaches[index].sets.append(
             ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil)
         )
     }
@@ -196,15 +195,21 @@ private struct ExerciseSetCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.spacing.small) {
-            metricFields(for: $approach.set)
+            metricFields(for: Binding(
+                get: { approach.sets.first ?? ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil) },
+                set: { approach.sets[0] = $0 }
+            ))
             Button("+" + NSLocalizedString("WorkoutExerciseEdit.AddMetric", comment: "Add Metric"), action: onAddMetric)
                 .font(Theme.font.metadata)
-            if !approach.drops.isEmpty {
-                ForEach(approach.drops.indices, id: \.self) { idx in
+            if approach.sets.count > 1 {
+                ForEach(approach.sets.indices.dropFirst(), id: \.self) { idx in
                     VStack(alignment: .leading) {
-                        Text(String(format: NSLocalizedString("WorkoutExerciseEdit.Phase", comment: "Phase %d"), idx + 1))
+                        Text(String(format: NSLocalizedString("WorkoutExerciseEdit.Phase", comment: "Phase %d"), idx))
                             .font(Theme.font.metadata)
-                        metricFields(for: $approach.drops[idx])
+                        metricFields(for: Binding(
+                            get: { approach.sets[idx] },
+                            set: { approach.sets[idx] = $0 }
+                        ))
                     }
                 }
             }

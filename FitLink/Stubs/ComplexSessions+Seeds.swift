@@ -13,41 +13,47 @@ import Foundation
 let dropSetExercise = exercisesCatalog[0] // Жим лёжа
 
 let dropSetApproach1 = Approach(
-    set: ExerciseSet(
-        id: UUID(),
-        metricValues: [.reps: 8, .weight: 50],
-        notes: "Основной вес"
-    ),
-    drops: [
+    sets: [
+        ExerciseSet(
+            id: UUID(),
+            metricValues: [.reps: 8, .weight: 50],
+            notes: "Основной вес",
+            drops: nil
+        ),
         ExerciseSet(
             id: UUID(),
             metricValues: [.reps: 8, .weight: 40],
-            notes: "Дроп 1"
+            notes: "Дроп 1",
+            drops: nil
         ),
         ExerciseSet(
             id: UUID(),
             metricValues: [.reps: 8, .weight: 30],
-            notes: "Дроп 2"
+            notes: "Дроп 2",
+            drops: nil
         )
     ]
 )
 
 let dropSetApproach2 = Approach(
-    set: ExerciseSet(
-        id: UUID(),
-        metricValues: [.reps: 7, .weight: 45],
-        notes: "Основной вес"
-    ),
-    drops: [
+    sets: [
+        ExerciseSet(
+            id: UUID(),
+            metricValues: [.reps: 7, .weight: 45],
+            notes: "Основной вес",
+            drops: nil
+        ),
         ExerciseSet(
             id: UUID(),
             metricValues: [.reps: 7, .weight: 35],
-            notes: "Дроп 1"
+            notes: "Дроп 1",
+            drops: nil
         ),
         ExerciseSet(
             id: UUID(),
             metricValues: [.reps: 7, .weight: 25],
-            notes: "Дроп 2"
+            notes: "Дроп 2",
+            drops: nil
         )
     ]
 )
@@ -63,7 +69,7 @@ let dropSetInstance = ExerciseInstance(
 // Генератор подходов-дропсетов из ExerciseInstance (если их несколько — каждый Approach.dropset отдельно)
 func makeDropSetApproaches(for ex: ExerciseInstance) -> [DropSetApproach] {
     ex.approaches.map { approach in
-        DropSetApproach(steps: [approach.set] + approach.drops)
+        DropSetApproach(steps: approach.sets)
     }
 }
 
@@ -74,12 +80,14 @@ func makeDropSetApproaches(for ex: ExerciseInstance) -> [DropSetApproach] {
 func generateRegularApproaches(for exercise: Exercise, reps: [Int], weights: [Double]) -> [Approach] {
     zip(reps, weights).map { (rep, weight) in
         Approach(
-            set: ExerciseSet(
-                id: UUID(),
-                metricValues: [.reps: Double(rep), .weight: weight],
-                notes: nil
-            ),
-            drops: []
+            sets: [
+                ExerciseSet(
+                    id: UUID(),
+                    metricValues: [.reps: Double(rep), .weight: weight],
+                    notes: nil,
+                    drops: nil
+                )
+            ]
         )
     }
 }
@@ -117,7 +125,7 @@ func makeSupersetApproaches(
     var result: [SupersetApproach] = []
     for i in 0..<approachesCount {
         let exerciseResults: [ExerciseResult] = zip(instances, approachesList).map { (instance, approaches) in
-            let set = approaches[i].set
+            let set = approaches[i].sets.first!
             let metrics = instance.exercise.metrics
 
             let metricValues: [MetricValue] = metrics.compactMap { metric in
@@ -146,12 +154,14 @@ func makeRegularInstance(exIndex: Int, reps: [Int], weights: [Double], section: 
     let ex = exercisesCatalog[exIndex]
     let approaches = zip(reps, weights).map { (rep, weight) in
         Approach(
-            set: ExerciseSet(
-                id: UUID(),
-                metricValues: [.reps: Double(rep), .weight: weight],
-                notes: nil
-            ),
-            drops: []
+            sets: [
+                ExerciseSet(
+                    id: UUID(),
+                    metricValues: [.reps: Double(rep), .weight: weight],
+                    notes: nil,
+                    drops: nil
+                )
+            ]
         )
     }
     return ExerciseInstance(

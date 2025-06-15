@@ -112,7 +112,7 @@
 "UnitType.Minute" = "мин";
 "UnitType.Meter" = "м";
 "UnitType.Kilometer" = "км";
-"UnitType.Repetition" = "повт.";
+"UnitType.Repetition" = "x";
 "UnitType.Calorie" = "ккал";
 
 /* Muscle groups */
@@ -137,6 +137,7 @@
 "WorkoutSection.CoolDown" = "Заминка";
 /* Workout actions */
 "WorkoutSession.AddExercise" = "Добавить упражнение";
+"WorkoutDetail.AddExercise" = "Добавить упражнение";
 "WorkoutSession.AddGroupedExercise" = "Добавить групповое упражнение";
 "WorkoutSession.AddBlock" = "Добавить блок";
 "WorkoutSession.ClonePrevious" = "Клонировать прошлую";

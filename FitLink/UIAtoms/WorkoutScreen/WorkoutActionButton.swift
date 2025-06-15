@@ -24,5 +24,4 @@ struct WorkoutActionButton: View {
 #Preview {
     WorkoutActionButton(label: "Add Exercise", action: {})
         .padding()
-        .previewLayout(.sizeThatFits)
 }

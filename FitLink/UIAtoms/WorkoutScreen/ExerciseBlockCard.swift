@@ -18,9 +18,16 @@ struct ExerciseBlockCard: View {
                 .lineLimit(2)
                 .truncationMode(.tail)
 
-            Text(summary)
-                .font(Theme.font.metadata)
-                .foregroundColor(Theme.color.textSecondary)
+            if let main = exerciseInstances.first {
+                ExerciseSetMetricsView(
+                    sets: main.approaches.map { approach in
+                        var first = approach.sets.first ?? ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil)
+                        first.drops = Array(approach.sets.dropFirst())
+                        return first
+                    },
+                    metrics: main.exercise.metrics
+                )
+            }
         }
         .padding(Theme.spacing.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -31,40 +38,8 @@ struct ExerciseBlockCard: View {
     private var title: String {
         let names = exerciseInstances.map { $0.exercise.name }
         if let group, group.type == .superset {
-            return names.joined(separator: " + ")
+            return names.joined(separator: "\n+ ")
         }
         return names.joined(separator: " \u{2022} ")
-    }
-
-    private var summary: String {
-        guard let first = exerciseInstances.first else {
-            return "\(setCount) \(setsText)"
-        }
-        var parts: [String] = ["\(setCount) \(setsText)"]
-        if let approach = first.approaches.first {
-            for metric in first.exercise.metrics {
-                if let value = approach.set.metricValues[metric.type] {
-                    parts.append(ExerciseMetric.formattedMetric(value, metric: metric))
-                }
-            }
-        }
-        return parts.joined(separator: " \u{00b7} ")
-    }
-
-    private var setsText: String {
-        let mod100 = setCount % 100
-        if mod100 >= 11 && mod100 <= 14 { return "подходов" }
-        switch setCount % 10 {
-        case 1: return "подход"
-        case 2,3,4: return "подхода"
-        default: return "подходов"
-        }
-    }
-
-    private var setCount: Int {
-        if let group {
-            return exerciseInstances.map { $0.approaches.count }.max() ?? 0
-        }
-        return exerciseInstances.first?.approaches.count ?? 0
     }
 }
