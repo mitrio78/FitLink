@@ -27,7 +27,7 @@ struct ExerciseApproachListView: View {
             )
         } else {
             ApproachSetView(
-                set: approach.set,
+                set: approach.setWithDrops,
                 index: index,
                 metrics: exerciseInstance.exercise.metrics
             )
