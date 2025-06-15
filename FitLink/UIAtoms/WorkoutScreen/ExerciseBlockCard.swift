@@ -18,6 +18,15 @@ struct ExerciseBlockCard: View {
                 .lineLimit(2)
                 .truncationMode(.tail)
 
+            if group == nil, let instance = exerciseInstances.first {
+                let sets = instance.approaches.map { $0.set }
+                Text(makeSubtitle(from: sets))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                    .accessibilityLabel(makeSubtitleAccessibility(from: sets))
+            }
+
             Text(summary)
                 .font(Theme.font.metadata)
                 .foregroundColor(Theme.color.textSecondary)
