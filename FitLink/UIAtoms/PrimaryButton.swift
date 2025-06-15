@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Full-width primary action button
+@available(*, deprecated, message: "Use navigation bar toolbar buttons instead")
 struct PrimaryButton: View {
     let title: String
     var action: () -> Void
