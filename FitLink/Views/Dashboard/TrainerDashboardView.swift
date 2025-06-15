@@ -60,7 +60,7 @@ struct TrainerDashboardView: View {
                 
                 // Clients list
                 ScrollView {
-                    LazyVStack(spacing: 8) {
+                    LazyVStack(spacing: 12) {
                         ForEach(viewModel.filteredClients) { client in
                             ClientRow(
                                 client: client,

@@ -155,3 +155,7 @@
 "WorkoutExerciseEdit.DuplicateSet" = "Дублировать";
 "WorkoutExerciseEdit.DeleteSet" = "Удалить";
 "WorkoutExerciseEdit.SelectMetric" = "Выберите метрику";
+
+/* Common */
+"Common.Cancel" = "Отмена";
+"Common.Done" = "Готово";

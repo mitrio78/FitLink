@@ -155,3 +155,7 @@
 "WorkoutExerciseEdit.DuplicateSet" = "Duplicate";
 "WorkoutExerciseEdit.DeleteSet" = "Delete";
 "WorkoutExerciseEdit.SelectMetric" = "Select metric";
+
+/* Common */
+"Common.Cancel" = "Cancel";
+"Common.Done" = "Done";

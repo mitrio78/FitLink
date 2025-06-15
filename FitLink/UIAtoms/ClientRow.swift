@@ -44,14 +44,10 @@ struct ClientRow: View {
         .padding(.horizontal, Theme.spacing.small + 2)
         .background(Theme.color.backgroundSecondary)
         .cornerRadius(Theme.radius.card)
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.radius.card)
-                .stroke(Theme.color.border, lineWidth: 1)
-        )
-        //.frame(minHeight: 86)
     }
 }
 
 #Preview {
-    ClientRow(client: .init(id: UUID(), name: "Joe", avatarURL: nil), lastSession: .some(.init(id: UUID(), clientId: UUID(), title: "", exerciseInstances: [], status: .completed)), nextSession: .some(.init(id: UUID(), clientId: UUID(), title: "", exerciseInstances: [], status: .planned)))
+    ClientRow(client: .init(id: UUID(), name: "Joe", avatarURL: nil), lastSession: .some(.init(id: UUID(), clientId: UUID(), title: "workout 2", exerciseInstances: [], status: .completed)), nextSession: .some(.init(id: UUID(), clientId: UUID(), title: "workout 1", exerciseInstances: [], status: .planned)))
+        .padding(.horizontal)
 }
