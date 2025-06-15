@@ -44,11 +44,11 @@ struct WorkoutExerciseEditView: View {
                 }
             }
             .confirmationDialog(NSLocalizedString("WorkoutExerciseEdit.SelectMetric", comment: "Select metric"), isPresented: Binding(get: { metricPickerForSet != nil }, set: { if !$0 { metricPickerForSet = nil } })) {
-                if let index = metricPickerForSet, index < approaches.count, let exercise = selectedExercise {
-                    let available = ExerciseMetricType.allCases.filter { approaches[index].set.metricValues[$0] == nil }
+                if let index = metricPickerForSet, index < approaches.count {
+                    let available = ExerciseMetricType.allCases.filter { approaches[index].sets.first!.metricValues[$0] == nil }
                     ForEach(available, id: \.self) { type in
                         Button(type.displayName) {
-                            approaches[index].set.metricValues[type] = 0
+                            approaches[index].sets[0].metricValues[type] = 0
                             metricPickerForSet = nil
                         }
                     }

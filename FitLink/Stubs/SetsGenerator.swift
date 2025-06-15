@@ -31,8 +31,7 @@ func generateRegularApproaches(for exercise: Exercise, count: Int) -> [Approach]
                     metricValues: metricValues,
                     notes: (index == 0 && Bool.random()) ? "Техника, фокус!" : nil,
                     drops: nil
-                ),
-                ExerciseSet(id: UUID(), metricValues: [.weight: 10, .reps: 2], notes: nil, drops: nil)
+                )
             ]
         )
     }
