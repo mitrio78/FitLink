@@ -67,7 +67,7 @@ struct ExerciseSetMetricsView: View {
         }
     }
 
-    /// Metrics content wrapped with a background geometry reader to measure width.
+    /// Invisible copy of the metrics used solely for width measurement.
     private var measuredContent: some View {
         metricsContent()
             .fixedSize()
@@ -91,12 +91,13 @@ struct ExerciseSetMetricsView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             GeometryReader { geo in
                 Color.clear.preference(key: ContainerWidthKey.self, value: geo.size.width)
             }
         )
-        .background(measuredContent.opacity(0))
+        .overlay(measuredContent.opacity(0))
         .onPreferenceChange(WidthKey.self) { contentWidth = $0 }
         .onPreferenceChange(ContainerWidthKey.self) { containerWidth = $0 }
     }
