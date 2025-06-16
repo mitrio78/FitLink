@@ -5,8 +5,18 @@ struct ExerciseSetMetricsView: View {
     let sets: [ExerciseSet]
     let metrics: [ExerciseMetric]
 
+    /// Width of the container available for metrics.
+    @State private var containerWidth: CGFloat = 0
     /// Tracks the width required to display all sets without scrolling.
     @State private var contentWidth: CGFloat = 0
+
+    /// Preference key for capturing the container width.
+    private struct ContainerWidthKey: PreferenceKey {
+        static var defaultValue: CGFloat = 0
+        static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+            value = nextValue()
+        }
+    }
 
     /// Preference key used to pass width measurements up the view tree.
     private struct WidthKey: PreferenceKey {
@@ -60,6 +70,7 @@ struct ExerciseSetMetricsView: View {
     /// Metrics content wrapped with a background geometry reader to measure width.
     private var measuredContent: some View {
         metricsContent()
+            .fixedSize()
             .background(
                 GeometryReader { proxy in
                     Color.clear.preference(key: WidthKey.self, value: proxy.size.width)
@@ -68,22 +79,26 @@ struct ExerciseSetMetricsView: View {
     }
 
     var body: some View {
-        GeometryReader { geo in
-            VStack(alignment: .leading) {
-                Divider()
-                    .padding(.vertical, 4)
-                if contentWidth > geo.size.width {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        metricsContent()
-                    }
-                } else {
+        VStack(alignment: .leading) {
+            Divider()
+                .padding(.vertical, 4)
+            if contentWidth > containerWidth {
+                ScrollView(.horizontal, showsIndicators: false) {
                     metricsContent()
-                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
+            } else {
+                metricsContent()
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .background(measuredContent.opacity(0))
-            .onPreferenceChange(WidthKey.self) { contentWidth = $0 }
         }
+        .background(
+            GeometryReader { geo in
+                Color.clear.preference(key: ContainerWidthKey.self, value: geo.size.width)
+            }
+        )
+        .background(measuredContent.opacity(0))
+        .onPreferenceChange(WidthKey.self) { contentWidth = $0 }
+        .onPreferenceChange(ContainerWidthKey.self) { containerWidth = $0 }
     }
     
     private func weightString(for set: ExerciseSet) -> String {
