@@ -57,32 +57,33 @@ struct ExerciseSetMetricsView: View {
         }
     }
 
+    /// Invisible view used to measure the intrinsic width of the metrics stack.
+    private var widthMeasurer: some View {
+        metricsContent()
+            .fixedSize()
+            .background(
+                GeometryReader { proxy in
+                    Color.clear.preference(key: WidthKey.self, value: proxy.size.width)
+                }
+            )
+    }
+
     var body: some View {
         GeometryReader { geo in
-            VStack {
+            VStack(alignment: .leading) {
                 Divider()
                     .padding(.vertical, 4)
-                Group {
-                    if contentWidth > geo.size.width {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            metricsContent()
-                        }
-                    } else {
+                if contentWidth > geo.size.width {
+                    ScrollView(.horizontal, showsIndicators: false) {
                         metricsContent()
                     }
-                }
-                .overlay(
+                } else {
                     metricsContent()
-                        .fixedSize()
-                        .background(
-                            GeometryReader { proxy in
-                                Color.clear.preference(key: WidthKey.self, value: proxy.size.width)
-                            }
-                        )
-                        .hidden()
-                )
-                .onPreferenceChange(WidthKey.self) { contentWidth = $0 }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
+            .background(widthMeasurer.hidden())
+            .onPreferenceChange(WidthKey.self) { contentWidth = $0 }
         }
     }
     
