@@ -14,8 +14,13 @@ struct SupersetApproachView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.spacing.small) {
             Text(String(format: NSLocalizedString("SupersetApproachView.Title", comment: "Approach %d"), index))
-                .font(Theme.font.body.bold())
-            ForEach(Array(items.enumerated()), id: \.offset) { _, item in
+                .font(Theme.font.subheading.bold())
+                .foregroundColor(Theme.color.accent)
+            ForEach(Array(items.enumerated()), id: \.offset) { idx, item in
+                if idx > 0 {
+                    Divider()
+                        .background(Theme.color.border.opacity(0.3))
+                }
                 VStack(alignment: .leading, spacing: Theme.spacing.small / 2) {
                     Text(item.exercise.exercise.name)
                         .font(Theme.font.body).bold()
