@@ -21,7 +21,7 @@ struct ExerciseSetMetricsView: View {
         VStack {
             Divider()
                 .padding(.vertical, 4)
-            ScrollView(.horizontal) {
+            ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: Theme.spacing.medium) {
                     ForEach(Array(sets.prefix(4).enumerated()), id: \.offset) { index, set in
                         HStack(alignment: .center, spacing: 6) {
@@ -47,9 +47,9 @@ struct ExerciseSetMetricsView: View {
                                 }
                             }
                         }
-                    }
-                }
-            }
+                    } // ForEach
+                } // HStack
+            } // Scroll
         }
     }
     

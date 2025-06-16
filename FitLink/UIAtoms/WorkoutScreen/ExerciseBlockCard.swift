@@ -43,3 +43,7 @@ struct ExerciseBlockCard: View {
         return names.joined(separator: " \u{2022} ")
     }
 }
+
+#Preview {
+    ExerciseBlockCard(group: .some(.init(id: UUID(), type: .pyramid, exerciseInstanceIds: [])), exerciseInstances: [.init(id: UUID(), exercise: .init(id: UUID(), name: "Подпрыгивания", variations: ["Весело", "Задорно"], muscleGroups: [.custom("Все")], metrics: [.init(type: .reps, isRequired: true)]), approaches: [.init(sets: [.init(id: UUID(), metricValues: [.time: 20])])])])
+}

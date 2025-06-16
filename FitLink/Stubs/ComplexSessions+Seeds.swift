@@ -73,8 +73,6 @@ func makeDropSetApproaches(for ex: ExerciseInstance) -> [DropSetApproach] {
     }
 }
 
-
-
 // Суперсет из двух упражнений: сгибания рук и тяга штанги
 // Для суперсета нам нужно, чтобы в каждом подходе был Approach.regular для каждого упражнения
 func generateRegularApproaches(for exercise: Exercise, reps: [Int], weights: [Double]) -> [Approach] {
@@ -106,48 +104,6 @@ let superSetInstance2 = ExerciseInstance(
     groupId: nil,
     notes: nil
 )
-
-
-/// Генерирует массив подходов для суперсета
-func makeSupersetApproaches(
-    group: SetGroup,
-    allExercises: [ExerciseInstance]
-) -> [SupersetApproach] {
-    let instances = group.exerciseInstanceIds.compactMap { id in
-        allExercises.first(where: { $0.id == id })
-    }
-    guard !instances.isEmpty else { return [] }
-
-    let approachesList: [[Approach]] = instances.map { $0.approaches }
-    let approachesCount = approachesList.map { $0.count }.min() ?? 0
-    guard approachesCount > 0 else { return [] }
-
-    var result: [SupersetApproach] = []
-    for i in 0..<approachesCount {
-        let exerciseResults: [ExerciseResult] = zip(instances, approachesList).map { (instance, approaches) in
-            let set = approaches[i].sets.first!
-            let metrics = instance.exercise.metrics
-
-            let metricValues: [MetricValue] = metrics.compactMap { metric in
-                guard let rawValue = set.metricValues[metric.type] else { return nil }
-                let valueString = ExerciseMetric.formattedMetric(rawValue, metric: metric)
-                return MetricValue(
-                    type: metric.type,
-                    displayName: metric.displayName,
-                    value: valueString,
-                    iconName: metric.iconName
-                )
-            }
-
-            return ExerciseResult(
-                exerciseName: instance.exercise.name,
-                metricValues: metricValues
-            )
-        }
-        result.append(SupersetApproach(exercises: exerciseResults))
-    }
-    return result
-}
 
 // --- ДОБАВЛЯЕМ ОДИНОЧНЫЕ УПРАЖНЕНИЯ ДЛЯ ПРИМЕРА ---
 func makeRegularInstance(exIndex: Int, reps: [Int], weights: [Double], section: WorkoutSection = .main) -> ExerciseInstance {
@@ -200,7 +156,7 @@ struct MockData {
                 id: UUID(),
                 clientId: clientsMock[0].id,
                 title: "Дропсет + Суперсет (пример)",
-                date: ISO8601DateFormatter().date(from: "2025-05-30T18:00:00+03:00"),
+                date: ISO8601DateFormatter().date(from: "2025-06-18T18:00:00+03:00"),
                 exerciseInstances: [
                     makeRegularInstance(exIndex: 3, reps: [12,10,9], weights: [0,0,0]), // Подтягивания (без веса)
                     dropSetInstance,
@@ -221,7 +177,7 @@ struct MockData {
                 id: UUID(),
                 clientId: clientsMock[3].id,
                 title: "Fullbody: суперсет и дропсет",
-                date: ISO8601DateFormatter().date(from: "2025-06-02T19:00:00+03:00"),
+                date: ISO8601DateFormatter().date(from: "2025-06-20T19:00:00+03:00"),
                 exerciseInstances: [
                     dropSetInstance,
                     superSetInstance1,
