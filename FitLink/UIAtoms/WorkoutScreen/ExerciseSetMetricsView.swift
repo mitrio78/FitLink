@@ -57,10 +57,9 @@ struct ExerciseSetMetricsView: View {
         }
     }
 
-    /// Invisible view used to measure the intrinsic width of the metrics stack.
-    private var widthMeasurer: some View {
+    /// Metrics content wrapped with a background geometry reader to measure width.
+    private var measuredContent: some View {
         metricsContent()
-            .fixedSize()
             .background(
                 GeometryReader { proxy in
                     Color.clear.preference(key: WidthKey.self, value: proxy.size.width)
@@ -82,7 +81,7 @@ struct ExerciseSetMetricsView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-            .background(widthMeasurer.hidden())
+            .background(measuredContent.opacity(0))
             .onPreferenceChange(WidthKey.self) { contentWidth = $0 }
         }
     }
