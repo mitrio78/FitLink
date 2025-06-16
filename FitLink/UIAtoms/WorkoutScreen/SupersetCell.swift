@@ -35,7 +35,7 @@ struct SupersetCell: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(
                                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(Color(.secondarySystemBackground))
+                                    .fill(Theme.color.supersetSubcardBackground)
                             )
                     }
                 }
