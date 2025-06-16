@@ -4,6 +4,17 @@ import SwiftUI
 struct ExerciseSetMetricsView: View {
     let sets: [ExerciseSet]
     let metrics: [ExerciseMetric]
+
+    /// Tracks the width required to display all sets without scrolling.
+    @State private var contentWidth: CGFloat = 0
+
+    /// Preference key used to pass width measurements up the view tree.
+    private struct WidthKey: PreferenceKey {
+        static var defaultValue: CGFloat = 0
+        static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+            value = max(value, nextValue())
+        }
+    }
     
     private var weightMetric: ExerciseMetric? {
         metrics.first { $0.type == .weight }
@@ -16,40 +27,62 @@ struct ExerciseSetMetricsView: View {
     private var timeMetric: ExerciseMetric? {
         metrics.first { $0.type == .time }
     }
-    
-    var body: some View {
-        VStack {
-            Divider()
-                .padding(.vertical, 4)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: Theme.spacing.medium) {
-                    ForEach(Array(sets.prefix(4).enumerated()), id: \.offset) { index, set in
-                        HStack(alignment: .center, spacing: 6) {
-                            let drops = [set] + (set.drops ?? [])
-                            ForEach(drops.indices, id: \.self) { idx in
-                                VStack(spacing: 2) {
-                                    // Верхняя строка — вес
-                                    Text(weightString(for: drops[idx]))
-                                        .font(.headline.bold())
-                                    // Нижняя строка — метрика
-                                    Text(metricString(for: drops[idx]))
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
-                                // Стрелка — если не последний дроп
-                                if idx < drops.count - 1 {
-                                    Text("→")
-                                        .font(.headline.bold())
-                                        .padding(.horizontal, 2)
-                                } else {
-                                    Divider()
-                                        .padding(.leading)
-                                }
-                            }
+
+    /// HStack containing the metrics for up to four sets.
+    @ViewBuilder
+    private func metricsContent() -> some View {
+        HStack(spacing: Theme.spacing.medium) {
+            ForEach(Array(sets.prefix(4).enumerated()), id: \.offset) { index, set in
+                HStack(alignment: .center, spacing: 6) {
+                    let drops = [set] + (set.drops ?? [])
+                    ForEach(drops.indices, id: \.self) { idx in
+                        VStack(spacing: 2) {
+                            Text(weightString(for: drops[idx]))
+                                .font(.headline.bold())
+                            Text(metricString(for: drops[idx]))
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
                         }
-                    } // ForEach
-                } // HStack
-            } // Scroll
+                        if idx < drops.count - 1 {
+                            Text("→")
+                                .font(.headline.bold())
+                                .padding(.horizontal, 2)
+                        } else {
+                            Divider()
+                                .padding(.leading)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    var body: some View {
+        GeometryReader { geo in
+            VStack {
+                Divider()
+                    .padding(.vertical, 4)
+                Group {
+                    if contentWidth > geo.size.width {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            metricsContent()
+                        }
+                    } else {
+                        metricsContent()
+                    }
+                }
+                .overlay(
+                    metricsContent()
+                        .fixedSize()
+                        .background(
+                            GeometryReader { proxy in
+                                Color.clear.preference(key: WidthKey.self, value: proxy.size.width)
+                            }
+                        )
+                        .hidden()
+                )
+                .onPreferenceChange(WidthKey.self) { contentWidth = $0 }
+            }
         }
     }
     
