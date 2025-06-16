@@ -31,10 +31,12 @@ struct SupersetCell: View {
                 VStack(alignment: .leading, spacing: Theme.spacing.small * 1.5) {
                     ForEach(Array(approaches.enumerated()), id: \.offset) { idx, data in
                         SupersetApproachView(index: idx + 1, items: data)
-                        if idx < approaches.count - 1 {
-                            Divider()
-                                .background(Theme.color.border.opacity(0.5))
-                        }
+                            .padding(Theme.spacing.small)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    .fill(Color(.secondarySystemBackground))
+                            )
                     }
                 }
                 .padding(.top, Theme.spacing.small)
