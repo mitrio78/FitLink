@@ -7,7 +7,7 @@ enum AppColors {
     static let textSecondary = Color("TextSecondary")
     static let disabledText = Color("DisabledText")
     static let border = Color("Border")
-    static let accent = Color("Accent")
+    static let accent = Color("CustomAccent")
     static let badgeBackground = Color("BadgeBackground")
     static let cardShadow = Color("CardShadow")
 }
