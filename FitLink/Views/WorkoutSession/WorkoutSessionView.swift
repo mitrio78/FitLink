@@ -79,7 +79,7 @@ struct WorkoutSessionView: View {
     private func workoutSection(_ section: WorkoutSection, exercises: [ExerciseInstance]) -> some View {
         if !exercises.isEmpty {
             Section {
-                ForEach(exercises) { ex in
+                ForEach(exercises, id: \.id) { ex in
                     if let group = viewModel.group(for: ex), viewModel.isFirstExerciseInGroup(ex) {
                         let groupExercises = viewModel.groupExercises(for: group)
                         WorkoutExerciseRowView(
