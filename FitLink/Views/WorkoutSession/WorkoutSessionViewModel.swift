@@ -7,21 +7,26 @@ final class WorkoutSessionViewModel: ObservableObject {
     let session: WorkoutSession
     let client: Client?
 
+    @Published private(set) var exercises: [ExerciseInstance]
+    @Published private(set) var setGroups: [SetGroup]
+
     init(session: WorkoutSession, client: Client?) {
         self.session = session
         self.client = client
+        self.exercises = session.exerciseInstances
+        self.setGroups = session.setGroups ?? []
     }
 
     var warmUpExercises: [ExerciseInstance] {
-        session.exerciseInstances.filter { $0.section == .warmUp }
+        exercises.filter { $0.section == .warmUp }
     }
 
     var mainExercises: [ExerciseInstance] {
-        session.exerciseInstances.filter { $0.section == .main }
+        exercises.filter { $0.section == .main }
     }
 
     var coolDownExercises: [ExerciseInstance] {
-        session.exerciseInstances.filter { $0.section == .coolDown }
+        exercises.filter { $0.section == .coolDown }
     }
 
     func addExerciseTapped() {
@@ -29,7 +34,7 @@ final class WorkoutSessionViewModel: ObservableObject {
     }
 
     func group(for exercise: ExerciseInstance) -> SetGroup? {
-        session.setGroups?.first { $0.exerciseInstanceIds.contains(exercise.id) }
+        setGroups.first { $0.exerciseInstanceIds.contains(exercise.id) }
     }
 
     func isFirstExerciseInGroup(_ exercise: ExerciseInstance) -> Bool {
@@ -38,10 +43,20 @@ final class WorkoutSessionViewModel: ObservableObject {
     }
 
     func groupExercises(for group: SetGroup) -> [ExerciseInstance] {
-        session.exerciseInstances.filter { group.exerciseInstanceIds.contains($0.id) }
+        exercises.filter { group.exerciseInstanceIds.contains($0.id) }
     }
 
     func isExerciseInAnyGroup(_ exercise: ExerciseInstance) -> Bool {
-        session.setGroups?.contains(where: { $0.exerciseInstanceIds.contains(exercise.id) }) ?? false
+        setGroups.contains(where: { $0.exerciseInstanceIds.contains(exercise.id) })
+    }
+
+    func addItem(_ result: WorkoutExerciseEditResult) {
+        switch result {
+        case .single(let instance):
+            exercises.append(instance)
+        case .superset(let group, let instances):
+            setGroups.append(group)
+            exercises.append(contentsOf: instances)
+        }
     }
 }
