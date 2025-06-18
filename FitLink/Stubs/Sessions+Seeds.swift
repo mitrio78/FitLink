@@ -86,7 +86,7 @@ let mockSessions: [WorkoutSession] = [
         ],
         setGroups: nil,
         notes: "Релакс",
-        status: .planned
+        status: .completed
     ),
     WorkoutSession(
         id: UUID(),
@@ -100,7 +100,7 @@ let mockSessions: [WorkoutSession] = [
         ],
         setGroups: nil,
         notes: nil,
-        status: .completed
+        status: .planned
     ),
     WorkoutSession(
         id: UUID(),
@@ -166,7 +166,7 @@ let mockSessions: [WorkoutSession] = [
         ],
         setGroups: nil,
         notes: nil,
-        status: .completed
+        status: .planned
     ),
     WorkoutSession(
         id: UUID(),
@@ -191,7 +191,7 @@ let mockSessions: [WorkoutSession] = [
         ],
         setGroups: nil,
         notes: "Присед, становая",
-        status: .planned
+        status: .completed
     ),
     WorkoutSession(
         id: UUID(),
@@ -203,6 +203,6 @@ let mockSessions: [WorkoutSession] = [
         ],
         setGroups: nil,
         notes: nil,
-        status: .planned
+        status: .cancelled
     )
 ]
