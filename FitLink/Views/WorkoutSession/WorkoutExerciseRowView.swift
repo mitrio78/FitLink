@@ -44,10 +44,7 @@ struct WorkoutExerciseRowView: View {
                 }
             }
             .buttonStyle(.plain)
-            .swipeActions {
-                deleteButton
-            }
-
+            
             if isExpanded {
                 VStack(alignment: .leading, spacing: Theme.spacing.small * 1.5) {
                     ForEach(Array(supersetApproaches.enumerated()), id: \.offset) { idx, data in
@@ -67,6 +64,10 @@ struct WorkoutExerciseRowView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Theme.color.backgroundSecondary)
         .cornerRadius(Theme.radius.card)
+        .contentShape(Rectangle())
+        .swipeActions {
+            deleteButton
+        }
     }
 
     private var simpleRow: some View {
@@ -81,9 +82,6 @@ struct WorkoutExerciseRowView: View {
                 .font(Theme.font.subheading)
                 .lineLimit(2)
                 .truncationMode(.tail)
-                .swipeActions {
-                    deleteButton
-                }
 
             let main = groupExercises.first ?? exercise
             ExerciseSetMetricsView(
@@ -99,6 +97,10 @@ struct WorkoutExerciseRowView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Theme.color.backgroundSecondary)
         .cornerRadius(Theme.radius.card)
+        .contentShape(Rectangle())
+        .swipeActions {
+            deleteButton
+        }
     }
 
     private var deleteButton: some View {

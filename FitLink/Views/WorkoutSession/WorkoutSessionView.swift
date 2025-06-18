@@ -72,7 +72,7 @@ struct WorkoutSessionView: View {
             VStack(alignment: .leading, spacing: 0) {
                 WorkoutSectionHeaderView(title: title)
 
-                VStack(spacing: Theme.spacing.small) {
+                LazyVStack(spacing: Theme.spacing.small) {
                     ForEach(exercises) { ex in
                         if let group = viewModel.group(for: ex), viewModel.isFirstExerciseInGroup(ex) {
                             let groupExercises = viewModel.groupExercises(for: group)
@@ -91,7 +91,7 @@ struct WorkoutSessionView: View {
                             )
                         }
                     }
-                } //: VStack
+                } //: LazyVStack
             }
         }
     }
