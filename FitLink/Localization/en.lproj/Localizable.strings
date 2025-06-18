@@ -158,6 +158,14 @@
 "WorkoutExerciseEdit.SelectMetric" = "Select metric";
 "WorkoutExerciseEdit.AddAnotherExercise" = "Add Another Exercise";
 
+/* Metric Editor */
+"MetricEditor.Title" = "Edit Sets";
+"MetricEditor.AddSet" = "Add Set";
+
+/* Drop editor */
+"DropEditor.Title" = "Edit Drops";
+"DropEditor.AddDrop" = "Add Drop";
+
 /* Common */
 "Common.Cancel" = "Cancel";
 "Common.Done" = "Done";

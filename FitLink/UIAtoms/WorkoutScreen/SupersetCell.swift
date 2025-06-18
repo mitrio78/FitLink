@@ -5,6 +5,7 @@ struct SupersetCell: View {
     let group: SetGroup
     let exercises: [ExerciseInstance]
     var onEdit: () -> Void = {}
+    var onSetsEdit: (ExerciseInstance) -> Void = { _ in }
 
     @State private var isExpanded = false
 
@@ -20,7 +21,7 @@ struct SupersetCell: View {
     }
 
     private var summary: String? {
-        let count = approaches.count
+        let count = exercises.map { $0.approaches.count }.min() ?? 0
         guard count > 1 else { return nil }
         return String(format: NSLocalizedString("WorkoutSetGroup.RepsMultiplier", comment: "× %d"), count)
     }
@@ -31,7 +32,7 @@ struct SupersetCell: View {
             if isExpanded {
                 VStack(alignment: .leading, spacing: Theme.spacing.small * 1.5) {
                     ForEach(Array(approaches.enumerated()), id: \.offset) { idx, data in
-                        SupersetApproachView(index: idx + 1, items: data)
+                        SupersetApproachView(index: idx + 1, items: data, onSetsEdit: onSetsEdit)
                             .padding(Theme.spacing.small)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(

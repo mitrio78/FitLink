@@ -1,0 +1,79 @@
+import SwiftUI
+
+/// Screen to edit approaches (sets) for a single exercise
+struct MetricEditorView: View {
+    var onComplete: ([Approach]) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @StateObject private var viewModel: MetricEditorViewModel
+
+    init(exercise: ExerciseInstance, onComplete: @escaping ([Approach]) -> Void) {
+        self.onComplete = onComplete
+        _viewModel = StateObject(wrappedValue: MetricEditorViewModel(approaches: exercise.approaches,
+                                                                     metrics: exercise.exercise.metrics))
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(Array(viewModel.approaches.enumerated()), id: \.offset) { idx, approach in
+                    VStack(alignment: .leading, spacing: Theme.spacing.small) {
+                        Button(action: { viewModel.editDrops(for: idx) }) {
+                            ApproachCardView(set: approachSet(from: approach), metrics: viewModel.metrics)
+                                .frame(height: 64)
+                        }
+                        SetEditorRow(set: binding(for: idx), metrics: viewModel.metrics)
+                    }
+                    .padding(.vertical, Theme.spacing.small)
+                }
+                .onDelete(perform: viewModel.removeApproach)
+
+                Button(action: viewModel.addApproach) {
+                    HStack {
+                        Spacer()
+                        Image(systemName: "plus")
+                        Text(NSLocalizedString("WorkoutExerciseEdit.AddSet", comment: "Add Set"))
+                        Spacer()
+                    }
+                }
+            }
+            .listStyle(.plain)
+            .navigationTitle(NSLocalizedString("MetricEditor.Title", comment: "Edit Sets"))
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(NSLocalizedString("Common.Cancel", comment: "Cancel")) { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(NSLocalizedString("Common.Done", comment: "Done")) {
+                        onComplete(viewModel.approaches)
+                        dismiss()
+                    }
+                }
+            }
+            .sheet(item: $viewModel.dropEditContext) { context in
+                DropSetEditorView(sets: viewModel.approaches[context.index].sets,
+                                  metrics: viewModel.metrics) { sets in
+                    viewModel.updateDrops(at: context.index, sets: sets)
+                }
+            }
+        }
+    }
+
+    private func binding(for index: Int) -> Binding<ExerciseSet> {
+        Binding<ExerciseSet>(
+            get: { viewModel.approaches[index].sets.first ?? ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil) },
+            set: { viewModel.approaches[index].sets = [$0] }
+        )
+    }
+
+    private func approachSet(from approach: Approach) -> ExerciseSet {
+        var first = approach.sets.first ?? ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil)
+        first.drops = Array(approach.sets.dropFirst())
+        return first
+    }
+}
+#Preview {
+    let session = MockData.complexMockSessions.first!
+    let instance = session.exerciseInstances.first!
+    return MetricEditorView(exercise: instance) { _ in }
+}
