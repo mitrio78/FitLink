@@ -8,6 +8,6 @@ enum AppTypography {
     static let body = Font.system(size: 15, weight: .regular)
     static let caption = Font.system(size: 13, weight: .regular)
     static let metadata = Font.system(size: 12, weight: .light)
-    static let metrics1 = Font.system(size: 16, weight: .black)
+    static let metrics1 = Font.system(size: 16, weight: .bold)
     static let metrics2 = Font.system(size: 16, weight: .semibold)
 }
