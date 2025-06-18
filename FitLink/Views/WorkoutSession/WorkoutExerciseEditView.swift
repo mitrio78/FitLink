@@ -18,12 +18,12 @@ struct WorkoutExerciseEditView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Theme.spacing.large) {
-                    exercisesList
-                } //: VStack
-                .padding(Theme.spacing.medium)
+            List {
+                exercisesList
             }
+            .listStyle(.plain)
+            .animation(.default, value: viewModel.selectedExercises)
+            .padding(Theme.spacing.medium)
             .navigationTitle(isEditing ? NSLocalizedString("WorkoutExerciseEdit.EditTitle", comment: "Edit Exercise") : NSLocalizedString("WorkoutExerciseEdit.AddTitle", comment: "Add Exercise"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -53,63 +53,67 @@ struct WorkoutExerciseEditView: View {
         }
     }
 
+    @ViewBuilder
     private var exercisesList: some View {
-        VStack(spacing: Theme.spacing.medium) {
-            if viewModel.selectedExercises.isEmpty {
-                Button(action: { libraryIndex = 0; showLibrary = true }) {
-                    Text("+ " + NSLocalizedString("WorkoutExerciseEdit.SelectExercise", comment: "Select Exercise"))
-                        .font(Theme.font.titleMedium)
-                        .frame(maxWidth: .infinity, minHeight: 120)
-                        .foregroundColor(Theme.color.accent)
-                        .background(Theme.color.backgroundSecondary)
-                        .cornerRadius(Theme.radius.card)
-                }
-            } else {
-                ForEach(Array(viewModel.selectedExercises.enumerated()), id: \.offset) { idx, exercise in
-                    exerciseCard(for: exercise, index: idx)
-                }
-                Button(action: { libraryIndex = viewModel.selectedExercises.count; showLibrary = true }) {
-                    Text("+ " + NSLocalizedString("WorkoutExerciseEdit.AddAnotherExercise", comment: "Add Another Exercise"))
-                        .font(Theme.font.body)
-                        .frame(maxWidth: .infinity, minHeight: 60)
-                        .foregroundColor(Theme.color.accent)
-                        .background(Theme.color.backgroundSecondary)
-                        .cornerRadius(Theme.radius.card)
-                }
+        if viewModel.selectedExercises.isEmpty {
+            Button(action: { libraryIndex = 0; showLibrary = true }) {
+                Text("+ " + NSLocalizedString("WorkoutExerciseEdit.SelectExercise", comment: "Select Exercise"))
+                    .font(Theme.font.titleMedium)
+                    .frame(maxWidth: .infinity, minHeight: 120)
+                    .foregroundColor(Theme.color.accent)
+                    .background(Theme.color.backgroundSecondary)
+                    .cornerRadius(Theme.radius.card)
             }
-        } //: VStack
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets())
+        } else {
+            ForEach(Array(viewModel.selectedExercises.enumerated()), id: \.offset) { idx, exercise in
+                exerciseRow(for: exercise, index: idx)
+            }
+            Button(action: { libraryIndex = viewModel.selectedExercises.count; showLibrary = true }) {
+                Text("+ " + NSLocalizedString("WorkoutExerciseEdit.AddAnotherExercise", comment: "Add Another Exercise"))
+                    .font(Theme.font.body)
+                    .frame(maxWidth: .infinity, minHeight: 60)
+                    .foregroundColor(Theme.color.accent)
+                    .background(Theme.color.backgroundSecondary)
+                    .cornerRadius(Theme.radius.card)
+            }
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets())
+        }
     }
 
     @ViewBuilder
-    private func exerciseCard(for exercise: Exercise, index: Int) -> some View {
-        ZStack(alignment: .topTrailing) {
-            Button(action: { libraryIndex = index; showLibrary = true }) {
-                HStack {
-                    Image(systemName: exercise.mainMuscle.iconName)
-                        .font(.largeTitle)
-                        .foregroundColor(exercise.mainMuscle.color)
-                    Text(exercise.name)
-                        .font(Theme.font.titleMedium.bold())
-                    Spacer()
-                    Text(NSLocalizedString("WorkoutExerciseEdit.Change", comment: "Replace"))
-                        .font(Theme.font.body)
-                        .foregroundColor(.secondary)
-                }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Theme.color.backgroundSecondary)
-                .cornerRadius(Theme.radius.card)
+    private func exerciseRow(for exercise: Exercise, index: Int) -> some View {
+        Button(action: { libraryIndex = index; showLibrary = true }) {
+            HStack {
+                Image(systemName: exercise.mainMuscle.iconName)
+                    .font(.largeTitle)
+                    .foregroundColor(exercise.mainMuscle.color)
+                Text(exercise.name)
+                    .font(Theme.font.titleMedium.bold())
+                Spacer()
+                Text(NSLocalizedString("WorkoutExerciseEdit.Change", comment: "Replace"))
+                    .font(Theme.font.body)
+                    .foregroundColor(.secondary)
             }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Theme.color.backgroundSecondary)
+            .cornerRadius(Theme.radius.card)
+        }
+        .contentShape(Rectangle())
+        .listRowInsets(EdgeInsets())
+        .listRowSeparator(.hidden)
+        .swipeActions(edge: .trailing) {
             Button(role: .destructive) {
                 if viewModel.removeExercise(at: index) && isEditing {
                     onComplete(.deleted)
                     dismiss()
                 }
             } label: {
-                Image(systemName: "trash")
-                    .padding(8)
+                Label(NSLocalizedString("Common.Delete", comment: "Delete"), systemImage: "trash")
             }
-            .accessibilityLabel(NSLocalizedString("Common.Delete", comment: "Delete"))
         }
     }
 }
