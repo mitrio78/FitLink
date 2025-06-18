@@ -44,7 +44,7 @@ struct WorkoutSessionView: View {
             }
         }
         .sheet(item: $viewModel.activeMetricEditorExercise) { instance in
-            MetricEditorView(exercise: instance) { approaches in
+            MetricEditorView(exercise: instance, scrollToIndex: viewModel.metricEditorStartIndex) { approaches in
                 viewModel.updateMetrics(for: instance.id, approaches: approaches)
             }
         }
@@ -88,7 +88,7 @@ struct WorkoutSessionView: View {
                             groupExercises: groupExercises,
                             onEdit: { viewModel.editItemTapped(withId: group.id) },
                             onDelete: { viewModel.deleteItem(withId: group.id) },
-                            onSetsEdit: { viewModel.editMetrics(for: $0.id) }
+                            onSetsEdit: { ex, idx in viewModel.editMetrics(for: ex.id, approachIndex: idx) }
                         )
                         .listRowSeparator(.hidden)
                     } else if !viewModel.isExerciseInAnyGroup(ex) {
@@ -97,7 +97,7 @@ struct WorkoutSessionView: View {
                             group: nil,
                             onEdit: { viewModel.editItemTapped(withId: ex.id) },
                             onDelete: { viewModel.deleteItem(withId: ex.id) },
-                            onSetsEdit: { viewModel.editMetrics(for: $0.id) }
+                            onSetsEdit: { ex, _ in viewModel.editMetrics(for: ex.id) }
                         )
                         .listRowSeparator(.hidden)
                     }

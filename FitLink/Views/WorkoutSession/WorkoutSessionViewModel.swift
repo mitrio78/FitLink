@@ -15,6 +15,7 @@ final class WorkoutSessionViewModel: ObservableObject {
     @Published var showExerciseEdit: Bool = false
     @Published var editingContext: EditingContext? = nil
     @Published var activeMetricEditorExercise: ExerciseInstance? = nil
+    var metricEditorStartIndex: Int? = nil
     let session: WorkoutSession
     let client: Client?
 
@@ -45,9 +46,10 @@ final class WorkoutSessionViewModel: ObservableObject {
         showExerciseEdit = true
     }
 
-    func editMetrics(for exerciseId: UUID) {
+    func editMetrics(for exerciseId: UUID, approachIndex: Int? = nil) {
         if let instance = exercises.first(where: { $0.id == exerciseId }) {
             activeMetricEditorExercise = instance
+            metricEditorStartIndex = approachIndex
         }
     }
 
@@ -56,6 +58,7 @@ final class WorkoutSessionViewModel: ObservableObject {
             exercises[idx].approaches = approaches
         }
         activeMetricEditorExercise = nil
+        metricEditorStartIndex = nil
     }
 
     func editItemTapped(withId id: UUID) {

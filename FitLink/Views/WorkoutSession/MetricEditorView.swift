@@ -3,18 +3,21 @@ import SwiftUI
 /// Screen to edit approaches (sets) for a single exercise
 struct MetricEditorView: View {
     var onComplete: ([Approach]) -> Void
+    private let scrollToIndex: Int?
 
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: MetricEditorViewModel
 
-    init(exercise: ExerciseInstance, onComplete: @escaping ([Approach]) -> Void) {
+    init(exercise: ExerciseInstance, scrollToIndex: Int? = nil, onComplete: @escaping ([Approach]) -> Void) {
         self.onComplete = onComplete
+        self.scrollToIndex = scrollToIndex
         _viewModel = StateObject(wrappedValue: MetricEditorViewModel(approaches: exercise.approaches,
                                                                      metrics: exercise.exercise.metrics))
     }
 
     var body: some View {
         NavigationStack {
+            ScrollViewReader { proxy in
             List {
                 ForEach(Array(viewModel.approaches.enumerated()), id: \.offset) { idx, approach in
                     VStack(alignment: .leading, spacing: Theme.spacing.small) {
@@ -25,6 +28,7 @@ struct MetricEditorView: View {
                         SetEditorRow(set: binding(for: idx), metrics: viewModel.metrics)
                     }
                     .padding(.vertical, Theme.spacing.small)
+                    .id(idx)
                 }
                 .onDelete(perform: viewModel.removeApproach)
 
@@ -39,6 +43,13 @@ struct MetricEditorView: View {
             }
             .listStyle(.plain)
             .navigationTitle(NSLocalizedString("MetricEditor.Title", comment: "Edit Sets"))
+            .onAppear {
+                if let idx = scrollToIndex {
+                    DispatchQueue.main.async {
+                        proxy.scrollTo(idx, anchor: .top)
+                    }
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(NSLocalizedString("Common.Cancel", comment: "Cancel")) { dismiss() }
@@ -55,6 +66,7 @@ struct MetricEditorView: View {
                                   metrics: viewModel.metrics) { sets in
                     viewModel.updateDrops(at: context.index, sets: sets)
                 }
+            }
             }
         }
     }
@@ -75,5 +87,5 @@ struct MetricEditorView: View {
 #Preview {
     let session = MockData.complexMockSessions.first!
     let instance = session.exerciseInstances.first!
-    return MetricEditorView(exercise: instance) { _ in }
+    return MetricEditorView(exercise: instance, scrollToIndex: 0) { _ in }
 }

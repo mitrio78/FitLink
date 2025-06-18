@@ -9,7 +9,7 @@ import SwiftUI
 /// View representing a single approach in the superset.
 struct SupersetApproachView: View {
     let index: Int
-    let items: [(exercise: ExerciseInstance, approach: Approach)]
+    let items: [(exercise: ExerciseInstance, approach: Approach?)]
     var onSetsEdit: (ExerciseInstance) -> Void = { _ in }
 
     var body: some View {
@@ -26,8 +26,17 @@ struct SupersetApproachView: View {
                     Text(item.exercise.exercise.name)
                         .font(Theme.font.body).bold()
                     Button(action: { onSetsEdit(item.exercise) }) {
-                        ApproachCardView(set: approachSet(from: item.approach), metrics: item.exercise.exercise.metrics)
-                            .frame(height: 64)
+                        if let approach = item.approach {
+                            ApproachCardView(set: approachSet(from: approach), metrics: item.exercise.exercise.metrics)
+                                .frame(height: 64)
+                        } else {
+                            Image(systemName: "plus")
+                                .frame(minWidth: 64, maxHeight: .infinity)
+                                .frame(height: 64)
+                                .foregroundColor(.secondary)
+                                .background(Theme.color.textSecondary.opacity(0.05))
+                                .cornerRadius(Theme.radius.card)
+                        }
                     }
                 }
             }
