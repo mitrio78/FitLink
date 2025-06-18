@@ -76,16 +76,26 @@ struct WorkoutSessionView: View {
                     ForEach(exercises) { ex in
                         if let group = viewModel.group(for: ex), viewModel.isFirstExerciseInGroup(ex) {
                             let groupExercises = viewModel.groupExercises(for: group)
-                            if group.type == .superset {
-                                SupersetCell(group: group, exercises: groupExercises)
-                            } else {
-                                ExerciseBlockCard(group: group, exerciseInstances: groupExercises)
-                            }
+                            WorkoutExerciseRowView(exercise: ex, group: group, groupExercises: groupExercises)
+                                .swipeActions {
+                                    Button(role: .destructive) {
+                                        viewModel.deleteExercise(withId: ex.id)
+                                    } label: {
+                                        Label(NSLocalizedString("Common.Delete", comment: "Удалить"), systemImage: "trash")
+                                    }
+                                }
                         } else if !viewModel.isExerciseInAnyGroup(ex) {
-                            ExerciseBlockCard(group: nil, exerciseInstances: [ex])
+                            WorkoutExerciseRowView(exercise: ex)
+                                .swipeActions {
+                                    Button(role: .destructive) {
+                                        viewModel.deleteExercise(withId: ex.id)
+                                    } label: {
+                                        Label(NSLocalizedString("Common.Delete", comment: "Удалить"), systemImage: "trash")
+                                    }
+                                }
                         }
                     }
-                }
+                } //: VStack
             }
         }
     }
