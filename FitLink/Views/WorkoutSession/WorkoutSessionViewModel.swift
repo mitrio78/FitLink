@@ -59,4 +59,13 @@ final class WorkoutSessionViewModel: ObservableObject {
             exercises.append(contentsOf: instances)
         }
     }
+
+    func deleteItem(withId id: UUID) {
+        if let groupIndex = setGroups.firstIndex(where: { $0.id == id }) {
+            let group = setGroups.remove(at: groupIndex)
+            exercises.removeAll { group.exerciseInstanceIds.contains($0.id) }
+        } else {
+            exercises.removeAll { $0.id == id }
+        }
+    }
 }
