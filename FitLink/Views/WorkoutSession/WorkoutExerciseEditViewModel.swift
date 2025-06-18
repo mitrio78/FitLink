@@ -19,6 +19,13 @@ final class WorkoutExerciseEditViewModel: ObservableObject {
         selectedExercises[index] = exercise
     }
 
+    /// Remove exercise at index. Returns `true` if no exercises remain.
+    func removeExercise(at index: Int) -> Bool {
+        guard selectedExercises.indices.contains(index) else { return false }
+        selectedExercises.remove(at: index)
+        return selectedExercises.isEmpty
+    }
+
     func confirmSelection() -> WorkoutExerciseEditResult? {
         guard !selectedExercises.isEmpty else { return nil }
         if selectedExercises.count == 1, let exercise = selectedExercises.first {
@@ -58,4 +65,5 @@ final class WorkoutExerciseEditViewModel: ObservableObject {
 enum WorkoutExerciseEditResult {
     case single(ExerciseInstance)
     case superset(group: SetGroup, exercises: [ExerciseInstance])
+    case deleted
 }

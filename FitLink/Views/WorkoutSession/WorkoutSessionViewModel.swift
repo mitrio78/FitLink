@@ -89,6 +89,8 @@ final class WorkoutSessionViewModel: ObservableObject {
         case .superset(let group, let instances):
             setGroups.append(group)
             exercises.append(contentsOf: instances)
+        case .deleted:
+            break
         }
     }
 
@@ -134,12 +136,22 @@ final class WorkoutSessionViewModel: ObservableObject {
             }
             setGroups.append(group)
             exercises.insert(contentsOf: instances, at: insertionIndex)
+        case .deleted:
+            // Handled outside this switch
+            break
         }
     }
 
     func completeEdit(_ result: WorkoutExerciseEditResult) {
         if editingContext != nil {
-            replaceItem(result)
+            if case .deleted = result {
+                deleteItem(withId: editingContext!.id)
+            } else {
+                replaceItem(result)
+            }
+        } else if case .deleted = result {
+            // nothing to delete
+            return
         } else {
             addItem(result)
         }
