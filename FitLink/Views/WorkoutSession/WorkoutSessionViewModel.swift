@@ -112,7 +112,7 @@ final class WorkoutSessionViewModel: ObservableObject {
         switch result {
         case .single(var instance):
             if let old = context.instances.first,
-               old.exercise.metrics.map(\.$type) == instance.exercise.metrics.map(\.$type) {
+               old.exercise.metrics.map(\.type) == instance.exercise.metrics.map(\.type) {
                 instance.approaches = old.approaches
                 instance.notes = old.notes
             }
@@ -124,7 +124,7 @@ final class WorkoutSessionViewModel: ObservableObject {
                 var item = instances[i]
                 if context.instances.indices.contains(i) {
                     let old = context.instances[i]
-                    if old.exercise.metrics.map(\.$type) == item.exercise.metrics.map(\.$type) {
+                    if old.exercise.metrics.map(\.type) == item.exercise.metrics.map(\.type) {
                         item.approaches = old.approaches
                         item.notes = old.notes
                     }

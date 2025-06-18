@@ -41,10 +41,9 @@ struct WorkoutExerciseEditView: View {
                 }
             }
             .sheet(isPresented: $showLibrary) {
-                let index = libraryIndex
                 ExerciseLibraryView { exercise in
-                    if index < viewModel.selectedExercises.count {
-                        viewModel.replaceExercise(at: index, with: exercise)
+                    if libraryIndex < viewModel.selectedExercises.count {
+                        viewModel.replaceExercise(at: libraryIndex, with: exercise)
                     } else {
                         viewModel.addExercise(exercise)
                     }

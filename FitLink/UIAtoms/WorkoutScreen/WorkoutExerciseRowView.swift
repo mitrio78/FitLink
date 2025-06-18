@@ -14,10 +14,12 @@ struct WorkoutExerciseRowView: View {
         .contentShape(Rectangle())
         .swipeActions(allowsFullSwipe: false) {
             Button(action: onEdit) {
-                Label(NSLocalizedString("Common.Edit", comment: "Edit"), systemImage: "pencil")
+                Label(NSLocalizedString("Common.Edit", comment: "Edit"), systemImage: "gearshape")
+                    .labelStyle(.iconOnly)
             }
             Button(role: .destructive, action: onDelete) {
-                Text(NSLocalizedString("Common.Delete", comment: "Delete"))
+                Label(NSLocalizedString("Common.Delete", comment: "Delete"), systemImage: "trash")
+                    .labelStyle(.iconOnly)
             }
         }
     }
