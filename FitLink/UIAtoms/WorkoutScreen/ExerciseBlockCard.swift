@@ -4,6 +4,7 @@ import SwiftUI
 struct ExerciseBlockCard: View {
     let group: SetGroup?
     let exerciseInstances: [ExerciseInstance]
+    var onEdit: () -> Void = {}
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.spacing.small) {
@@ -19,13 +20,14 @@ struct ExerciseBlockCard: View {
                 .truncationMode(.tail)
 
             if let main = exerciseInstances.first {
-                ExerciseSetMetricsView(
+                ApproachListView(
                     sets: main.approaches.map { approach in
                         var first = approach.sets.first ?? ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil)
                         first.drops = Array(approach.sets.dropFirst())
                         return first
                     },
-                    metrics: main.exercise.metrics
+                    metrics: main.exercise.metrics,
+                    onTap: onEdit
                 )
             }
         }

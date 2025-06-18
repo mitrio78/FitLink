@@ -4,6 +4,7 @@ import SwiftUI
 struct SupersetCell: View {
     let group: SetGroup
     let exercises: [ExerciseInstance]
+    var onEdit: () -> Void = {}
 
     @State private var isExpanded = false
 
@@ -37,6 +38,7 @@ struct SupersetCell: View {
                                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                                     .fill(Theme.color.supersetSubcardBackground)
                             )
+                            .onTapGesture { onEdit() }
                     }
                 }
                 .padding(.top, Theme.spacing.small)

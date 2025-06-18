@@ -28,12 +28,12 @@ struct WorkoutExerciseRowView: View {
     private var content: some View {
         if let group, !groupExercises.isEmpty {
             if group.type == .superset {
-                SupersetCell(group: group, exercises: groupExercises)
+                SupersetCell(group: group, exercises: groupExercises, onEdit: onEdit)
             } else {
-                ExerciseBlockCard(group: group, exerciseInstances: groupExercises)
+                ExerciseBlockCard(group: group, exerciseInstances: groupExercises, onEdit: onEdit)
             }
         } else {
-            ExerciseBlockCard(group: nil, exerciseInstances: [exercise])
+            ExerciseBlockCard(group: nil, exerciseInstances: [exercise], onEdit: onEdit)
         }
     }
 }
