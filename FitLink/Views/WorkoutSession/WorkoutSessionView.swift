@@ -14,35 +14,14 @@ struct WorkoutSessionView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                // Заголовок
-                Text(
-                    String(
-                        format: NSLocalizedString("WorkoutSession.Header", comment: "Тренировка для %@"),
-                        viewModel.client?.name ?? NSLocalizedString("WorkoutSession.ClientPlaceholder", comment: "Клиента")
-                    )
-                )
-                .font(Theme.font.titleMedium).bold()
-                .padding(.vertical)
-                if let date = viewModel.session.date {
-                    Text("\(date.formatted(date: .long, time: .shortened))")
-                        .foregroundColor(Theme.color.textSecondary)
-                }
-                if let notes = viewModel.session.notes, !notes.isEmpty {
-                    Text(notes)
-                        .font(Theme.font.body)
-                        .foregroundColor(Theme.color.accent)
-                        .padding(.vertical, Theme.spacing.small)
-                }
+        List {
+            headerSection
 
-                workoutSectionView(title: WorkoutSection.warmUp.displayTitle, exercises: viewModel.warmUpExercises)
-                workoutSectionView(title: WorkoutSection.main.displayTitle, exercises: viewModel.mainExercises)
-                workoutSectionView(title: WorkoutSection.coolDown.displayTitle, exercises: viewModel.coolDownExercises)
-            }
-            .padding(Theme.spacing.medium)
-            .padding(.bottom, Theme.spacing.medium)
+            workoutSection(.warmUp, exercises: viewModel.warmUpExercises)
+            workoutSection(.main, exercises: viewModel.mainExercises)
+            workoutSection(.coolDown, exercises: viewModel.coolDownExercises)
         }
+        .listStyle(.insetGrouped)
         .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -66,26 +45,56 @@ struct WorkoutSessionView: View {
         }
     }
 
-    @ViewBuilder
-    private func workoutSectionView(title: String, exercises: [ExerciseInstance]) -> some View {
-        if !exercises.isEmpty {
+    private var headerSection: some View {
+        Section {
             VStack(alignment: .leading, spacing: 0) {
-                WorkoutSectionHeaderView(title: title)
+                Text(
+                    String(
+                        format: NSLocalizedString("WorkoutSession.Header", comment: "Тренировка для %@"),
+                        viewModel.client?.name ?? NSLocalizedString("WorkoutSession.ClientPlaceholder", comment: "Клиента")
+                    )
+                )
+                .font(Theme.font.titleMedium).bold()
+                .padding(.vertical)
+                if let date = viewModel.session.date {
+                    Text("\(date.formatted(date: .long, time: .shortened))")
+                        .foregroundColor(Theme.color.textSecondary)
+                }
+                if let notes = viewModel.session.notes, !notes.isEmpty {
+                    Text(notes)
+                        .font(Theme.font.body)
+                        .foregroundColor(Theme.color.accent)
+                        .padding(.vertical, Theme.spacing.small)
+                }
+            } //: VStack
+        }
+    }
 
-                VStack(spacing: Theme.spacing.small) {
-                    ForEach(exercises) { ex in
-                        if let group = viewModel.group(for: ex), viewModel.isFirstExerciseInGroup(ex) {
-                            let groupExercises = viewModel.groupExercises(for: group)
-                            if group.type == .superset {
-                                SupersetCell(group: group, exercises: groupExercises)
-                            } else {
-                                ExerciseBlockCard(group: group, exerciseInstances: groupExercises)
-                            }
-                        } else if !viewModel.isExerciseInAnyGroup(ex) {
-                            ExerciseBlockCard(group: nil, exerciseInstances: [ex])
-                        }
+    @ViewBuilder
+    private func workoutSection(_ section: WorkoutSection, exercises: [ExerciseInstance]) -> some View {
+        if !exercises.isEmpty {
+            Section {
+                ForEach(exercises) { ex in
+                    if let group = viewModel.group(for: ex), viewModel.isFirstExerciseInGroup(ex) {
+                        let groupExercises = viewModel.groupExercises(for: group)
+                        WorkoutExerciseRowView(
+                            exercise: ex,
+                            group: group,
+                            groupExercises: groupExercises,
+                            onDelete: { viewModel.deleteItem(withId: group.id) }
+                        )
+                        .listRowSeparator(.hidden)
+                    } else if !viewModel.isExerciseInAnyGroup(ex) {
+                        WorkoutExerciseRowView(
+                            exercise: ex,
+                            group: nil,
+                            onDelete: { viewModel.deleteItem(withId: ex.id) }
+                        )
+                        .listRowSeparator(.hidden)
                     }
                 }
+            } header: {
+                WorkoutSectionHeaderView(title: section.displayTitle)
             }
         }
     }
