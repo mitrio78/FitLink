@@ -21,7 +21,7 @@ struct WorkoutSessionView: View {
             workoutSection(.main, exercises: viewModel.mainExercises)
             workoutSection(.coolDown, exercises: viewModel.coolDownExercises)
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.plain)
         .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
