@@ -60,7 +60,9 @@ struct WorkoutSessionView: View {
         }
         .presentationDetents([.medium, .large])
         .sheet(isPresented: $viewModel.showExerciseEdit) {
-            WorkoutExerciseEditView(sessionStore: WorkoutStore(), sessionId: viewModel.session.id)
+            WorkoutExerciseEditView { result in
+                viewModel.addItem(result)
+            }
         }
     }
 

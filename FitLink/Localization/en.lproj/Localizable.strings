@@ -156,6 +156,7 @@
 "WorkoutExerciseEdit.DuplicateSet" = "Duplicate";
 "WorkoutExerciseEdit.DeleteSet" = "Delete";
 "WorkoutExerciseEdit.SelectMetric" = "Select metric";
+"WorkoutExerciseEdit.AddAnotherExercise" = "Add Another Exercise";
 
 /* Common */
 "Common.Cancel" = "Cancel";
