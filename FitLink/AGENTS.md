@@ -62,6 +62,20 @@ VStack {
 
 - Keep layout minimalistic and readable. Use built‑in modifiers rather than custom ones when possible.
 
+## View Structure Conventions
+
+- Always use `List` for any vertically scrolling list of items where:
+  - Each item is rendered with identical or similar structure (rows)
+  - Swipe actions, selection, or reorder support is desired
+  - You want performance optimizations like cell reuse
+
+- Use `.listStyle(.plain)` by default to maintain visual control
+
+- Use `ScrollView + LazyHGrid` or `LazyVGrid` for:
+  - Horizontally scrollable rows (e.g. sets, metrics)
+  - Complex nested layout
+  - Non-uniform sizing or alignment
+
 ---
 
 ## 💬 Localization
