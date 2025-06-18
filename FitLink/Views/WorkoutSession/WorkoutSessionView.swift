@@ -44,7 +44,7 @@ struct WorkoutSessionView: View {
             }
         }
         .sheet(item: $viewModel.activeMetricEditorExercise) { instance in
-            MetricEditorView(exercise: instance) { approaches in
+            MetricEditorView(exercise: instance, scrollToIndex: viewModel.metricEditorStartIndex) { approaches in
                 viewModel.updateMetrics(for: instance.id, approaches: approaches)
             }
         }
@@ -79,7 +79,7 @@ struct WorkoutSessionView: View {
     private func workoutSection(_ section: WorkoutSection, exercises: [ExerciseInstance]) -> some View {
         if !exercises.isEmpty {
             Section {
-                ForEach(exercises) { ex in
+                ForEach(exercises, id: \.id) { ex in
                     if let group = viewModel.group(for: ex), viewModel.isFirstExerciseInGroup(ex) {
                         let groupExercises = viewModel.groupExercises(for: group)
                         WorkoutExerciseRowView(
@@ -88,8 +88,14 @@ struct WorkoutSessionView: View {
                             groupExercises: groupExercises,
                             onEdit: { viewModel.editItemTapped(withId: group.id) },
                             onDelete: { viewModel.deleteItem(withId: group.id) },
-                            onSetsEdit: { viewModel.editMetrics(for: $0.id) }
+                            onSetsEdit: { ex, idx in viewModel.editMetrics(for: ex.id, approachIndex: idx) },
+                            initiallyExpanded: viewModel.expandedGroupId == group.id
                         )
+                        .onAppear {
+                            if viewModel.expandedGroupId == group.id {
+                                viewModel.expandedGroupId = nil
+                            }
+                        }
                         .listRowSeparator(.hidden)
                     } else if !viewModel.isExerciseInAnyGroup(ex) {
                         WorkoutExerciseRowView(
@@ -97,7 +103,7 @@ struct WorkoutSessionView: View {
                             group: nil,
                             onEdit: { viewModel.editItemTapped(withId: ex.id) },
                             onDelete: { viewModel.deleteItem(withId: ex.id) },
-                            onSetsEdit: { viewModel.editMetrics(for: $0.id) }
+                            onSetsEdit: { ex, _ in viewModel.editMetrics(for: ex.id) }
                         )
                         .listRowSeparator(.hidden)
                     }
