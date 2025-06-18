@@ -12,25 +12,26 @@ struct ApproachListView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHGrid(rows: gridRows, spacing: Theme.spacing.small) {
                 if sets.isEmpty {
-                    Image(systemName: "plus")
-                        .frame(width: 64, height: 64)
-                        .foregroundColor(.primary)
-                        .background(Theme.color.backgroundSecondary)
-                        .cornerRadius(Theme.radius.card)
-                        .contentShape(Rectangle())
-                        .highPriorityGesture(TapGesture().onEnded(onTap))
+                    Button(action: onTap) {
+                        Image(systemName: "plus")
+                            .frame(width: 64, height: 64)
+                            .foregroundColor(.primary)
+                            .background(Theme.color.backgroundSecondary)
+                            .cornerRadius(Theme.radius.card)
+                    }
+                    .buttonStyle(.plain)
                 } else {
                     ForEach(sets) { set in
-                        ApproachCardView(set: set, metrics: metrics)
-                            .frame(height: 64)
-                            .contentShape(Rectangle())
-                            .highPriorityGesture(TapGesture().onEnded(onTap))
+                        Button(action: onTap) {
+                            ApproachCardView(set: set, metrics: metrics)
+                                .frame(height: 64)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
             }
             .padding(.vertical, Theme.spacing.small)
-        }
-        .highPriorityGesture(DragGesture()) // ensure horizontal scroll isn't intercepted
+        } //: ScrollView
     }
 }
 
