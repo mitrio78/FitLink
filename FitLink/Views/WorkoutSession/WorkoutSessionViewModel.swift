@@ -16,6 +16,7 @@ final class WorkoutSessionViewModel: ObservableObject {
     @Published var editingContext: EditingContext? = nil
     @Published var activeMetricEditorExercise: ExerciseInstance? = nil
     var metricEditorStartIndex: Int? = nil
+    @Published var expandedGroupId: UUID? = nil
     let session: WorkoutSession
     let client: Client?
 
@@ -103,11 +104,13 @@ final class WorkoutSessionViewModel: ObservableObject {
         switch result {
         case .single(let instance):
             exercises.append(instance)
+            expandedGroupId = nil
         case .superset(let group, let instances):
             setGroups.append(group)
             exercises.append(contentsOf: instances)
+            expandedGroupId = group.id
         case .deleted:
-            break
+            expandedGroupId = nil
         }
     }
 
@@ -137,6 +140,7 @@ final class WorkoutSessionViewModel: ObservableObject {
             }
             instance.section = context.instances.first?.section ?? .main
             exercises.insert(instance, at: insertionIndex)
+            expandedGroupId = nil
         case .superset(var group, var instances):
             if let oldGroup = context.group { group.notes = oldGroup.notes }
             for i in 0..<instances.count {
@@ -153,9 +157,10 @@ final class WorkoutSessionViewModel: ObservableObject {
             }
             setGroups.append(group)
             exercises.insert(contentsOf: instances, at: insertionIndex)
+            expandedGroupId = group.id
         case .deleted:
             // Handled outside this switch
-            break
+            expandedGroupId = nil
         }
     }
 

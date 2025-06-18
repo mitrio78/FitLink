@@ -86,10 +86,16 @@ struct WorkoutSessionView: View {
                             exercise: ex,
                             group: group,
                             groupExercises: groupExercises,
+                            initiallyExpanded: viewModel.expandedGroupId == group.id,
                             onEdit: { viewModel.editItemTapped(withId: group.id) },
                             onDelete: { viewModel.deleteItem(withId: group.id) },
                             onSetsEdit: { ex, idx in viewModel.editMetrics(for: ex.id, approachIndex: idx) }
                         )
+                        .onAppear {
+                            if viewModel.expandedGroupId == group.id {
+                                viewModel.expandedGroupId = nil
+                            }
+                        }
                         .listRowSeparator(.hidden)
                     } else if !viewModel.isExerciseInAnyGroup(ex) {
                         WorkoutExerciseRowView(

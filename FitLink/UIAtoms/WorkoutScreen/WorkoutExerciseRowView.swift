@@ -7,6 +7,7 @@ struct WorkoutExerciseRowView: View {
     var onEdit: () -> Void
     var onDelete: () -> Void
     var onSetsEdit: (ExerciseInstance, Int?) -> Void
+    var initiallyExpanded: Bool = false
 
     var body: some View {
         ZStack {
@@ -29,9 +30,13 @@ struct WorkoutExerciseRowView: View {
     private var content: some View {
         if let group, !groupExercises.isEmpty {
             if group.type == .superset {
-                SupersetCell(group: group, exercises: groupExercises, onEdit: onEdit, onSetsEdit: { ex, index in
-                    onSetsEdit(ex, index)
-                })
+                SupersetCell(group: group,
+                             exercises: groupExercises,
+                             initiallyExpanded: initiallyExpanded,
+                             onEdit: onEdit,
+                             onSetsEdit: { ex, index in
+                                 onSetsEdit(ex, index)
+                             })
             } else {
                 ExerciseBlockCard(group: group, exerciseInstances: groupExercises, onEdit: onEdit, onSetsTap: { ex in onSetsEdit(ex, nil) })
             }
@@ -44,6 +49,11 @@ struct WorkoutExerciseRowView: View {
 #Preview {
     let session = MockData.complexMockSessions.first!
     let exercise = session.exerciseInstances.first!
-    return WorkoutExerciseRowView(exercise: exercise, group: nil, onEdit: {}, onDelete: {}, onSetsEdit: { _, _ in })
+    return WorkoutExerciseRowView(exercise: exercise,
+                                  group: nil,
+                                  onEdit: {},
+                                  onDelete: {},
+                                  onSetsEdit: { _, _ in },
+                                  initiallyExpanded: false)
         .padding()
 }

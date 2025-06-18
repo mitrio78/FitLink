@@ -6,8 +6,22 @@ struct SupersetCell: View {
     let exercises: [ExerciseInstance]
     var onEdit: () -> Void = {}
     var onSetsEdit: (ExerciseInstance, Int) -> Void = { _, _ in }
+    var initiallyExpanded: Bool = false
 
-    @State private var isExpanded = false
+    @State private var isExpanded: Bool
+
+    init(group: SetGroup,
+         exercises: [ExerciseInstance],
+         initiallyExpanded: Bool = false,
+         onEdit: @escaping () -> Void = {},
+         onSetsEdit: @escaping (ExerciseInstance, Int) -> Void = { _, _ in }) {
+        self.group = group
+        self.exercises = exercises
+        self.onEdit = onEdit
+        self.onSetsEdit = onSetsEdit
+        self.initiallyExpanded = initiallyExpanded
+        _isExpanded = State(initialValue: initiallyExpanded)
+    }
 
     private var approaches: [[(exercise: ExerciseInstance, approach: Approach?)]] {
         let maxCount = exercises.map { $0.approaches.count }.max() ?? 0
