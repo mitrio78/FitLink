@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+@MainActor
 final class ExerciseLibraryViewModel: ObservableObject {
     @Published var exercises: [Exercise] = exercisesCatalog
     @Published var searchText: String = ""

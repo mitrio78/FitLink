@@ -7,25 +7,10 @@
 import SwiftUI
 
 struct WorkoutSessionView: View {
-    let session: WorkoutSession
-    let client: Client?
+    @StateObject private var viewModel: WorkoutSessionViewModel
 
-    @State private var showExerciseEdit = false
-
-    private func addExerciseTapped() {
-        showExerciseEdit = true
-    }
-
-    private var warmUpExercises: [ExerciseInstance] {
-        session.exerciseInstances.filter { $0.section == .warmUp }
-    }
-
-    private var mainExercises: [ExerciseInstance] {
-        session.exerciseInstances.filter { $0.section == .main }
-    }
-
-    private var coolDownExercises: [ExerciseInstance] {
-        session.exerciseInstances.filter { $0.section == .coolDown }
+    init(session: WorkoutSession, client: Client?) {
+        _viewModel = StateObject(wrappedValue: WorkoutSessionViewModel(session: session, client: client))
     }
     
     var body: some View {
@@ -35,25 +20,25 @@ struct WorkoutSessionView: View {
                 Text(
                     String(
                         format: NSLocalizedString("WorkoutSession.Header", comment: "Тренировка для %@"),
-                        client?.name ?? NSLocalizedString("WorkoutSession.ClientPlaceholder", comment: "Клиента")
+                        viewModel.client?.name ?? NSLocalizedString("WorkoutSession.ClientPlaceholder", comment: "Клиента")
                     )
                 )
                 .font(Theme.font.titleMedium).bold()
                 .padding(.vertical)
-                if let date = session.date {
+                if let date = viewModel.session.date {
                     Text("\(date.formatted(date: .long, time: .shortened))")
                         .foregroundColor(Theme.color.textSecondary)
                 }
-                if let notes = session.notes, !notes.isEmpty {
+                if let notes = viewModel.session.notes, !notes.isEmpty {
                     Text(notes)
                         .font(Theme.font.body)
                         .foregroundColor(Theme.color.accent)
                         .padding(.vertical, Theme.spacing.small)
                 }
 
-                workoutSectionView(title: WorkoutSection.warmUp.displayTitle, exercises: warmUpExercises)
-                workoutSectionView(title: WorkoutSection.main.displayTitle, exercises: mainExercises)
-                workoutSectionView(title: WorkoutSection.coolDown.displayTitle, exercises: coolDownExercises)
+                workoutSectionView(title: WorkoutSection.warmUp.displayTitle, exercises: viewModel.warmUpExercises)
+                workoutSectionView(title: WorkoutSection.main.displayTitle, exercises: viewModel.mainExercises)
+                workoutSectionView(title: WorkoutSection.coolDown.displayTitle, exercises: viewModel.coolDownExercises)
             }
             .padding(Theme.spacing.medium)
             .padding(.bottom, Theme.spacing.medium)
@@ -61,7 +46,7 @@ struct WorkoutSessionView: View {
         .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: addExerciseTapped) {
+                Button(action: viewModel.addExerciseTapped) {
                     Image(systemName: "plus")
                         .padding(6)
                         .background(Color.accentColor.opacity(0.15))
@@ -74,8 +59,8 @@ struct WorkoutSessionView: View {
             }
         }
         .presentationDetents([.medium, .large])
-        .sheet(isPresented: $showExerciseEdit) {
-            WorkoutExerciseEditView(sessionStore: WorkoutStore(), sessionId: session.id)
+        .sheet(isPresented: $viewModel.showExerciseEdit) {
+            WorkoutExerciseEditView(sessionStore: WorkoutStore(), sessionId: viewModel.session.id)
         }
     }
 
@@ -87,15 +72,14 @@ struct WorkoutSessionView: View {
 
                 VStack(spacing: Theme.spacing.small) {
                     ForEach(exercises) { ex in
-                        if let group = session.setGroups?.first(where: { $0.exerciseInstanceIds.contains(ex.id) }),
-                           group.exerciseInstanceIds.first == ex.id {
-                            let groupExercises = session.exerciseInstances.filter { group.exerciseInstanceIds.contains($0.id) }
+                        if let group = viewModel.group(for: ex), viewModel.isFirstExerciseInGroup(ex) {
+                            let groupExercises = viewModel.groupExercises(for: group)
                             if group.type == .superset {
                                 SupersetCell(group: group, exercises: groupExercises)
                             } else {
                                 ExerciseBlockCard(group: group, exerciseInstances: groupExercises)
                             }
-                        } else if !(session.setGroups ?? []).contains(where: { $0.exerciseInstanceIds.contains(ex.id) }) {
+                        } else if !viewModel.isExerciseInAnyGroup(ex) {
                             ExerciseBlockCard(group: nil, exerciseInstances: [ex])
                         }
                     }
