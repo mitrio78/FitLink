@@ -28,12 +28,15 @@ struct SupersetCell: View {
         VStack(alignment: .leading, spacing: Theme.spacing.small) {
             header
             if isExpanded {
-                VStack(alignment: .leading, spacing: Theme.spacing.medium) {
+                VStack(alignment: .leading, spacing: Theme.spacing.small * 1.5) {
                     ForEach(Array(approaches.enumerated()), id: \.offset) { idx, data in
                         SupersetApproachView(index: idx + 1, items: data)
-                        if idx < approaches.count - 1 {
-                            Divider()
-                        }
+                            .padding(Theme.spacing.small)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    .fill(Theme.color.supersetSubcardBackground)
+                            )
                     }
                 }
                 .padding(.top, Theme.spacing.small)

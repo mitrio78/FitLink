@@ -10,4 +10,5 @@ enum AppColors {
     static let accent = Color("CustomAccent")
     static let badgeBackground = Color("BadgeBackground")
     static let cardShadow = Color("CardShadow")
+    static let supersetSubcardBackground = Color("SupersetSubcardBackground")
 }
