@@ -162,6 +162,10 @@
 "MetricEditor.Title" = "Редактирование сетов";
 "MetricEditor.AddSet" = "Добавить сет";
 
+/* Drop editor */
+"DropEditor.Title" = "Редактирование дропов";
+"DropEditor.AddDrop" = "Добавить дроп";
+
 /* Common */
 "Common.Cancel" = "Отмена";
 "Common.Done" = "Готово";

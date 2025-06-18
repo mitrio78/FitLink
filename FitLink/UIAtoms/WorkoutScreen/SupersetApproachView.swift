@@ -10,6 +10,7 @@ import SwiftUI
 struct SupersetApproachView: View {
     let index: Int
     let items: [(exercise: ExerciseInstance, approach: Approach)]
+    var onSetsEdit: (ExerciseInstance) -> Void = { _ in }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.spacing.small) {
@@ -24,10 +25,10 @@ struct SupersetApproachView: View {
                 VStack(alignment: .leading, spacing: Theme.spacing.small / 2) {
                     Text(item.exercise.exercise.name)
                         .font(Theme.font.body).bold()
-                    ExerciseSetMetricsView(
-                        sets: [approachSet(from: item.approach)],
-                        metrics: item.exercise.exercise.metrics
-                    )
+                    Button(action: { onSetsEdit(item.exercise) }) {
+                        ApproachCardView(set: approachSet(from: item.approach), metrics: item.exercise.exercise.metrics)
+                            .frame(height: 64)
+                    }
                 }
             }
         }

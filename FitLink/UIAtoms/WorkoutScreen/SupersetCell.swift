@@ -9,6 +9,13 @@ struct SupersetCell: View {
 
     @State private var isExpanded = false
 
+    private var approaches: [[(exercise: ExerciseInstance, approach: Approach)]] {
+        let minCount = exercises.map { $0.approaches.count }.min() ?? 0
+        return (0..<minCount).map { index in
+            exercises.map { ($0, $0.approaches[index]) }
+        }
+    }
+
     private var title: String {
         exercises.map { $0.exercise.name }.joined(separator: "\n+ ")
     }
@@ -24,27 +31,15 @@ struct SupersetCell: View {
             header
             if isExpanded {
                 VStack(alignment: .leading, spacing: Theme.spacing.small * 1.5) {
-                    ForEach(exercises) { ex in
-                        VStack(alignment: .leading, spacing: Theme.spacing.small / 2) {
-                            Text(ex.exercise.name)
-                                .font(Theme.font.body.bold())
-                            ApproachListView(
-                                sets: ex.approaches.map { approach in
-                                    var first = approach.sets.first ?? ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil)
-                                    first.drops = Array(approach.sets.dropFirst())
-                                    return first
-                                },
-                                metrics: ex.exercise.metrics,
-                                onTap: { onSetsEdit(ex) }
+                    ForEach(Array(approaches.enumerated()), id: \.offset) { idx, data in
+                        SupersetApproachView(index: idx + 1, items: data, onSetsEdit: onSetsEdit)
+                            .padding(Theme.spacing.small)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    .fill(Theme.color.supersetSubcardBackground)
                             )
-                        }
-                        .padding(Theme.spacing.small)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .fill(Theme.color.supersetSubcardBackground)
-                        )
-                        .onTapGesture { onEdit() }
+                            .onTapGesture { onEdit() }
                     }
                 }
                 .padding(.top, Theme.spacing.small)

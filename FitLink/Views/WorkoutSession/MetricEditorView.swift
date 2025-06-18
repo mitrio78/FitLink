@@ -17,9 +17,11 @@ struct MetricEditorView: View {
         NavigationStack {
             List {
                 ForEach(Array(viewModel.approaches.enumerated()), id: \.offset) { idx, approach in
-                    VStack(alignment: .leading) {
-                        Text(String(format: NSLocalizedString("ApproachSetView.Title", comment: "Approach %d:"), idx + 1))
-                            .font(Theme.font.body.bold())
+                    VStack(alignment: .leading, spacing: Theme.spacing.small) {
+                        Button(action: { viewModel.editDrops(for: idx) }) {
+                            ApproachCardView(set: approachSet(from: approach), metrics: viewModel.metrics)
+                                .frame(height: 64)
+                        }
                         SetEditorRow(set: binding(for: idx), metrics: viewModel.metrics)
                     }
                     .padding(.vertical, Theme.spacing.small)
@@ -48,6 +50,12 @@ struct MetricEditorView: View {
                     }
                 }
             }
+            .sheet(item: $viewModel.dropEditContext) { context in
+                DropSetEditorView(sets: viewModel.approaches[context.index].sets,
+                                  metrics: viewModel.metrics) { sets in
+                    viewModel.updateDrops(at: context.index, sets: sets)
+                }
+            }
         }
     }
 
@@ -57,40 +65,13 @@ struct MetricEditorView: View {
             set: { viewModel.approaches[index].sets = [$0] }
         )
     }
-}
 
-private struct SetEditorRow: View {
-    @Binding var set: ExerciseSet
-    let metrics: [ExerciseMetric]
-
-    private let numberFormatter: NumberFormatter = {
-        let f = NumberFormatter()
-        f.minimumFractionDigits = 0
-        f.maximumFractionDigits = 2
-        return f
-    }()
-
-    var body: some View {
-        ForEach(metrics, id: \.type) { metric in
-            HStack {
-                Text(metric.displayName)
-                Spacer()
-                TextField("0", value: binding(for: metric.type), formatter: numberFormatter)
-                    .keyboardType(.decimalPad)
-                    .multilineTextAlignment(.trailing)
-                    .foregroundColor(.primary)
-            }
-        }
-    }
-
-    private func binding(for type: ExerciseMetricType) -> Binding<Double> {
-        Binding<Double>(
-            get: { set.metricValues[type] ?? 0 },
-            set: { set.metricValues[type] = $0 }
-        )
+    private func approachSet(from approach: Approach) -> ExerciseSet {
+        var first = approach.sets.first ?? ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil)
+        first.drops = Array(approach.sets.dropFirst())
+        return first
     }
 }
-
 #Preview {
     let session = MockData.complexMockSessions.first!
     let instance = session.exerciseInstances.first!

@@ -1,8 +1,14 @@
 import Foundation
 
 @MainActor
+struct DropEditContext: Identifiable {
+    let id = UUID()
+    let index: Int
+}
+
 final class MetricEditorViewModel: ObservableObject {
     @Published var approaches: [Approach]
+    @Published var dropEditContext: DropEditContext? = nil
     let metrics: [ExerciseMetric]
 
     init(approaches: [Approach], metrics: [ExerciseMetric]) {
@@ -17,5 +23,14 @@ final class MetricEditorViewModel: ObservableObject {
 
     func removeApproach(at offsets: IndexSet) {
         approaches.remove(atOffsets: offsets)
+    }
+
+    func editDrops(for index: Int) {
+        dropEditContext = DropEditContext(index: index)
+    }
+
+    func updateDrops(at index: Int, sets: [ExerciseSet]) {
+        approaches[index].sets = sets
+        dropEditContext = nil
     }
 }
