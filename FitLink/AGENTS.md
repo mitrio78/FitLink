@@ -1,86 +1,100 @@
 # AGENTS.md — FitLink iOS Project Guide for Agents
 
 ## 💡 Project Overview
+FitLink is an iOS fitness coaching app written in **SwiftUI** and organised with the **MVVM** architecture.  The project already includes screens for:
 
-This is an iOS fitness coaching app built with **SwiftUI** using the **MVVM** architecture. The app includes screens for managing workouts, clients, sessions, exercises, and nutrition tracking.
+- TrainerDashboard
+- ExerciseLibrary
+- Schedule
+- WorkoutSession
+- Workouts
+- Profile
+- Main (tab bar container)
+
+The repository structure is as follows:
+
+```
+FitLink/
+├── App/                   # App entry point
+├── CommonServices/        # Date formatter, in-memory stores, etc.
+├── Helpers/               # Extensions
+├── Localization/          # *.lproj folders with Localizable.strings
+├── Models/                # Codable model definitions
+├── Resources/             # Asset catalogs
+├── Stubs/                 # Mock data generators
+├── Theme/                 # Colors, Typography, Spacing constants
+├── UIAtoms/               # Reusable UI components
+└── Views/                 # Feature screens with View + ViewModel pairs
+```
+
+Each feature inside `Views/` has its own folder containing the SwiftUI `View` and its associated `ViewModel` (e.g. `Views/WorkoutSession/WorkoutSessionView.swift` and `WorkoutSessionViewModel.swift`).
 
 ---
 
 ## 📐 Architectural Guidelines (MVVM)
 
-- Each `View` must have a corresponding `ViewModel` located **in the same folder**.
-- `ViewModel` classes should:
-  - Be marked with `@MainActor`
-  - Inherit from `ObservableObject`
-  - Expose state via `@Published` properties
-  - Contain all business logic (e.g. loading data, adding/removing items, processing user actions)
+- Every `View` must have a corresponding `ViewModel` located **in the same folder** and named `<Screen>ViewModel`.
+- `ViewModel` classes **must**:
+  - Be annotated with `@MainActor`.
+  - Inherit from `ObservableObject`.
+  - Expose state via `@Published` properties.
+  - Keep all business logic (loading data, processing user actions, etc.).
+- Views should remain declarative. Delegate logic from gestures or `.onAppear` to the ViewModel.
+- Navigation state should be stored in the ViewModel as `@Published` optionals.
+- Prefer `@StateObject` in Views to instantiate the ViewModel.
+- Use Swift Concurrency (`async/await`) when performing asynchronous work. **TODO:** current code has no async calls – update ViewModels to use async/await when networking or long operations are added.
 
 ---
 
 ## 🧱 UI Guidelines
 
-- Use `Theme.font`, `Theme.color`, and `Theme.spacing` for all styles (do not hardcode font sizes or colors).
-- Wrap logical UI blocks in separate `View` components when they grow beyond ~40 lines.
-- Use the following comment style after closing UI containers:
+- **Theme**: Use `Theme.color`, `Theme.font`, `Theme.spacing`, `Theme.radius` and `Theme.shadow` for all styling. Avoid hard‑coded colors or font sizes.
+- Views should stay small. Extract subviews when a block grows beyond ~40 lines.
+- Closing comments for UI containers should follow the style:
 
 ```swift
 VStack {
     ...
 } //: VStack
+```
 
-HStack {
-    ...
-} //: HStack
+  **TODO:** existing code rarely uses these comments. New code should adopt them for consistency.
 
-ZStack {
-    ...
-} //: ZStack
+- Keep layout minimalistic and readable. Use built‑in modifiers rather than custom ones when possible.
 
-Group {
-    ...
-} //: Group
+---
 
-🧼 Code Style Rules
+## 💬 Localization
 
-Always place ViewModel in the same file group as its View.
-Use meaningful names: WorkoutSessionViewModel, ExerciseLibraryViewModel, etc.
-Avoid putting logic inside .onTapGesture, .onAppear, etc. directly in View — instead, delegate to ViewModel.
-Avoid using @State for anything other than lightweight UI flags (like isExpanded). Prefer @ObservedObject/@StateObject for state-driven views.
+- All visible strings must come from `Localizable.strings`. Use `NSLocalizedString` or helper accessors.
+- Example: `Text(NSLocalizedString("ExerciseLibrary.Header", comment: "Exercises"))`
 
-🔌 Async / Data Handling
+---
 
-Use async/await for all async work in ViewModel
-Make sure all state changes (self.someProperty =) happen on the main thread
-Use Task { await viewModel.load() } in Views if needed
+## 📁 Data & Services
 
-💬 Localization
+- Models under `Models/` conform to `Codable` when persisted (e.g. `WorkoutSession`).
+- `CommonServices/` contains small services like `DateFormatterService` and `WorkoutStore` (in‑memory store used in previews and feature screens).
+- `Stubs/` holds factories such as `MockData` and `clientsMock` for previews and local testing.
 
-All strings in UI should use NSLocalizedString or accessors like Strings.Dashboard.Title.
-Avoid hardcoded strings in Text(...), Label(...), Alert(...), etc.
+---
 
-🚨 Error Handling
+## 🔌 UIAtoms and Previews
 
-Avoid using fatalError, assertionFailure in production paths.
-Handle errors gracefully and expose error messages in ViewModel state when needed.
+- Reusable UI building blocks live in `UIAtoms/` (e.g. `ClientRow`, `SearchBarWithFilter`, components of the workout screen). Keep them simple and styling-consistent.
+- Every view and atom should have SwiftUI `#Preview` definitions next to the implementation to aid design‑time testing.
 
-🧭 Navigation
+---
 
-Navigation should be handled via @Published var selectedItem: Item? style in ViewModel.
-Use NavigationStack and NavigationLink with bindings.
+## ✅ Summary Checklist for New Code
 
-📁 Folder Structure
+1. Create a `View` and `ViewModel` pair in the same folder.
+2. Annotate the `ViewModel` with `@MainActor` and expose state via `@Published`.
+3. Keep business logic and navigation state in the ViewModel.
+4. Use `Theme.*` constants for styling.
+5. Localize all UI strings.
+6. Extract subviews for large UI blocks.
+7. Place `//: VStack` (etc.) closing comments after UI containers. *(TODO: enforce consistently)*
+8. Provide a `#Preview` section for every View/Atom.
 
-When generating code in Views:
-
-Always place //: VStack (etc.) after closing braces
-Create a ViewModel in same folder
-Mark ViewModel as @MainActor
-Use Theme for fonts/colors
-Bind @StateObject to ViewModel at the top level
-Make Views purely declarative
-
-🙏 Final Note
-
-This project values clean code, clear separation of concerns, and readability. Help us maintain these standards and make the codebase scalable and friendly to navigate!
-
-
+Following this guide will keep the FitLink codebase consistent and easy to maintain.
