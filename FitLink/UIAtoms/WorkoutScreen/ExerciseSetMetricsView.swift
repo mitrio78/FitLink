@@ -7,12 +7,22 @@ struct ExerciseSetMetricsView: View {
 
     /// Tracks the width required to display all sets without scrolling.
     @State private var contentWidth: CGFloat = 0
+    /// Tracks the width available for displaying the sets.
+    @State private var containerWidth: CGFloat = 0
 
-    /// Preference key used to pass width measurements up the view tree.
-    private struct WidthKey: PreferenceKey {
+    /// Preference key used to measure intrinsic content width.
+    private struct ContentWidthKey: PreferenceKey {
         static var defaultValue: CGFloat = 0
         static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
             value = max(value, nextValue())
+        }
+    }
+
+    /// Preference key used to pass container width up the view tree.
+    private struct ContainerWidthKey: PreferenceKey {
+        static var defaultValue: CGFloat = 0
+        static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+            value = nextValue()
         }
     }
     
@@ -63,29 +73,33 @@ struct ExerciseSetMetricsView: View {
             .fixedSize()
             .background(
                 GeometryReader { proxy in
-                    Color.clear.preference(key: WidthKey.self, value: proxy.size.width)
+                    Color.clear.preference(key: ContentWidthKey.self, value: proxy.size.width)
                 }
             )
     }
 
     var body: some View {
-        GeometryReader { geo in
-            VStack(alignment: .leading) {
-                Divider()
-                    .padding(.vertical, 4)
-                if contentWidth > geo.size.width {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        metricsContent()
-                    }
-                } else {
+        VStack(alignment: .leading) {
+            Divider()
+                .padding(.vertical, 4)
+            if contentWidth > containerWidth {
+                ScrollView(.horizontal, showsIndicators: false) {
                     metricsContent()
-                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
+            } else {
+                metricsContent()
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .overlay(measuredContent.hidden())
-            .onPreferenceChange(WidthKey.self) { contentWidth = $0 }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            GeometryReader { proxy in
+                Color.clear.preference(key: ContainerWidthKey.self, value: proxy.size.width)
+            }
+        )
+        .overlay(measuredContent.hidden())
+        .onPreferenceChange(ContentWidthKey.self) { contentWidth = $0 }
+        .onPreferenceChange(ContainerWidthKey.self) { containerWidth = $0 }
     }
     
     private func weightString(for set: ExerciseSet) -> String {
