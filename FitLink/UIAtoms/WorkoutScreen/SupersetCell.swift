@@ -25,6 +25,9 @@ struct SupersetCell: View {
 
     private var approaches: [[(exercise: ExerciseInstance, approach: Approach?)]] {
         let maxCount = exercises.map { $0.approaches.count }.max() ?? 0
+        if maxCount == 0 {
+            return [exercises.map { ($0, nil) }]
+        }
         return (0..<maxCount).map { index in
             exercises.map { ($0, $0.approaches[safe: index]) }
         }
