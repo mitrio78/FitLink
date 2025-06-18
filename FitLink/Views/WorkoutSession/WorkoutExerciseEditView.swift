@@ -5,9 +5,16 @@ struct WorkoutExerciseEditView: View {
     var onComplete: (WorkoutExerciseEditResult) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var viewModel = WorkoutExerciseEditViewModel()
+    @StateObject private var viewModel: WorkoutExerciseEditViewModel
+    private let isEditing: Bool
     @State private var libraryIndex: Int = 0
     @State private var showLibrary = false
+
+    init(initialExercises: [Exercise] = [], onComplete: @escaping (WorkoutExerciseEditResult) -> Void) {
+        self.onComplete = onComplete
+        _viewModel = StateObject(wrappedValue: WorkoutExerciseEditViewModel(initialExercises: initialExercises))
+        self.isEditing = !initialExercises.isEmpty
+    }
 
     var body: some View {
         NavigationStack {
@@ -17,7 +24,7 @@ struct WorkoutExerciseEditView: View {
                 } //: VStack
                 .padding(Theme.spacing.medium)
             }
-            .navigationTitle(NSLocalizedString("WorkoutExerciseEdit.AddTitle", comment: "Add Exercise"))
+            .navigationTitle(isEditing ? NSLocalizedString("WorkoutExerciseEdit.EditTitle", comment: "Edit Exercise") : NSLocalizedString("WorkoutExerciseEdit.AddTitle", comment: "Add Exercise"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -34,10 +41,9 @@ struct WorkoutExerciseEditView: View {
                 }
             }
             .sheet(isPresented: $showLibrary) {
-                let index = libraryIndex
                 ExerciseLibraryView { exercise in
-                    if index < viewModel.selectedExercises.count {
-                        viewModel.replaceExercise(at: index, with: exercise)
+                    if libraryIndex < viewModel.selectedExercises.count {
+                        viewModel.replaceExercise(at: libraryIndex, with: exercise)
                     } else {
                         viewModel.addExercise(exercise)
                     }

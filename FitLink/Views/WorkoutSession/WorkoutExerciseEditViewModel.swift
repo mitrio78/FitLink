@@ -2,7 +2,11 @@ import Foundation
 
 @MainActor
 final class WorkoutExerciseEditViewModel: ObservableObject {
-    @Published var selectedExercises: [Exercise] = []
+    @Published var selectedExercises: [Exercise]
+
+    init(initialExercises: [Exercise] = []) {
+        self.selectedExercises = initialExercises
+    }
 
     var isSuperset: Bool { selectedExercises.count > 1 }
 

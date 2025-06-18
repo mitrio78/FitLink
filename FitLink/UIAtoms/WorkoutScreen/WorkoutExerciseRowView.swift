@@ -4,6 +4,7 @@ struct WorkoutExerciseRowView: View {
     let exercise: ExerciseInstance
     let group: SetGroup?
     var groupExercises: [ExerciseInstance] = []
+    var onEdit: () -> Void
     var onDelete: () -> Void
 
     var body: some View {
@@ -11,9 +12,14 @@ struct WorkoutExerciseRowView: View {
             content
         } //: ZStack
         .contentShape(Rectangle())
-        .swipeActions {
+        .swipeActions(allowsFullSwipe: false) {
+            Button(action: onEdit) {
+                Label(NSLocalizedString("Common.Edit", comment: "Edit"), systemImage: "gearshape")
+                    .labelStyle(.iconOnly)
+            }
             Button(role: .destructive, action: onDelete) {
-                Text(NSLocalizedString("Common.Delete", comment: "Delete"))
+                Label(NSLocalizedString("Common.Delete", comment: "Delete"), systemImage: "trash")
+                    .labelStyle(.iconOnly)
             }
         }
     }
@@ -35,6 +41,6 @@ struct WorkoutExerciseRowView: View {
 #Preview {
     let session = MockData.complexMockSessions.first!
     let exercise = session.exerciseInstances.first!
-    return WorkoutExerciseRowView(exercise: exercise, group: nil, onDelete: {})
+    return WorkoutExerciseRowView(exercise: exercise, group: nil, onEdit: {}, onDelete: {})
         .padding()
 }
