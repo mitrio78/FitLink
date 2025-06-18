@@ -1,7 +1,11 @@
-//
-//  ProfileViewModel.swift
-//  FitLink
-//
-//  Created by Дмитрий Гришечко on 28.05.2025.
-//
+import Foundation
+import SwiftUI
 
+@MainActor
+final class ProfileViewModel: ObservableObject {
+    @Published var username: String = ""
+
+    init(username: String = "Trainer") {
+        self.username = username
+    }
+}

@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+@MainActor
 final class TrainerDashboardViewModel: ObservableObject {
     @Published var clients: [Client] = clientsMock
     @Published var sessions: [WorkoutSession] = MockData.complexMockSessions
