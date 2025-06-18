@@ -40,8 +40,10 @@ struct SupersetCell: View {
                     }
                 }
                 .padding(.top, Theme.spacing.small)
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
+        .animation(.easeInOut, value: isExpanded)
         .padding(Theme.spacing.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Theme.color.backgroundSecondary)
@@ -49,7 +51,7 @@ struct SupersetCell: View {
     }
 
     private var header: some View {
-        Button(action: { withAnimation { isExpanded.toggle() } }) {
+        Button(action: { isExpanded.toggle() }) {
             HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: Theme.spacing.small / 2) {
                     Text(group.type.displayName)
@@ -71,6 +73,7 @@ struct SupersetCell: View {
                     .foregroundColor(.secondary)
             }
         }
+        .animation(.easeInOut, value: isExpanded)
         .buttonStyle(.plain)
     }
 }
