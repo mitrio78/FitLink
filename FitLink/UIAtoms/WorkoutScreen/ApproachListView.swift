@@ -15,7 +15,7 @@ struct ApproachListView: View {
                     Button(action: onTap) {
                         Image(systemName: "plus")
                             .frame(width: 64, height: 64)
-                            .foregroundColor(.gray)
+                            .foregroundColor(.primary)
                             .background(Theme.color.backgroundSecondary)
                             .cornerRadius(Theme.radius.card)
                     }

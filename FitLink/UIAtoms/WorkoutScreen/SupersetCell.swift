@@ -5,22 +5,16 @@ struct SupersetCell: View {
     let group: SetGroup
     let exercises: [ExerciseInstance]
     var onEdit: () -> Void = {}
+    var onSetsEdit: (ExerciseInstance) -> Void = { _ in }
 
     @State private var isExpanded = false
-
-    private var approaches: [[(exercise: ExerciseInstance, approach: Approach)]] {
-        let minCount = exercises.map { $0.approaches.count }.min() ?? 0
-        return (0..<minCount).map { index in
-            exercises.map { ($0, $0.approaches[index]) }
-        }
-    }
 
     private var title: String {
         exercises.map { $0.exercise.name }.joined(separator: "\n+ ")
     }
 
     private var summary: String? {
-        let count = approaches.count
+        let count = exercises.map { $0.approaches.count }.min() ?? 0
         guard count > 1 else { return nil }
         return String(format: NSLocalizedString("WorkoutSetGroup.RepsMultiplier", comment: "× %d"), count)
     }
@@ -30,15 +24,27 @@ struct SupersetCell: View {
             header
             if isExpanded {
                 VStack(alignment: .leading, spacing: Theme.spacing.small * 1.5) {
-                    ForEach(Array(approaches.enumerated()), id: \.offset) { idx, data in
-                        SupersetApproachView(index: idx + 1, items: data)
-                            .padding(Theme.spacing.small)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(Theme.color.supersetSubcardBackground)
+                    ForEach(exercises) { ex in
+                        VStack(alignment: .leading, spacing: Theme.spacing.small / 2) {
+                            Text(ex.exercise.name)
+                                .font(Theme.font.body.bold())
+                            ApproachListView(
+                                sets: ex.approaches.map { approach in
+                                    var first = approach.sets.first ?? ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil)
+                                    first.drops = Array(approach.sets.dropFirst())
+                                    return first
+                                },
+                                metrics: ex.exercise.metrics,
+                                onTap: { onSetsEdit(ex) }
                             )
-                            .onTapGesture { onEdit() }
+                        }
+                        .padding(Theme.spacing.small)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(Theme.color.supersetSubcardBackground)
+                        )
+                        .onTapGesture { onEdit() }
                     }
                 }
                 .padding(.top, Theme.spacing.small)

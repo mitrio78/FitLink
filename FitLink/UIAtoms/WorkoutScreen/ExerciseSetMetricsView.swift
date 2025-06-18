@@ -31,10 +31,11 @@ struct ExerciseSetMetricsView: View {
                                     // Верхняя строка — вес
                                     Text(weightString(for: drops[idx]))
                                         .font(.headline.bold())
+                                        .foregroundColor(.primary)
                                     // Нижняя строка — метрика
                                     Text(metricString(for: drops[idx]))
                                         .font(.subheadline)
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(.primary)
                                 }
                                 // Стрелка — если не последний дроп
                                 if idx < drops.count - 1 {

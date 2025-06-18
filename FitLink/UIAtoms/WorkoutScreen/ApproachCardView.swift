@@ -25,10 +25,11 @@ struct ApproachCardView: View {
                     if let weight = weightString(for: drops[idx]) {
                         Text(weight)
                             .font(Theme.font.metrics1.bold())
+                            .foregroundColor(.primary)
                     }
                     Text(metricString(for: drops[idx]))
                         .font(Theme.font.metrics2)
-                        .foregroundColor(Theme.color.textSecondary)
+                        .foregroundColor(.primary)
                 }
                 if idx < drops.count - 1 {
                     Image(systemName: "chevron.right")

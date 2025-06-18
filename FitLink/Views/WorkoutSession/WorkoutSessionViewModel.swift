@@ -14,6 +14,7 @@ struct EditingContext: Identifiable {
 final class WorkoutSessionViewModel: ObservableObject {
     @Published var showExerciseEdit: Bool = false
     @Published var editingContext: EditingContext? = nil
+    @Published var activeMetricEditorExercise: ExerciseInstance? = nil
     let session: WorkoutSession
     let client: Client?
 
@@ -42,6 +43,19 @@ final class WorkoutSessionViewModel: ObservableObject {
     func addExerciseTapped() {
         editingContext = nil
         showExerciseEdit = true
+    }
+
+    func editMetrics(for exerciseId: UUID) {
+        if let instance = exercises.first(where: { $0.id == exerciseId }) {
+            activeMetricEditorExercise = instance
+        }
+    }
+
+    func updateMetrics(for exerciseId: UUID, approaches: [Approach]) {
+        if let idx = exercises.firstIndex(where: { $0.id == exerciseId }) {
+            exercises[idx].approaches = approaches
+        }
+        activeMetricEditorExercise = nil
     }
 
     func editItemTapped(withId id: UUID) {

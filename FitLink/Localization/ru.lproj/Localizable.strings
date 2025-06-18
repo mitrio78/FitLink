@@ -158,6 +158,10 @@
 "WorkoutExerciseEdit.SelectMetric" = "Выберите метрику";
 "WorkoutExerciseEdit.AddAnotherExercise" = "Добавить ещё одно упражнение";
 
+/* Metric Editor */
+"MetricEditor.Title" = "Редактирование сетов";
+"MetricEditor.AddSet" = "Добавить сет";
+
 /* Common */
 "Common.Cancel" = "Отмена";
 "Common.Done" = "Готово";
