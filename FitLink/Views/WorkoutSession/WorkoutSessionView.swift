@@ -14,9 +14,40 @@ struct WorkoutSessionView: View {
     }
     
     var body: some View {
-        ScrollView {
+        List {
+            headerSection
+
+            workoutSection(.warmUp, exercises: viewModel.warmUpExercises)
+            workoutSection(.main, exercises: viewModel.mainExercises)
+            workoutSection(.coolDown, exercises: viewModel.coolDownExercises)
+        }
+        .listStyle(.plain)
+        .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: viewModel.addExerciseTapped) {
+                    Image(systemName: "plus")
+                        .padding(6)
+                        .background(Color.accentColor.opacity(0.15))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+                .controlSize(.large)
+                .foregroundColor(Color.accentColor)
+                .accessibilityLabel(NSLocalizedString("WorkoutDetail.AddExercise", comment: ""))
+                .accessibilityIdentifier("WorkoutDetail.AddExerciseButton")
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .sheet(isPresented: $viewModel.showExerciseEdit) {
+            WorkoutExerciseEditView(initialExercises: viewModel.editingContext?.exercises ?? []) { result in
+                viewModel.completeEdit(result)
+            }
+        }
+    }
+
+    private var headerSection: some View {
+        Section {
             VStack(alignment: .leading, spacing: 0) {
-                // Заголовок
                 Text(
                     String(
                         format: NSLocalizedString("WorkoutSession.Header", comment: "Тренировка для %@"),
@@ -35,55 +66,37 @@ struct WorkoutSessionView: View {
                         .foregroundColor(Theme.color.accent)
                         .padding(.vertical, Theme.spacing.small)
                 }
-
-                workoutSectionView(title: WorkoutSection.warmUp.displayTitle, exercises: viewModel.warmUpExercises)
-                workoutSectionView(title: WorkoutSection.main.displayTitle, exercises: viewModel.mainExercises)
-                workoutSectionView(title: WorkoutSection.coolDown.displayTitle, exercises: viewModel.coolDownExercises)
-            }
-            .padding(Theme.spacing.medium)
-            .padding(.bottom, Theme.spacing.medium)
-        }
-        .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: viewModel.addExerciseTapped) {
-                    Image(systemName: "plus")
-                        .padding(6)
-                        .background(Color.accentColor.opacity(0.15))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                }
-                .controlSize(.large)
-                .foregroundColor(Color.accentColor)
-                .accessibilityLabel(NSLocalizedString("WorkoutDetail.AddExercise", comment: ""))
-                .accessibilityIdentifier("WorkoutDetail.AddExerciseButton")
-            }
-        }
-        .presentationDetents([.medium, .large])
-        .sheet(isPresented: $viewModel.showExerciseEdit) {
-            WorkoutExerciseEditView(sessionStore: WorkoutStore(), sessionId: viewModel.session.id)
+            } //: VStack
         }
     }
 
     @ViewBuilder
-    private func workoutSectionView(title: String, exercises: [ExerciseInstance]) -> some View {
+    private func workoutSection(_ section: WorkoutSection, exercises: [ExerciseInstance]) -> some View {
         if !exercises.isEmpty {
-            VStack(alignment: .leading, spacing: 0) {
-                WorkoutSectionHeaderView(title: title)
-
-                VStack(spacing: Theme.spacing.small) {
-                    ForEach(exercises) { ex in
-                        if let group = viewModel.group(for: ex), viewModel.isFirstExerciseInGroup(ex) {
-                            let groupExercises = viewModel.groupExercises(for: group)
-                            if group.type == .superset {
-                                SupersetCell(group: group, exercises: groupExercises)
-                            } else {
-                                ExerciseBlockCard(group: group, exerciseInstances: groupExercises)
-                            }
-                        } else if !viewModel.isExerciseInAnyGroup(ex) {
-                            ExerciseBlockCard(group: nil, exerciseInstances: [ex])
-                        }
+            Section {
+                ForEach(exercises) { ex in
+                    if let group = viewModel.group(for: ex), viewModel.isFirstExerciseInGroup(ex) {
+                        let groupExercises = viewModel.groupExercises(for: group)
+                        WorkoutExerciseRowView(
+                            exercise: ex,
+                            group: group,
+                            groupExercises: groupExercises,
+                            onEdit: { viewModel.editItemTapped(withId: group.id) },
+                            onDelete: { viewModel.deleteItem(withId: group.id) }
+                        )
+                        .listRowSeparator(.hidden)
+                    } else if !viewModel.isExerciseInAnyGroup(ex) {
+                        WorkoutExerciseRowView(
+                            exercise: ex,
+                            group: nil,
+                            onEdit: { viewModel.editItemTapped(withId: ex.id) },
+                            onDelete: { viewModel.deleteItem(withId: ex.id) }
+                        )
+                        .listRowSeparator(.hidden)
                     }
                 }
+            } header: {
+                WorkoutSectionHeaderView(title: section.displayTitle)
             }
         }
     }

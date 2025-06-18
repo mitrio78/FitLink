@@ -1,35 +1,72 @@
 import Foundation
 import SwiftUI
 
+struct EditingContext: Identifiable {
+    let id: UUID
+    let index: Int
+    let instances: [ExerciseInstance]
+    let group: SetGroup?
+
+    var exercises: [Exercise] { instances.map { $0.exercise } }
+}
+
 @MainActor
 final class WorkoutSessionViewModel: ObservableObject {
     @Published var showExerciseEdit: Bool = false
+    @Published var editingContext: EditingContext? = nil
     let session: WorkoutSession
     let client: Client?
+
+    @Published private(set) var exercises: [ExerciseInstance]
+    @Published private(set) var setGroups: [SetGroup]
 
     init(session: WorkoutSession, client: Client?) {
         self.session = session
         self.client = client
+        self.exercises = session.exerciseInstances
+        self.setGroups = session.setGroups ?? []
     }
 
     var warmUpExercises: [ExerciseInstance] {
-        session.exerciseInstances.filter { $0.section == .warmUp }
+        exercises.filter { $0.section == .warmUp }
     }
 
     var mainExercises: [ExerciseInstance] {
-        session.exerciseInstances.filter { $0.section == .main }
+        exercises.filter { $0.section == .main }
     }
 
     var coolDownExercises: [ExerciseInstance] {
-        session.exerciseInstances.filter { $0.section == .coolDown }
+        exercises.filter { $0.section == .coolDown }
     }
 
     func addExerciseTapped() {
+        editingContext = nil
         showExerciseEdit = true
     }
 
+    func editItemTapped(withId id: UUID) {
+        if let group = setGroups.first(where: { $0.id == id }) {
+            let exercisesInGroup = groupExercises(for: group)
+            if let first = exercisesInGroup.first,
+               let index = exercises.firstIndex(where: { $0.id == first.id }) {
+                editingContext = EditingContext(id: group.id,
+                                               index: index,
+                                               instances: exercisesInGroup,
+                                               group: group)
+                showExerciseEdit = true
+            }
+        } else if let index = exercises.firstIndex(where: { $0.id == id }) {
+            let instance = exercises[index]
+            editingContext = EditingContext(id: instance.id,
+                                           index: index,
+                                           instances: [instance],
+                                           group: nil)
+            showExerciseEdit = true
+        }
+    }
+
     func group(for exercise: ExerciseInstance) -> SetGroup? {
-        session.setGroups?.first { $0.exerciseInstanceIds.contains(exercise.id) }
+        setGroups.first { $0.exerciseInstanceIds.contains(exercise.id) }
     }
 
     func isFirstExerciseInGroup(_ exercise: ExerciseInstance) -> Bool {
@@ -38,10 +75,95 @@ final class WorkoutSessionViewModel: ObservableObject {
     }
 
     func groupExercises(for group: SetGroup) -> [ExerciseInstance] {
-        session.exerciseInstances.filter { group.exerciseInstanceIds.contains($0.id) }
+        exercises.filter { group.exerciseInstanceIds.contains($0.id) }
     }
 
     func isExerciseInAnyGroup(_ exercise: ExerciseInstance) -> Bool {
-        session.setGroups?.contains(where: { $0.exerciseInstanceIds.contains(exercise.id) }) ?? false
+        setGroups.contains(where: { $0.exerciseInstanceIds.contains(exercise.id) })
+    }
+
+    func addItem(_ result: WorkoutExerciseEditResult) {
+        switch result {
+        case .single(let instance):
+            exercises.append(instance)
+        case .superset(let group, let instances):
+            setGroups.append(group)
+            exercises.append(contentsOf: instances)
+        case .deleted:
+            break
+        }
+    }
+
+    func replaceItem(_ result: WorkoutExerciseEditResult) {
+        guard let context = editingContext else { return }
+
+        // Determine insertion index before modifying arrays
+        var insertionIndex = context.index
+
+        if let group = context.group {
+            if let idx = setGroups.firstIndex(where: { $0.id == group.id }) {
+                setGroups.remove(at: idx)
+            }
+            exercises.removeAll { group.exerciseInstanceIds.contains($0.id) }
+        } else {
+            exercises.removeAll { $0.id == context.id }
+        }
+
+        if insertionIndex > exercises.count { insertionIndex = exercises.count }
+
+        switch result {
+        case .single(var instance):
+            if let old = context.instances.first,
+               old.exercise.metrics.map(\.type) == instance.exercise.metrics.map(\.type) {
+                instance.approaches = old.approaches
+                instance.notes = old.notes
+            }
+            instance.section = context.instances.first?.section ?? .main
+            exercises.insert(instance, at: insertionIndex)
+        case .superset(var group, var instances):
+            if let oldGroup = context.group { group.notes = oldGroup.notes }
+            for i in 0..<instances.count {
+                var item = instances[i]
+                if context.instances.indices.contains(i) {
+                    let old = context.instances[i]
+                    if old.exercise.metrics.map(\.type) == item.exercise.metrics.map(\.type) {
+                        item.approaches = old.approaches
+                        item.notes = old.notes
+                    }
+                    item.section = old.section
+                }
+                instances[i] = item
+            }
+            setGroups.append(group)
+            exercises.insert(contentsOf: instances, at: insertionIndex)
+        case .deleted:
+            // Handled outside this switch
+            break
+        }
+    }
+
+    func completeEdit(_ result: WorkoutExerciseEditResult) {
+        if editingContext != nil {
+            if case .deleted = result {
+                deleteItem(withId: editingContext!.id)
+            } else {
+                replaceItem(result)
+            }
+        } else if case .deleted = result {
+            // nothing to delete
+            return
+        } else {
+            addItem(result)
+        }
+        editingContext = nil
+    }
+
+    func deleteItem(withId id: UUID) {
+        if let groupIndex = setGroups.firstIndex(where: { $0.id == id }) {
+            let group = setGroups.remove(at: groupIndex)
+            exercises.removeAll { group.exerciseInstanceIds.contains($0.id) }
+        } else {
+            exercises.removeAll { $0.id == id }
+        }
     }
 }
