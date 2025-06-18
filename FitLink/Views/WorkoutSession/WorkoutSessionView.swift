@@ -39,8 +39,8 @@ struct WorkoutSessionView: View {
         }
         .presentationDetents([.medium, .large])
         .sheet(isPresented: $viewModel.showExerciseEdit) {
-            WorkoutExerciseEditView { result in
-                viewModel.addItem(result)
+            WorkoutExerciseEditView(initialExercises: viewModel.editingContext?.exercises ?? []) { result in
+                viewModel.completeEdit(result)
             }
         }
     }
@@ -81,6 +81,7 @@ struct WorkoutSessionView: View {
                             exercise: ex,
                             group: group,
                             groupExercises: groupExercises,
+                            onEdit: { viewModel.editItemTapped(withId: group.id) },
                             onDelete: { viewModel.deleteItem(withId: group.id) }
                         )
                         .listRowSeparator(.hidden)
@@ -88,6 +89,7 @@ struct WorkoutSessionView: View {
                         WorkoutExerciseRowView(
                             exercise: ex,
                             group: nil,
+                            onEdit: { viewModel.editItemTapped(withId: ex.id) },
                             onDelete: { viewModel.deleteItem(withId: ex.id) }
                         )
                         .listRowSeparator(.hidden)
