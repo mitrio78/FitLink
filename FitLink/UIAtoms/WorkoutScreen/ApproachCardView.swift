@@ -21,11 +21,13 @@ struct ApproachCardView: View {
         HStack(spacing: 4) {
             let drops = [set] + (set.drops ?? [])
             ForEach(drops.indices, id: \.self) { idx in
-                VStack(spacing: 2) {
-                    Text(weightString(for: drops[idx]))
-                        .font(Theme.font.body.bold())
+                VStack(spacing: 4) {
+                    if let weight = weightString(for: drops[idx]) {
+                        Text(weight)
+                            .font(Theme.font.metrics1.bold())
+                    }
                     Text(metricString(for: drops[idx]))
-                        .font(Theme.font.caption)
+                        .font(Theme.font.metrics2)
                         .foregroundColor(Theme.color.textSecondary)
                 }
                 if idx < drops.count - 1 {
@@ -37,13 +39,13 @@ struct ApproachCardView: View {
         }
         .padding(Theme.spacing.small)
         .frame(minWidth: 64, maxHeight: .infinity)
-        .background(Theme.color.backgroundSecondary)
+        .background(Theme.color.textSecondary.opacity(0.05))
         .cornerRadius(Theme.radius.card)
     }
 
-    private func weightString(for set: ExerciseSet) -> String {
-        guard let weightMetric else { return "" }
-        return set.metricValues[.weight].map { ExerciseMetric.formattedMetric($0, metric: weightMetric) } ?? ""
+    private func weightString(for set: ExerciseSet) -> String? {
+        guard let weightMetric else { return nil }
+        return set.metricValues[.weight].map { ExerciseMetric.formattedMetric($0, metric: weightMetric) }
     }
 
     private func metricString(for set: ExerciseSet) -> String {

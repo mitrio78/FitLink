@@ -18,6 +18,8 @@ struct ExerciseBlockCard: View {
                 .font(Theme.font.subheading)
                 .lineLimit(2)
                 .truncationMode(.tail)
+            
+            Divider()
 
             if let main = exerciseInstances.first {
                 ApproachListView(
@@ -31,7 +33,8 @@ struct ExerciseBlockCard: View {
                 )
             }
         }
-        .padding(Theme.spacing.medium)
+        .padding(.horizontal ,Theme.spacing.medium)
+        .padding(.top, Theme.spacing.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Theme.color.backgroundSecondary)
         .cornerRadius(Theme.radius.card)
@@ -47,5 +50,47 @@ struct ExerciseBlockCard: View {
 }
 
 #Preview {
-    ExerciseBlockCard(group: .some(.init(id: UUID(), type: .pyramid, exerciseInstanceIds: [])), exerciseInstances: [.init(id: UUID(), exercise: .init(id: UUID(), name: "Подпрыгивания", variations: ["Весело", "Задорно"], muscleGroups: [.custom("Все")], metrics: [.init(type: .reps, isRequired: true)]), approaches: [.init(sets: [.init(id: UUID(), metricValues: [.time: 20])])])])
+    let set1 = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8], notes: nil, drops: nil)
+    let set2 = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8], notes: nil, drops: nil)
+    ExerciseBlockCard(
+        group: .some(
+            .init(id: UUID(),
+            type: .pyramid,
+            exerciseInstanceIds: []
+                 )
+        ),
+        exerciseInstances: [
+            .init(
+                id: UUID(),
+                exercise: .init(
+                    id: UUID(),
+                    name: "Подпрыгивания",
+                    variations: ["Весело", "Задорно"],
+                    muscleGroups: [.custom("Все")],
+                    metrics: [
+                        .init(
+                            type: .weight,
+                            isRequired: true
+                        ),
+                        .init(
+                            type: .reps,
+                            isRequired: true
+                        )
+                    ]
+                ),
+                approaches: [
+                    .init(
+                        sets: [
+                            set1
+                        ]
+                    ),
+                    .init(
+                        sets: [
+                            set2
+                        ]
+                    )
+                ]
+            )
+        ]
+    )
 }
