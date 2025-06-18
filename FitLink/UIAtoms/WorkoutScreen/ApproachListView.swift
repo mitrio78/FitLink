@@ -18,19 +18,24 @@ struct ApproachListView: View {
                             .foregroundColor(.primary)
                             .background(Theme.color.backgroundSecondary)
                             .cornerRadius(Theme.radius.card)
+                            .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
                 } else {
                     ForEach(sets) { set in
                         Button(action: onTap) {
                             ApproachCardView(set: set, metrics: metrics)
                                 .frame(height: 64)
-                            
+                                .contentShape(Rectangle())
                         }
+                        .buttonStyle(.plain)
                     }
                 }
             }
+            .contentShape(Rectangle())
             .padding(.vertical, Theme.spacing.small)
-        } //: ScrollView
+        }
+        .highPriorityGesture(DragGesture()) // ensure horizontal scroll isn't intercepted
     }
 }
 

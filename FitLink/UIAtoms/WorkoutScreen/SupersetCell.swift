@@ -49,13 +49,12 @@ struct SupersetCell: View {
                         SupersetApproachView(index: idx + 1, items: data) { ex in
                             onSetsEdit(ex, idx)
                         }
-                            .padding(Theme.spacing.small)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(Theme.color.supersetSubcardBackground)
-                            )
-                            .onTapGesture { onEdit() }
+                        .padding(Theme.spacing.small)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(Theme.color.supersetSubcardBackground)
+                        )
                     }
                 }
                 .padding(.top, Theme.spacing.small)

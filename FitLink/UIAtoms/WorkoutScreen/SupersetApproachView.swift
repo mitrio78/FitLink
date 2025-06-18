@@ -25,27 +25,14 @@ struct SupersetApproachView: View {
                 VStack(alignment: .leading, spacing: Theme.spacing.small / 2) {
                     Text(item.exercise.exercise.name)
                         .font(Theme.font.body).bold()
-                    Button(action: { onSetsEdit(item.exercise) }) {
-                        if let approach = item.approach {
-                            ApproachCardView(set: approachSet(from: approach), metrics: item.exercise.exercise.metrics)
-                                .frame(height: 64)
-                        } else {
-                            Image(systemName: "plus")
-                                .frame(minWidth: 64, maxHeight: .infinity)
-                                .frame(height: 64)
-                                .foregroundColor(.secondary)
-                                .background(Theme.color.textSecondary.opacity(0.05))
-                                .cornerRadius(Theme.radius.card)
-                        }
-                    }
+                    ApproachListView(
+                        sets: item.approach?.sets ?? [],
+                        metrics: item.exercise.exercise.metrics,
+                        onTap: { onSetsEdit(item.exercise) }
+                    )
                 }
             }
         }
     }
 
-    private func approachSet(from approach: Approach) -> ExerciseSet {
-        var first = approach.sets.first ?? ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil)
-        first.drops = Array(approach.sets.dropFirst())
-        return first
-    }
 }

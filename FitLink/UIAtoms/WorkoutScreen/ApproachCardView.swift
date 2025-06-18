@@ -42,6 +42,7 @@ struct ApproachCardView: View {
         .frame(minWidth: 64, maxHeight: .infinity)
         .background(Theme.color.textSecondary.opacity(0.05))
         .cornerRadius(Theme.radius.card)
+        .contentShape(Rectangle())
     }
 
     private func weightString(for set: ExerciseSet) -> String? {
