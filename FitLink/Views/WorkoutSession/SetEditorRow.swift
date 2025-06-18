@@ -36,7 +36,7 @@ struct SetEditorRow: View {
 #Preview {
     let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
                    ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
-    var set = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8])
+    let set = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8])
     return SetEditorRow(set: .constant(set), metrics: metrics)
         .padding()
 }
