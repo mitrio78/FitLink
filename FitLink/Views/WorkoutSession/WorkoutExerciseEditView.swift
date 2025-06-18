@@ -101,6 +101,7 @@ struct WorkoutExerciseEditView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Theme.color.backgroundSecondary)
             .cornerRadius(Theme.radius.card)
+            .padding(.bottom)
         }
         .contentShape(Rectangle())
         .listRowInsets(EdgeInsets())
