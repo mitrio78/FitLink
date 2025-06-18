@@ -7,19 +7,24 @@
 import SwiftUI
 
 struct WorkoutSessionView: View {
-    let session: WorkoutSession
+    @StateObject private var viewModel: WorkoutSessionViewModel
     let client: Client?
 
+    init(session: WorkoutSession, client: Client?) {
+        _viewModel = StateObject(wrappedValue: WorkoutSessionViewModel(session: session))
+        self.client = client
+    }
+
     private var warmUpExercises: [ExerciseInstance] {
-        session.exerciseInstances.filter { $0.section == .warmUp }
+        viewModel.warmUpExercises
     }
 
     private var mainExercises: [ExerciseInstance] {
-        session.exerciseInstances.filter { $0.section == .main }
+        viewModel.mainExercises
     }
 
     private var coolDownExercises: [ExerciseInstance] {
-        session.exerciseInstances.filter { $0.section == .coolDown }
+        viewModel.coolDownExercises
     }
     
     var body: some View {
@@ -34,11 +39,11 @@ struct WorkoutSessionView: View {
                 )
                 .font(Theme.font.titleMedium).bold()
                 .padding(.vertical)
-                if let date = session.date {
+                if let date = viewModel.session.date {
                     Text("\(date.formatted(date: .long, time: .shortened))")
                         .foregroundColor(Theme.color.textSecondary)
                 }
-                if let notes = session.notes, !notes.isEmpty {
+                if let notes = viewModel.session.notes, !notes.isEmpty {
                     Text(notes)
                         .font(Theme.font.body)
                         .foregroundColor(Theme.color.accent)
@@ -54,7 +59,7 @@ struct WorkoutSessionView: View {
             }
             .padding(Theme.spacing.medium)
             .padding(.bottom, Theme.spacing.medium)
-        }
+        } //: VStack
         .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
         .presentationDetents([.medium, .large])
     }
@@ -67,16 +72,30 @@ struct WorkoutSessionView: View {
 
                 VStack(spacing: Theme.spacing.small) {
                     ForEach(exercises) { ex in
-                        if let group = session.setGroups?.first(where: { $0.exerciseInstanceIds.contains(ex.id) }),
+                        if let group = viewModel.session.setGroups?.first(where: { $0.exerciseInstanceIds.contains(ex.id) }),
                            group.exerciseInstanceIds.first == ex.id {
-                            let groupExercises = session.exerciseInstances.filter { group.exerciseInstanceIds.contains($0.id) }
-                            ExerciseBlockCard(group: group, exerciseInstances: groupExercises)
-                        } else if !(session.setGroups ?? []).contains(where: { $0.exerciseInstanceIds.contains(ex.id) }) {
-                            ExerciseBlockCard(group: nil, exerciseInstances: [ex])
+                            let groupExercises = viewModel.session.exerciseInstances.filter { group.exerciseInstanceIds.contains($0.id) }
+                            WorkoutExerciseRowView(group: group, exercises: groupExercises)
+                                .swipeActions {
+                                    Button(role: .destructive) {
+                                        viewModel.deleteExercise(withId: ex.id)
+                                    } label: {
+                                        Label("Удалить", systemImage: "trash")
+                                    }
+                                }
+                        } else if !(viewModel.session.setGroups ?? []).contains(where: { $0.exerciseInstanceIds.contains(ex.id) }) {
+                            WorkoutExerciseRowView(exercise: ex)
+                                .swipeActions {
+                                    Button(role: .destructive) {
+                                        viewModel.deleteExercise(withId: ex.id)
+                                    } label: {
+                                        Label("Удалить", systemImage: "trash")
+                                    }
+                                }
                         }
                     }
-                }
-            }
+                } //: VStack
+            } //: VStack
         }
     }
 }
