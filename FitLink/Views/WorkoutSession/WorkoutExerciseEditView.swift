@@ -82,22 +82,34 @@ struct WorkoutExerciseEditView: View {
 
     @ViewBuilder
     private func exerciseCard(for exercise: Exercise, index: Int) -> some View {
-        Button(action: { libraryIndex = index; showLibrary = true }) {
-            HStack {
-                Image(systemName: exercise.mainMuscle.iconName)
-                    .font(.largeTitle)
-                    .foregroundColor(exercise.mainMuscle.color)
-                Text(exercise.name)
-                    .font(Theme.font.titleMedium.bold())
-                Spacer()
-                Text(NSLocalizedString("WorkoutExerciseEdit.Change", comment: "Replace"))
-                    .font(Theme.font.body)
-                    .foregroundColor(.secondary)
+        ZStack(alignment: .topTrailing) {
+            Button(action: { libraryIndex = index; showLibrary = true }) {
+                HStack {
+                    Image(systemName: exercise.mainMuscle.iconName)
+                        .font(.largeTitle)
+                        .foregroundColor(exercise.mainMuscle.color)
+                    Text(exercise.name)
+                        .font(Theme.font.titleMedium.bold())
+                    Spacer()
+                    Text(NSLocalizedString("WorkoutExerciseEdit.Change", comment: "Replace"))
+                        .font(Theme.font.body)
+                        .foregroundColor(.secondary)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Theme.color.backgroundSecondary)
+                .cornerRadius(Theme.radius.card)
             }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Theme.color.backgroundSecondary)
-            .cornerRadius(Theme.radius.card)
+            Button(role: .destructive) {
+                if viewModel.removeExercise(at: index) && isEditing {
+                    onComplete(.deleted)
+                    dismiss()
+                }
+            } label: {
+                Image(systemName: "trash")
+                    .padding(8)
+            }
+            .accessibilityLabel(NSLocalizedString("Common.Delete", comment: "Delete"))
         }
     }
 }
