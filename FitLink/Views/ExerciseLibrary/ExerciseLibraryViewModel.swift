@@ -10,14 +10,16 @@ import Combine
 
 @MainActor
 final class ExerciseLibraryViewModel: ObservableObject {
-    @Published var exercises: [Exercise]
+    @Published var exercises: [Exercise] = []
     @Published var searchText: String = ""
     @Published var selectedMuscleGroup: MuscleGroup? = nil
     private let dataStore: AppDataStore
 
     init(dataStore: AppDataStore = .shared) {
         self.dataStore = dataStore
-        self.exercises = dataStore.exercises
+
+        dataStore.$exercises
+            .assign(to: &$exercises)
     }
 
     var filteredExercises: [Exercise] {

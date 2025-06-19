@@ -3,11 +3,13 @@ import SwiftUI
 
 @MainActor
 final class WorkoutsViewModel: ObservableObject {
-    @Published var workouts: [WorkoutSession]
+    @Published var workouts: [WorkoutSession] = []
     private let dataStore: AppDataStore
 
     init(dataStore: AppDataStore = .shared) {
         self.dataStore = dataStore
-        self.workouts = dataStore.sessions
+
+        dataStore.$sessions
+            .assign(to: &$workouts)
     }
 }
