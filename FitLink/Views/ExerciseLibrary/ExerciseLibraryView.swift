@@ -11,7 +11,7 @@ struct ExerciseLibraryView: View {
     var onSelect: ((Exercise) -> Void)? = nil
 
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var viewModel = ExerciseLibraryViewModel()
+    @StateObject private var viewModel = ExerciseLibraryViewModel(dataStore: .shared)
     @State private var showFilterDialog = false
 
     var body: some View {

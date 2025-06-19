@@ -24,7 +24,7 @@ final class WorkoutSessionViewModel: ObservableObject {
     @Published private(set) var exercises: [ExerciseInstance]
     @Published private(set) var setGroups: [SetGroup]
 
-    init(session: WorkoutSession, client: Client?, dataStore: AppDataStore = .shared) {
+    init(session: WorkoutSession, client: Client?, dataStore: AppDataStore) {
         self.session = session
         self.client = client
         self.dataStore = dataStore

@@ -19,7 +19,9 @@ struct MetricEditorView: View {
         NavigationStack {
             ScrollViewReader { proxy in
             List {
-                ForEach(Array(viewModel.approaches.enumerated()), id: \.offset) { idx, approach in
+                ForEach(Array(viewModel.approaches.enumerated()), id: \.element.id) { pair in
+                    let idx = pair.offset
+                    let approach = pair.element
                     VStack(alignment: .leading, spacing: Theme.spacing.small) {
                         HStack(spacing: Theme.spacing.small) {
                             ApproachCardView(set: approachSet(from: approach), metrics: viewModel.metrics)
@@ -33,10 +35,12 @@ struct MetricEditorView: View {
                             }
                             .buttonStyle(.plain)
                         }
-                        SetEditorRow(set: binding(for: idx), metrics: viewModel.metrics)
+                        SetEditorRow(set: binding(for: idx),
+                                    metrics: viewModel.metrics,
+                                    scrollProxy: proxy)
                     }
                     .padding(.vertical, Theme.spacing.small)
-                    .id(idx)
+                    .id(approach.id)
                 }
                 .onDelete(perform: viewModel.removeApproach)
 
@@ -52,8 +56,16 @@ struct MetricEditorView: View {
                                          leading: Theme.spacing.large,
                                          bottom: 0,
                                          trailing: Theme.spacing.large))
+
+                Color.clear
+                    .frame(height: Theme.spacing.large)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
             }
             .listStyle(.plain)
+            .safeAreaInset(edge: .bottom) {
+                Color.clear.frame(height: Theme.spacing.medium)
+            }
             .simultaneousGesture(
                 TapGesture().onEnded { _ in hideKeyboard() }
             )
@@ -84,8 +96,8 @@ struct MetricEditorView: View {
                     viewModel.updateDrops(at: context.index, sets: sets)
                 }
             }
-            }
-        }
+            } //: ScrollViewReader
+        } //: NavigationStack
     }
 
     private func binding(for index: Int) -> Binding<ExerciseSet> {

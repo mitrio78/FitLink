@@ -14,15 +14,23 @@ struct DropSetEditorView: View {
 
     var body: some View {
         NavigationStack {
+            ScrollViewReader { proxy in
             List {
-                ForEach(viewModel.sets.indices, id: \.self) { idx in
-                    SetEditorRow(set: $viewModel.sets[idx], metrics: viewModel.metrics, showLabels: false)
-                        .listRowSeparator(.hidden)
-                        .overlay(alignment: .topLeading) {
-                            Text(label(for: idx))
-                                .font(Theme.font.caption)
-                                .foregroundColor(.secondary)
-                        }
+                let enumerated = Array(viewModel.sets.enumerated())
+                ForEach(enumerated, id: \.element.id) { pair in
+                    let idx = pair.offset
+                    SetEditorRow(
+                        set: binding(for: pair.element.id),
+                        metrics: viewModel.metrics,
+                        showLabels: false,
+                        scrollProxy: proxy
+                    )
+                    .listRowSeparator(.hidden)
+                    .overlay(alignment: .topLeading) {
+                        Text(label(for: idx))
+                            .font(Theme.font.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
                 .onDelete(perform: viewModel.deleteDrops)
 
@@ -38,8 +46,16 @@ struct DropSetEditorView: View {
                                          leading: Theme.spacing.large,
                                          bottom: 0,
                                          trailing: Theme.spacing.large))
+
+                Color.clear
+                    .frame(height: Theme.spacing.large)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
             }
             .listStyle(.plain)
+            .safeAreaInset(edge: .bottom) {
+                Color.clear.frame(height: Theme.spacing.medium)
+            }
             .simultaneousGesture(
                 TapGesture().onEnded { _ in hideKeyboard() }
             )
@@ -57,7 +73,8 @@ struct DropSetEditorView: View {
                     }
                 }
             }
-        }
+            } //: ScrollViewReader
+        } //: NavigationStack
     }
 
     private func label(for index: Int) -> String {
@@ -66,6 +83,17 @@ struct DropSetEditorView: View {
         } else {
             return String(format: NSLocalizedString("DropSetView.DropStep", comment: "Drop %d"), index)
         }
+    }
+
+    private func binding(for id: ExerciseSet.ID) -> Binding<ExerciseSet> {
+        Binding(
+            get: { viewModel.sets.first(where: { $0.id == id }) ?? ExerciseSet(id: id, metricValues: [:], notes: nil, drops: nil) },
+            set: { newValue in
+                if let index = viewModel.sets.firstIndex(where: { $0.id == id }) {
+                    viewModel.sets[index] = newValue
+                }
+            }
+        )
     }
 }
 
