@@ -100,6 +100,27 @@ VStack {
 
 ---
 
+## 🧠 Temporary AppDataStore – Development Guide
+
+### 📌 Purpose
+
+To centralize all access to application data (users, workouts, exercises, etc.) during development in a single in-memory store. This allows consistent data usage across features, simplifies development, and prepares the app for future migration to a real persistence layer (e.g., SwiftData, remote API).
+
+### ✅ Principles
+
+- All runtime data access and mutation must go through `AppDataStore`.
+- The store acts as a single source of truth for all features.
+- SwiftUI views should use it via `@EnvironmentObject` or as a shared instance.
+- Only Previews are allowed to use mock data directly (`.mock()`, `.stub()`, etc.).
+- No feature module should generate or hold its own mock data.
+- All editors, interactors, and view models must read and write through the store.
+
+### 🎯 Migration Goal
+
+Once ready, `AppDataStore` can be replaced with a real persistence layer (SwiftData, CloudKit, Firebase, or networking). This will require minimal changes to the rest of the app if all access flows through the centralized store.
+
+---
+
 ## ✅ Summary Checklist for New Code
 
 1. Create a `View` and `ViewModel` pair in the same folder.
