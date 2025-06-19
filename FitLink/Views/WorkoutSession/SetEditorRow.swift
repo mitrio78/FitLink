@@ -5,6 +5,7 @@ struct SetEditorRow: View {
     @Binding var set: ExerciseSet
     let metrics: [ExerciseMetric]
     var showLabels: Bool = true
+    var scrollProxy: ScrollViewProxy? = nil
 
     var body: some View {
         ForEach(metrics, id: \.type) { metric in
@@ -13,25 +14,47 @@ struct SetEditorRow: View {
                 Spacer()
                 MetricInputField(
                     value: binding(for: metric.type),
-                    prefix: metric.type == .reps ? "x" : nil,
-                    suffix: metric.type != .reps ? metric.unit?.displayName : nil,
-                    keyboardType: .decimalPad
+                    labelPrefix: metric.type == .reps ? "×" : nil,
+                    labelSuffix: metric.type != .reps ? metric.unit?.displayName : nil,
+                    keyboardType: .decimalPad,
+                    presets: presets(for: metric.type),
+                    scrollProxy: scrollProxy,
+                    scrollId: "\(set.id)-\(metric.type.rawValue)"
                 )
             }
         }
     }
 
-    private func binding(for type: ExerciseMetricType) -> Binding<Double?> {
-        Binding<Double?>(
-            get: { set.metricValues[type] },
+    private func binding(for type: ExerciseMetricType) -> Binding<String> {
+        Binding<String>(
+            get: {
+                guard let value = set.metricValues[type] else { return "" }
+                if value == floor(value) {
+                    return String(Int(value))
+                } else {
+                    return String(value)
+                }
+            },
             set: { newValue in
-                if let value = newValue {
-                    set.metricValues[type] = value
+                let cleaned = newValue.trimLeadingZeros()
+                if let number = Double(cleaned), number != 0 {
+                    set.metricValues[type] = number
                 } else {
                     set.metricValues.removeValue(forKey: type)
                 }
             }
         )
+    }
+
+    private func presets(for type: ExerciseMetricType) -> [Double] {
+        switch type {
+        case .weight:
+            return [2.5, 5, 10]
+        case .reps:
+            return [1, 2]
+        default:
+            return []
+        }
     }
 }
 

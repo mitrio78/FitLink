@@ -33,7 +33,9 @@ struct MetricEditorView: View {
                             }
                             .buttonStyle(.plain)
                         }
-                        SetEditorRow(set: binding(for: idx), metrics: viewModel.metrics)
+                        SetEditorRow(set: binding(for: idx),
+                                    metrics: viewModel.metrics,
+                                    scrollProxy: proxy)
                     }
                     .padding(.vertical, Theme.spacing.small)
                     .id(idx)

@@ -14,9 +14,13 @@ struct DropSetEditorView: View {
 
     var body: some View {
         NavigationStack {
+            ScrollViewReader { proxy in
             List {
                 ForEach(viewModel.sets.indices, id: \.self) { idx in
-                    SetEditorRow(set: $viewModel.sets[idx], metrics: viewModel.metrics, showLabels: false)
+                    SetEditorRow(set: $viewModel.sets[idx],
+                                 metrics: viewModel.metrics,
+                                 showLabels: false,
+                                 scrollProxy: proxy)
                         .listRowSeparator(.hidden)
                         .overlay(alignment: .topLeading) {
                             Text(label(for: idx))
@@ -56,6 +60,7 @@ struct DropSetEditorView: View {
                         dismiss()
                     }
                 }
+            }
             }
         }
     }
