@@ -31,6 +31,7 @@ struct DropSetEditorView: View {
                             .font(Theme.font.caption)
                             .foregroundColor(.secondary)
                     }
+                    .deleteDisabled(idx == 0)
                 }
                 .onDelete(perform: viewModel.deleteDrops)
 
