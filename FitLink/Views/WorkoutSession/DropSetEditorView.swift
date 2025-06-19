@@ -16,8 +16,7 @@ struct DropSetEditorView: View {
         NavigationStack {
             ScrollViewReader { proxy in
             List {
-                ForEach(viewModel.sets) { set in
-                    let idx = index(for: set.id)
+                ForEach(Array(viewModel.sets.enumerated()), id: \.element.id) { index, set in
                     SetEditorRow(
                         set: binding(for: set.id),
                         metrics: viewModel.metrics,
@@ -26,7 +25,7 @@ struct DropSetEditorView: View {
                     )
                     .listRowSeparator(.hidden)
                     .overlay(alignment: .topLeading) {
-                        Text(label(for: idx))
+                        Text(label(for: index))
                             .font(Theme.font.caption)
                             .foregroundColor(.secondary)
                     }
@@ -87,10 +86,6 @@ struct DropSetEditorView: View {
         } else {
             return String(format: NSLocalizedString("DropSetView.DropStep", comment: "Drop %d"), index)
         }
-    }
-
-    private func index(for id: ExerciseSet.ID) -> Int {
-        viewModel.sets.firstIndex(where: { $0.id == id }) ?? 0
     }
 
     private func binding(for id: ExerciseSet.ID) -> Binding<ExerciseSet> {
