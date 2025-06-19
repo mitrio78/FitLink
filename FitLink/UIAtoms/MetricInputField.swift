@@ -78,6 +78,7 @@ struct MetricInputField: View {
                 }
             }
         } //: VStack
+        .padding(.bottom, focused && !presets.isEmpty ? Theme.spacing.medium : 0)
         .id(scrollId)
         .font(Theme.font.body.bold())
         .onAppear { value = value.trimLeadingZeros() }
