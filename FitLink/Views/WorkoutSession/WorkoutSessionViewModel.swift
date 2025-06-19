@@ -17,15 +17,17 @@ final class WorkoutSessionViewModel: ObservableObject {
     @Published var activeMetricEditorExercise: ExerciseInstance? = nil
     var metricEditorStartIndex: Int? = nil
     @Published var expandedGroupId: UUID? = nil
-    let session: WorkoutSession
+    @Published var session: WorkoutSession
     let client: Client?
+    private let store: WorkoutStore
 
     @Published private(set) var exercises: [ExerciseInstance]
     @Published private(set) var setGroups: [SetGroup]
 
-    init(session: WorkoutSession, client: Client?) {
+    init(session: WorkoutSession, client: Client?, store: WorkoutStore) {
         self.session = session
         self.client = client
+        self.store = store
         self.exercises = session.exerciseInstances
         self.setGroups = session.setGroups ?? []
     }
@@ -57,6 +59,7 @@ final class WorkoutSessionViewModel: ObservableObject {
     func updateMetrics(for exerciseId: UUID, approaches: [Approach]) {
         if let idx = exercises.firstIndex(where: { $0.id == exerciseId }) {
             exercises[idx].approaches = approaches
+            save()
         }
         activeMetricEditorExercise = nil
         metricEditorStartIndex = nil
@@ -112,6 +115,7 @@ final class WorkoutSessionViewModel: ObservableObject {
         case .deleted:
             expandedGroupId = nil
         }
+        save()
     }
 
     func replaceItem(_ result: WorkoutExerciseEditResult) {
@@ -162,6 +166,7 @@ final class WorkoutSessionViewModel: ObservableObject {
             // Handled outside this switch
             expandedGroupId = nil
         }
+        save()
     }
 
     func completeEdit(_ result: WorkoutExerciseEditResult) {
@@ -178,6 +183,7 @@ final class WorkoutSessionViewModel: ObservableObject {
             addItem(result)
         }
         editingContext = nil
+        save()
     }
 
     func deleteItem(withId id: UUID) {
@@ -187,5 +193,12 @@ final class WorkoutSessionViewModel: ObservableObject {
         } else {
             exercises.removeAll { $0.id == id }
         }
+        save()
+    }
+
+    private func save() {
+        session.exerciseInstances = exercises
+        session.setGroups = setGroups
+        store.updateSession(session)
     }
 }

@@ -9,6 +9,7 @@ import SwiftUI
 struct ScheduleView: View {
     @StateObject private var viewModel = ScheduleViewModel()
     @State private var selectedSession: WorkoutSession?
+    @EnvironmentObject private var store: WorkoutStore
 
     var body: some View {
         NavigationStack {
@@ -86,7 +87,7 @@ struct ScheduleView: View {
             .background(Theme.color.background)
             .navigationDestination(item: $selectedSession) { session in
                 let client = session.clientId.flatMap { viewModel.clients[$0] }
-                WorkoutSessionView(session: session, client: client)
+                WorkoutSessionView(session: session, client: client, store: store)
             }
             .navigationBarHidden(true)
             
@@ -96,4 +97,5 @@ struct ScheduleView: View {
 
 #Preview {
     ScheduleView()
+        .environmentObject(WorkoutStore())
 }

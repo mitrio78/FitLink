@@ -9,8 +9,8 @@ import SwiftUI
 struct WorkoutSessionView: View {
     @StateObject private var viewModel: WorkoutSessionViewModel
 
-    init(session: WorkoutSession, client: Client?) {
-        _viewModel = StateObject(wrappedValue: WorkoutSessionViewModel(session: session, client: client))
+    init(session: WorkoutSession, client: Client?, store: WorkoutStore) {
+        _viewModel = StateObject(wrappedValue: WorkoutSessionViewModel(session: session, client: client, store: store))
     }
     
     var body: some View {
@@ -118,13 +118,13 @@ struct WorkoutSessionView: View {
 
 #Preview("Light") {
     NavigationStack {
-        WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0])
+        WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
     }
 }
 
 #Preview("Dark") {
     NavigationStack {
-        WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0])
+        WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
     }
     .preferredColorScheme(.dark)
 }

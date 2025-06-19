@@ -23,4 +23,9 @@ final class WorkoutStore: ObservableObject {
         guard let eIndex = sessions[sIndex].exerciseInstances.firstIndex(where: { $0.id == exercise.id }) else { return }
         sessions[sIndex].exerciseInstances[eIndex] = exercise
     }
+
+    func updateSession(_ session: WorkoutSession) {
+        guard let index = sessions.firstIndex(where: { $0.id == session.id }) else { return }
+        sessions[index] = session
+    }
 }

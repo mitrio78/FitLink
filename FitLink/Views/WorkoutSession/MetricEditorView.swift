@@ -91,7 +91,15 @@ struct MetricEditorView: View {
     private func binding(for index: Int) -> Binding<ExerciseSet> {
         Binding<ExerciseSet>(
             get: { viewModel.approaches[index].sets.first ?? ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil) },
-            set: { viewModel.approaches[index].sets = [$0] }
+            set: { newValue in
+                var sets = viewModel.approaches[index].sets
+                if sets.isEmpty {
+                    sets = [newValue]
+                } else {
+                    sets[0] = newValue
+                }
+                viewModel.approaches[index].sets = sets
+            }
         )
     }
 
