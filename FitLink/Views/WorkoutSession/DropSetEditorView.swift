@@ -42,8 +42,16 @@ struct DropSetEditorView: View {
                                          leading: Theme.spacing.large,
                                          bottom: 0,
                                          trailing: Theme.spacing.large))
+
+                Color.clear
+                    .frame(height: Theme.spacing.large)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
             }
             .listStyle(.plain)
+            .safeAreaInset(edge: .bottom) {
+                Color.clear.frame(height: Theme.spacing.medium)
+            }
             .simultaneousGesture(
                 TapGesture().onEnded { _ in hideKeyboard() }
             )
@@ -61,8 +69,8 @@ struct DropSetEditorView: View {
                     }
                 }
             }
-            }
-        }
+            } //: ScrollViewReader
+        } //: NavigationStack
     }
 
     private func label(for index: Int) -> String {
