@@ -19,10 +19,10 @@ struct SetEditorRow: View {
                     keyboardType: .decimalPad,
                     presets: presets(for: metric.type),
                     scrollProxy: scrollProxy,
-                    scrollId: "\(set.id)-\(metric.type.rawValue)"
+                    scrollId: "\(set.id)-\(String(describing: metric.type))"
                 )
-            }
-        }
+            } //: HStack
+        } //: ForEach
     }
 
     private func binding(for type: ExerciseMetricType) -> Binding<String> {
