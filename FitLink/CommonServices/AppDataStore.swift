@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 @MainActor
-final class AppDataStore: ObservableObject {
+class AppDataStore: ObservableObject {
     static let shared = AppDataStore()
 
     @Published var clients: [Client]
