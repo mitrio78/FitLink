@@ -1,9 +1,3 @@
-//
-//  Untitled.swift
-//  FitLink
-//
-//  Created by Дмитрий Гришечко on 16.06.2025.
-//
 import SwiftUI
 
 /// View representing a single approach in the superset.
@@ -26,13 +20,26 @@ struct SupersetApproachView: View {
                     Text(item.exercise.exercise.name)
                         .font(Theme.font.body).bold()
                     ApproachListView(
-                        sets: item.approach?.sets ?? [],
+                        sets: combinedSets(for: item.approach),
                         metrics: item.exercise.exercise.metrics,
                         onTap: { onSetsEdit(item.exercise) }
                     )
                 }
             }
-        }
+        } //: VStack
     }
 
+    private func combinedSets(for approach: Approach?) -> [ExerciseSet] {
+        guard let approach else { return [] }
+        var first = approach.sets.first ?? ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil)
+        first.drops = Array(approach.sets.dropFirst())
+        return [first]
+    }
+}
+
+#Preview {
+    let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
+                   ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
+    let ex = ExerciseInstance(id: UUID(), exercise: Exercise(id: UUID(), name: "Test", variations: [], muscleGroups: [.chest], metrics: metrics), approaches: [], groupId: nil, notes: nil)
+    return SupersetApproachView(index: 1, items: [(ex, nil)])
 }

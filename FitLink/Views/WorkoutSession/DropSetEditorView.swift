@@ -16,7 +16,7 @@ struct DropSetEditorView: View {
         NavigationStack {
             List {
                 ForEach(viewModel.sets.indices, id: \.self) { idx in
-                    SetEditorRow(set: $viewModel.sets[idx], metrics: viewModel.metrics)
+                    SetEditorRow(set: $viewModel.sets[idx], metrics: viewModel.metrics, showLabels: false)
                         .listRowSeparator(.hidden)
                         .overlay(alignment: .topLeading) {
                             Text(label(for: idx))
@@ -25,27 +25,33 @@ struct DropSetEditorView: View {
                         }
                 }
                 .onDelete(perform: viewModel.deleteDrops)
-                .onMove(perform: viewModel.moveDrops)
 
                 Button(action: viewModel.addDrop) {
-                    HStack {
-                        Spacer()
-                        Image(systemName: "plus")
-                        Text(NSLocalizedString("DropEditor.AddDrop", comment: "Add Drop"))
-                        Spacer()
-                    }
+                    Image(systemName: "plus")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Theme.color.backgroundSecondary)
+                        .cornerRadius(Theme.radius.card)
                 }
+                .buttonStyle(.plain)
+                .listRowInsets(EdgeInsets(top: 0,
+                                         leading: Theme.spacing.large,
+                                         bottom: 0,
+                                         trailing: Theme.spacing.large))
             }
             .listStyle(.plain)
+            .simultaneousGesture(
+                TapGesture().onEnded { _ in hideKeyboard() }
+            )
             .navigationTitle(NSLocalizedString("DropEditor.Title", comment: "Edit Drops"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) { EditButton() }
                 ToolbarItem(placement: .cancellationAction) {
                     Button(NSLocalizedString("Common.Cancel", comment: "Cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(NSLocalizedString("Common.Done", comment: "Done")) {
+                        hideKeyboard()
                         onComplete(viewModel.sets)
                         dismiss()
                     }

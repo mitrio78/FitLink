@@ -4,31 +4,33 @@ import SwiftUI
 struct SetEditorRow: View {
     @Binding var set: ExerciseSet
     let metrics: [ExerciseMetric]
-
-    private let numberFormatter: NumberFormatter = {
-        let f = NumberFormatter()
-        f.minimumFractionDigits = 0
-        f.maximumFractionDigits = 2
-        return f
-    }()
+    var showLabels: Bool = true
 
     var body: some View {
         ForEach(metrics, id: \.type) { metric in
             HStack {
-                Text(metric.displayName)
+                if showLabels { Text(metric.displayName) }
                 Spacer()
-                TextField("0", value: binding(for: metric.type), formatter: numberFormatter)
-                    .keyboardType(.decimalPad)
-                    .multilineTextAlignment(.trailing)
-                    .foregroundColor(.primary)
+                MetricInputField(
+                    value: binding(for: metric.type),
+                    prefix: metric.type == .reps ? "x" : nil,
+                    suffix: metric.type != .reps ? metric.unit?.displayName : nil,
+                    keyboardType: .decimalPad
+                )
             }
         }
     }
 
-    private func binding(for type: ExerciseMetricType) -> Binding<Double> {
-        Binding<Double>(
-            get: { set.metricValues[type] ?? 0 },
-            set: { set.metricValues[type] = $0 }
+    private func binding(for type: ExerciseMetricType) -> Binding<Double?> {
+        Binding<Double?>(
+            get: { set.metricValues[type] },
+            set: { newValue in
+                if let value = newValue {
+                    set.metricValues[type] = value
+                } else {
+                    set.metricValues.removeValue(forKey: type)
+                }
+            }
         )
     }
 }
