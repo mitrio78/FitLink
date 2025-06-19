@@ -27,13 +27,17 @@ struct DropSetEditorView: View {
                 .onDelete(perform: viewModel.deleteDrops)
 
                 Button(action: viewModel.addDrop) {
-                    HStack {
-                        Spacer()
-                        Image(systemName: "plus")
-                        Text(NSLocalizedString("DropEditor.AddDrop", comment: "Add Drop"))
-                        Spacer()
-                    }
+                    Image(systemName: "plus")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Theme.color.backgroundSecondary)
+                        .cornerRadius(Theme.radius.card)
                 }
+                .buttonStyle(.plain)
+                .listRowInsets(EdgeInsets(top: 0,
+                                         leading: Theme.spacing.large,
+                                         bottom: 0,
+                                         trailing: Theme.spacing.large))
             }
             .listStyle(.plain)
             .simultaneousGesture(

@@ -8,7 +8,16 @@ struct SetEditorRow: View {
 
     var body: some View {
         ForEach(metrics, id: \.type) { metric in
-            MetricInputField(value: binding(for: metric.type), metric: metric, showLabel: showLabels)
+            HStack {
+                if showLabels { Text(metric.displayName) }
+                Spacer()
+                MetricInputField(
+                    value: binding(for: metric.type),
+                    prefix: metric.type == .reps ? "x" : nil,
+                    suffix: metric.type != .reps ? metric.unit?.displayName : nil,
+                    keyboardType: .decimalPad
+                )
+            }
         }
     }
 

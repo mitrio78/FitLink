@@ -41,13 +41,17 @@ struct MetricEditorView: View {
                 .onDelete(perform: viewModel.removeApproach)
 
                 Button(action: viewModel.addApproach) {
-                    HStack {
-                        Spacer()
-                        Image(systemName: "plus")
-                        Text(NSLocalizedString("WorkoutExerciseEdit.AddSet", comment: "Add Set"))
-                        Spacer()
-                    }
+                    Image(systemName: "plus")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Theme.color.backgroundSecondary)
+                        .cornerRadius(Theme.radius.card)
                 }
+                .buttonStyle(.plain)
+                .listRowInsets(EdgeInsets(top: 0,
+                                         leading: Theme.spacing.large,
+                                         bottom: 0,
+                                         trailing: Theme.spacing.large))
             }
             .listStyle(.plain)
             .simultaneousGesture(

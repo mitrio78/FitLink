@@ -1,51 +1,63 @@
 import SwiftUI
 
-/// Editable metric field with optional label, prefix and suffix
+/// Editable numeric field with optional prefix and suffix.
 struct MetricInputField: View {
     @Binding var value: Double?
-    let metric: ExerciseMetric
-    var showLabel: Bool = true
-
-    @State private var text: String = ""
-    @FocusState private var focused: Bool
+    var placeholder: String = "0"
+    var prefix: String? = nil
+    var suffix: String? = nil
+    var keyboardType: UIKeyboardType = .decimalPad
     var onCommit: (() -> Void)? = nil
 
+    @State private var text: String = ""
+    @State private var width: CGFloat = 0
+    @FocusState private var focused: Bool
+
+    private let size: CGFloat = 48
+
     var body: some View {
-        HStack {
-            if showLabel {
-                Text(metric.displayName)
-                Spacer()
+        HStack(spacing: 4) {
+            if let prefix {
+                Text(prefix)
+                    .foregroundColor(.secondary)
             }
-            HStack(spacing: 4) {
-                if metric.type == .reps {
-                    Text("x")
-                        .foregroundColor(.secondary)
-                }
-                TextField("0", text: $text)
+            ZStack(alignment: .trailing) {
+                Text(text.isEmpty ? String(repeating: "0", count: 3) : text)
+                    .font(Theme.font.body.bold())
+                    .padding(.horizontal, 6)
+                    .background(
+                        GeometryReader { geo in
+                            Color.clear
+                                .preference(key: WidthKey.self, value: geo.size.width)
+                        }
+                    )
+                    .hidden()
+
+                TextField("", text: $text, prompt: Text(placeholder))
                     .focused($focused)
-                    .keyboardType(.decimalPad)
+                    .keyboardType(keyboardType)
                     .multilineTextAlignment(.center)
-                    .frame(minWidth: 48, minHeight: 48)
-                    .padding(.horizontal, 4)
-                    .background(RoundedRectangle(cornerRadius: 8).stroke(focused ? Theme.color.accent : Color.gray.opacity(0.3)))
+                    .frame(width: max(size, width), height: size)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(focused ? Theme.color.accent : Color.gray.opacity(0.3))
+                    )
                     .onTapGesture { handleTap() }
                     .onChange(of: text) { newValue in
                         text = newValue.trimLeadingZeros()
                         syncBinding()
                     }
-                if metric.type != .reps {
-                    Text(metric.unit?.displayName ?? "")
-                        .foregroundColor(.secondary)
-                }
             }
-            .font(Theme.font.body.bold())
+            .onPreferenceChange(WidthKey.self) { width = $0 }
+
+            if let suffix {
+                Text(suffix)
+                    .foregroundColor(.secondary)
+            }
         }
-        .onAppear {
-            text = formattedValue
-        }
-        .onChange(of: focused) { newValue in
-            if !newValue { commit() }
-        }
+        .font(Theme.font.body.bold())
+        .onAppear { text = formattedValue }
+        .onChange(of: focused) { if !$0 { commit() } }
     }
 
     private var formattedValue: String {
@@ -61,7 +73,10 @@ struct MetricInputField: View {
         if text == "0" {
             text = ""
         }
-        DispatchQueue.main.async { self.focused = true }
+        DispatchQueue.main.async {
+            self.focused = true
+            self.text = self.text
+        }
     }
 
     private func syncBinding() {
@@ -83,7 +98,14 @@ struct MetricInputField: View {
     }
 }
 
+private struct WidthKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 #Preview {
-    MetricInputField(value: .constant(12), metric: ExerciseMetric(type: .reps, unit: .repetition, isRequired: true))
+    MetricInputField(value: .constant(12), prefix: "x", suffix: "kg")
         .padding()
 }
