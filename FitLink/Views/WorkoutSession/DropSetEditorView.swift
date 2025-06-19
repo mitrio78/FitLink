@@ -16,23 +16,26 @@ struct DropSetEditorView: View {
         NavigationStack {
             ScrollViewReader { proxy in
             List {
-                let enumerated = Array(viewModel.sets.enumerated())
-                ForEach(enumerated, id: \.element.id) { pair in
-                    let idx = pair.offset
+                ForEach(Array(viewModel.sets.enumerated()), id: \.element.id) { index, set in
                     SetEditorRow(
-                        set: binding(for: pair.element.id),
+                        set: binding(for: set.id),
                         metrics: viewModel.metrics,
                         showLabels: false,
                         scrollProxy: proxy
                     )
                     .listRowSeparator(.hidden)
                     .overlay(alignment: .topLeading) {
-                        Text(label(for: idx))
+                        Text(label(for: index))
                             .font(Theme.font.caption)
                             .foregroundColor(.secondary)
                     }
                 }
-                .onDelete(perform: viewModel.deleteDrops)
+                .onDelete { offsets in
+                    withAnimation {
+                        let ids = offsets.compactMap { viewModel.sets[safe: $0]?.id }
+                        viewModel.deleteDrops(withIds: ids)
+                    }
+                }
 
                 Button(action: viewModel.addDrop) {
                     Image(systemName: "plus")
@@ -87,7 +90,12 @@ struct DropSetEditorView: View {
 
     private func binding(for id: ExerciseSet.ID) -> Binding<ExerciseSet> {
         Binding(
-            get: { viewModel.sets.first(where: { $0.id == id }) ?? ExerciseSet(id: id, metricValues: [:], notes: nil, drops: nil) },
+            get: {
+                guard let index = viewModel.sets.firstIndex(where: { $0.id == id }) else {
+                    preconditionFailure("binding not found for set id \(id)")
+                }
+                return viewModel.sets[index]
+            },
             set: { newValue in
                 if let index = viewModel.sets.firstIndex(where: { $0.id == id }) {
                     viewModel.sets[index] = newValue
