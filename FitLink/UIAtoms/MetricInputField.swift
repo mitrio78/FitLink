@@ -83,14 +83,7 @@ struct MetricInputField: View {
         .onAppear { value = value.trimLeadingZeros() }
         .onChange(of: focused) { _, isFocused in
             if isFocused {
-                withAnimation {
-                    scrollProxy?.scrollTo(scrollId, anchor: .bottom)
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    withAnimation {
-                        scrollProxy?.scrollTo(scrollId, anchor: .bottom)
-                    }
-                }
+                scrollToSelf()
             } else {
                 commit()
             }
@@ -133,6 +126,17 @@ struct MetricInputField: View {
             return String(Int(val))
         } else {
             return String(format: "%.1f", val)
+        }
+    }
+
+    private func scrollToSelf() {
+        withAnimation {
+            scrollProxy?.scrollTo(scrollId, anchor: .bottom)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            withAnimation {
+                scrollProxy?.scrollTo(scrollId, anchor: .bottom)
+            }
         }
     }
 }
