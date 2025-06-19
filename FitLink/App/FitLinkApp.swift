@@ -9,12 +9,12 @@ import SwiftUI
 
 @main
 struct FitLinkApp: App {
-    @StateObject private var store = WorkoutStore()
+    @StateObject private var dataStore = AppDataStore.shared
 
     var body: some Scene {
         WindowGroup {
             MainView()
-                .environmentObject(store)
+                .environmentObject(dataStore)
         }
     }
 }

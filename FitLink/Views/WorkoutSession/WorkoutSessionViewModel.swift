@@ -19,15 +19,15 @@ final class WorkoutSessionViewModel: ObservableObject {
     @Published var expandedGroupId: UUID? = nil
     @Published var session: WorkoutSession
     let client: Client?
-    private let store: WorkoutStore
+    private let dataStore: AppDataStore
 
     @Published private(set) var exercises: [ExerciseInstance]
     @Published private(set) var setGroups: [SetGroup]
 
-    init(session: WorkoutSession, client: Client?, store: WorkoutStore) {
+    init(session: WorkoutSession, client: Client?, dataStore: AppDataStore = .shared) {
         self.session = session
         self.client = client
-        self.store = store
+        self.dataStore = dataStore
         self.exercises = session.exerciseInstances
         self.setGroups = session.setGroups ?? []
     }
@@ -199,6 +199,6 @@ final class WorkoutSessionViewModel: ObservableObject {
     private func save() {
         session.exerciseInstances = exercises
         session.setGroups = setGroups
-        store.updateSession(session)
+        dataStore.updateSession(session)
     }
 }

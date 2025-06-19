@@ -9,11 +9,23 @@ import Combine
 
 @MainActor
 final class ScheduleViewModel: ObservableObject {
-    @Published var sessions: [WorkoutSession] = MockData.complexMockSessions
-    @Published var clients: [UUID: Client] = clientsDict
+    @Published var sessions: [WorkoutSession] = []
+    @Published var clients: [UUID: Client] = [:]
     @Published var searchText: String = ""
     @Published var selectedDate: Date = Date()
     @Published var isCalendarMode: Bool = true
+    private let dataStore: AppDataStore
+
+    init(dataStore: AppDataStore = .shared) {
+        self.dataStore = dataStore
+
+        dataStore.$sessions
+            .assign(to: &$sessions)
+
+        dataStore.$clients
+            .map { Dictionary(uniqueKeysWithValues: $0.map { ($0.id, $0) }) }
+            .assign(to: &$clients)
+    }
 
     // Фильтрация по клиенту и дате
     var filteredSessions: [WorkoutSession] {
