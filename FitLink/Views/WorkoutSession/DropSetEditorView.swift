@@ -16,11 +16,10 @@ struct DropSetEditorView: View {
         NavigationStack {
             ScrollViewReader { proxy in
             List {
-                let enumerated = Array(viewModel.sets.enumerated())
-                ForEach(enumerated, id: \.element.id) { pair in
-                    let idx = pair.offset
+                ForEach(viewModel.sets) { set in
+                    let idx = index(for: set.id)
                     SetEditorRow(
-                        set: binding(for: pair.element.id),
+                        set: binding(for: set.id),
                         metrics: viewModel.metrics,
                         showLabels: false,
                         scrollProxy: proxy
@@ -32,7 +31,10 @@ struct DropSetEditorView: View {
                             .foregroundColor(.secondary)
                     }
                 }
-                .onDelete(perform: viewModel.deleteDrops)
+                .onDelete { offsets in
+                    let ids = offsets.compactMap { viewModel.sets[safe: $0]?.id }
+                    viewModel.deleteDrops(withIds: ids)
+                }
 
                 Button(action: viewModel.addDrop) {
                     Image(systemName: "plus")
@@ -83,6 +85,10 @@ struct DropSetEditorView: View {
         } else {
             return String(format: NSLocalizedString("DropSetView.DropStep", comment: "Drop %d"), index)
         }
+    }
+
+    private func index(for id: ExerciseSet.ID) -> Int {
+        viewModel.sets.firstIndex(where: { $0.id == id }) ?? 0
     }
 
     private func binding(for id: ExerciseSet.ID) -> Binding<ExerciseSet> {

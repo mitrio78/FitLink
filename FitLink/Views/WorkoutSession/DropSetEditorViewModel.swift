@@ -17,9 +17,9 @@ final class DropSetEditorViewModel: ObservableObject {
         }
     }
 
-    func deleteDrops(at offsets: IndexSet) {
+    func deleteDrops(withIds ids: [ExerciseSet.ID]) {
         withAnimation {
-            sets.remove(atOffsets: offsets)
+            sets.removeAll { ids.contains($0.id) }
         }
     }
 
