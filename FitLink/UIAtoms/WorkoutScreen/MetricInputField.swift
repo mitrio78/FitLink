@@ -43,7 +43,7 @@ struct MetricInputField: View {
                             .stroke(focused ? Theme.color.accent : Color.gray.opacity(0.3))
                     )
                     .onTapGesture { handleTap() }
-                    .onChange(of: text) { newValue in
+                    .onChange(of: text) { _, newValue in
                         text = newValue.trimLeadingZeros()
                         syncBinding()
                     }
@@ -57,7 +57,9 @@ struct MetricInputField: View {
         }
         .font(Theme.font.body.bold())
         .onAppear { text = formattedValue }
-        .onChange(of: focused) { if !$0 { commit() } }
+        .onChange(of: focused) { _, newValue in
+            if !newValue { commit() }
+        }
     }
 
     private var formattedValue: String {
