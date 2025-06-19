@@ -47,14 +47,7 @@ struct SetEditorRow: View {
     }
 
     private func presets(for type: ExerciseMetricType) -> [Double] {
-        switch type {
-        case .weight:
-            return [2.5, 5, 10]
-        case .reps:
-            return [1, 2]
-        default:
-            return []
-        }
+        [1, 2, 5, 10].map(Double.init)
     }
 }
 

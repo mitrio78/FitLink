@@ -44,6 +44,10 @@ struct MetricInputField: View {
                         .background(
                             RoundedRectangle(cornerRadius: Theme.radius.button)
                                 .stroke(focused ? accentColor : Theme.color.border)
+                                .background(
+                                    RoundedRectangle(cornerRadius: Theme.radius.button)
+                                        .fill(focused ? Theme.color.backgroundSecondary : Color.clear)
+                                )
                         )
                         .onTapGesture(count: 1) { handleTap() }
                         .onTapGesture(count: 2) { reset() }
@@ -79,20 +83,14 @@ struct MetricInputField: View {
         .onAppear { value = value.trimLeadingZeros() }
         .onChange(of: focused) { _, isFocused in
             if isFocused {
-                scrollProxy?.scrollTo(scrollId, anchor: .center)
+                withAnimation {
+                    scrollProxy?.scrollTo(scrollId, anchor: .bottom)
+                }
             } else {
                 commit()
             }
         }
-        .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button(NSLocalizedString("Common.Done", comment: "Done")) {
-                    commit()
-                    hideKeyboard()
-                }
-            }
-        }
+        .animation(.easeInOut(duration: 0.2), value: focused)
     }
 
     private func handleTap() {
