@@ -21,9 +21,17 @@ struct MetricEditorView: View {
             List {
                 ForEach(Array(viewModel.approaches.enumerated()), id: \.offset) { idx, approach in
                     VStack(alignment: .leading, spacing: Theme.spacing.small) {
-                        Button(action: { viewModel.editDrops(for: idx) }) {
+                        HStack(spacing: Theme.spacing.small) {
                             ApproachCardView(set: approachSet(from: approach), metrics: viewModel.metrics)
                                 .frame(height: 64)
+                            Button(action: { viewModel.editDrops(for: idx) }) {
+                                Image(systemName: "plus")
+                                    .frame(width: 64, height: 64)
+                                    .foregroundColor(.primary)
+                                    .background(Theme.color.backgroundSecondary)
+                                    .cornerRadius(Theme.radius.card)
+                            }
+                            .buttonStyle(.plain)
                         }
                         SetEditorRow(set: binding(for: idx), metrics: viewModel.metrics)
                     }
@@ -43,6 +51,7 @@ struct MetricEditorView: View {
             }
             .listStyle(.plain)
             .navigationTitle(NSLocalizedString("MetricEditor.Title", comment: "Edit Sets"))
+            .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 if let idx = scrollToIndex {
                     DispatchQueue.main.async {

@@ -159,11 +159,11 @@
 "WorkoutExerciseEdit.AddAnotherExercise" = "Добавить ещё одно упражнение";
 
 /* Metric Editor */
-"MetricEditor.Title" = "Редактирование сетов";
+"MetricEditor.Title" = "Сеты";
 "MetricEditor.AddSet" = "Добавить сет";
 
 /* Drop editor */
-"DropEditor.Title" = "Редактирование дропов";
+"DropEditor.Title" = "Дропы";
 "DropEditor.AddDrop" = "Добавить дроп";
 
 /* Common */

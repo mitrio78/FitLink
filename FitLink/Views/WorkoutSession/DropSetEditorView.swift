@@ -16,7 +16,7 @@ struct DropSetEditorView: View {
         NavigationStack {
             List {
                 ForEach(viewModel.sets.indices, id: \.self) { idx in
-                    SetEditorRow(set: $viewModel.sets[idx], metrics: viewModel.metrics)
+                    SetEditorRow(set: $viewModel.sets[idx], metrics: viewModel.metrics, showLabels: false)
                         .listRowSeparator(.hidden)
                         .overlay(alignment: .topLeading) {
                             Text(label(for: idx))
@@ -25,7 +25,6 @@ struct DropSetEditorView: View {
                         }
                 }
                 .onDelete(perform: viewModel.deleteDrops)
-                .onMove(perform: viewModel.moveDrops)
 
                 Button(action: viewModel.addDrop) {
                     HStack {
@@ -40,7 +39,6 @@ struct DropSetEditorView: View {
             .navigationTitle(NSLocalizedString("DropEditor.Title", comment: "Edit Drops"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) { EditButton() }
                 ToolbarItem(placement: .cancellationAction) {
                     Button(NSLocalizedString("Common.Cancel", comment: "Cancel")) { dismiss() }
                 }
