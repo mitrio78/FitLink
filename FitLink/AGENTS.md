@@ -91,35 +91,21 @@ VStack {
 - `CommonServices/` contains small services like `DateFormatterService` and `WorkoutStore` (in‑memory store used in previews and feature screens).
 - `Stubs/` holds factories such as `MockData` and `clientsMock` for previews and local testing.
 
+### Temporary In-Memory AppDataStore
+
+- Provides a centralized source of truth for all app data during development.
+- All features must read and write data solely through `AppDataStore`.
+- Only SwiftUI Previews may use mock data directly.
+- This is a transitional mechanism to be replaced by a real data source like SwiftData or an API.
+
 ---
 
 ## 🔌 UIAtoms and Previews
 
 - Reusable UI building blocks live in `UIAtoms/` (e.g. `ClientRow`, `SearchBarWithFilter`, components of the workout screen). Keep them simple and styling-consistent.
 - Every view and atom should have SwiftUI `#Preview` definitions next to the implementation to aid design‑time testing.
-
 ---
 
-## 🧠 Temporary AppDataStore – Development Guide
-
-### 📌 Purpose
-
-To centralize all access to application data (users, workouts, exercises, etc.) during development in a single in-memory store. This allows consistent data usage across features, simplifies development, and prepares the app for future migration to a real persistence layer (e.g., SwiftData, remote API).
-
-### ✅ Principles
-
-- All runtime data access and mutation must go through `AppDataStore`.
-- The store acts as a single source of truth for all features.
-- SwiftUI views should use it via `@EnvironmentObject` or as a shared instance.
-- Only Previews are allowed to use mock data directly (`.mock()`, `.stub()`, etc.).
-- No feature module should generate or hold its own mock data.
-- All editors, interactors, and view models must read and write through the store.
-
-### 🎯 Migration Goal
-
-Once ready, `AppDataStore` can be replaced with a real persistence layer (SwiftData, CloudKit, Firebase, or networking). This will require minimal changes to the rest of the app if all access flows through the centralized store.
-
----
 
 ## ✅ Summary Checklist for New Code
 
