@@ -18,8 +18,13 @@ final class DropSetEditorViewModel: ObservableObject {
     }
 
     func deleteDrops(at offsets: IndexSet) {
+        // `List` supplies indexes starting from the first deletable row.
+        // Since the main set (row 0) isn't deletable, shift each index by +1
+        // to target the matching element in `sets`.
+        let actualOffsets = IndexSet(offsets.map { $0 + 1 })
+
         withAnimation {
-            sets.remove(atOffsets: offsets)
+            sets.remove(atOffsets: actualOffsets)
         }
     }
 
