@@ -7,10 +7,15 @@
 import SwiftUI
 
 struct WorkoutSessionView: View {
+    @EnvironmentObject private var dataStore: AppDataStore
     @StateObject private var viewModel: WorkoutSessionViewModel
 
+    init(session: WorkoutSession, client: Client?) {
+        _viewModel = StateObject(wrappedValue: WorkoutSessionViewModel(session: session, client: client, dataStore: AppDataStore.shared))
+    }
+
     init(session: WorkoutSession, client: Client?, store: WorkoutStore) {
-        _viewModel = StateObject(wrappedValue: WorkoutSessionViewModel(session: session, client: client, store: store))
+        self.init(session: session, client: client)
     }
     
     var body: some View {

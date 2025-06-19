@@ -4,8 +4,10 @@ import SwiftUI
 @MainActor
 final class WorkoutsViewModel: ObservableObject {
     @Published var workouts: [WorkoutSession]
+    private let dataStore: AppDataStore
 
-    init(workouts: [WorkoutSession] = MockData.complexMockSessions) {
-        self.workouts = workouts
+    init(dataStore: AppDataStore = .shared) {
+        self.dataStore = dataStore
+        self.workouts = dataStore.sessions
     }
 }
