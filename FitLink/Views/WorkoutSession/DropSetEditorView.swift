@@ -17,7 +17,8 @@ struct DropSetEditorView: View {
             ScrollViewReader { proxy in
             List {
                 let enumerated = Array(viewModel.sets.enumerated())
-                ForEach(enumerated, id: \.element.id) { idx, pair in
+                ForEach(enumerated, id: \.element.id) { pair in
+                    let idx = pair.offset
                     SetEditorRow(
                         set: binding(for: pair.element.id),
                         metrics: viewModel.metrics,

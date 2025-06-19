@@ -19,7 +19,9 @@ struct MetricEditorView: View {
         NavigationStack {
             ScrollViewReader { proxy in
             List {
-                ForEach(Array(viewModel.approaches.enumerated()), id: \.element.id) { idx, approach in
+                ForEach(Array(viewModel.approaches.enumerated()), id: \.element.id) { pair in
+                    let idx = pair.offset
+                    let approach = pair.element
                     VStack(alignment: .leading, spacing: Theme.spacing.small) {
                         HStack(spacing: Theme.spacing.small) {
                             ApproachCardView(set: approachSet(from: approach), metrics: viewModel.metrics)
