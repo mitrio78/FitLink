@@ -16,17 +16,20 @@ struct DropSetEditorView: View {
         NavigationStack {
             ScrollViewReader { proxy in
             List {
-                ForEach(Array(viewModel.sets.enumerated()), id: \.element.id) { idx, pair in
-                    SetEditorRow(set: binding(for: pair.element.id),
-                                 metrics: viewModel.metrics,
-                                 showLabels: false,
-                                 scrollProxy: proxy)
-                        .listRowSeparator(.hidden)
-                        .overlay(alignment: .topLeading) {
-                            Text(label(for: idx))
-                                .font(Theme.font.caption)
-                                .foregroundColor(.secondary)
-                        }
+                let enumerated = Array(viewModel.sets.enumerated())
+                ForEach(enumerated, id: \.element.id) { idx, pair in
+                    SetEditorRow(
+                        set: binding(for: pair.element.id),
+                        metrics: viewModel.metrics,
+                        showLabels: false,
+                        scrollProxy: proxy
+                    )
+                    .listRowSeparator(.hidden)
+                    .overlay(alignment: .topLeading) {
+                        Text(label(for: idx))
+                            .font(Theme.font.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
                 .onDelete(perform: viewModel.deleteDrops)
 
