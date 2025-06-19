@@ -17,6 +17,7 @@ struct MetricInputField: View {
     @FocusState private var focused: Bool
 
     private let size: CGFloat = 48
+    private let buttonRowHeight: CGFloat = 40
 
     var body: some View {
         VStack(spacing: Theme.spacing.small) {
@@ -78,7 +79,7 @@ struct MetricInputField: View {
                 }
             }
         } //: VStack
-        .padding(.bottom, focused && !presets.isEmpty ? Theme.spacing.medium : 0)
+        .padding(.bottom, focused && !presets.isEmpty ? buttonRowHeight + Theme.spacing.medium : 0)
         .id(scrollId)
         .font(Theme.font.body.bold())
         .onAppear { value = value.trimLeadingZeros() }
@@ -134,7 +135,7 @@ struct MetricInputField: View {
         withAnimation {
             scrollProxy?.scrollTo(scrollId, anchor: .bottom)
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             withAnimation {
                 scrollProxy?.scrollTo(scrollId, anchor: .bottom)
             }

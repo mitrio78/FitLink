@@ -16,7 +16,7 @@ struct DropSetEditorView: View {
         NavigationStack {
             ScrollViewReader { proxy in
             List {
-                ForEach(viewModel.sets.indices, id: \.self) { idx in
+                ForEach(Array(viewModel.sets.enumerated()), id: \.element.id) { idx, _ in
                     SetEditorRow(set: $viewModel.sets[idx],
                                  metrics: viewModel.metrics,
                                  showLabels: false,
