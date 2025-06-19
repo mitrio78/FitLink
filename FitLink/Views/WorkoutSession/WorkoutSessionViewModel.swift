@@ -14,15 +14,20 @@ struct EditingContext: Identifiable {
 final class WorkoutSessionViewModel: ObservableObject {
     @Published var showExerciseEdit: Bool = false
     @Published var editingContext: EditingContext? = nil
-    let session: WorkoutSession
+    @Published var activeMetricEditorExercise: ExerciseInstance? = nil
+    var metricEditorStartIndex: Int? = nil
+    @Published var expandedGroupId: UUID? = nil
+    @Published var session: WorkoutSession
     let client: Client?
+    private let dataStore: AppDataStore
 
     @Published private(set) var exercises: [ExerciseInstance]
     @Published private(set) var setGroups: [SetGroup]
 
-    init(session: WorkoutSession, client: Client?) {
+    init(session: WorkoutSession, client: Client?, dataStore: AppDataStore = .shared) {
         self.session = session
         self.client = client
+        self.dataStore = dataStore
         self.exercises = session.exerciseInstances
         self.setGroups = session.setGroups ?? []
     }
@@ -42,6 +47,22 @@ final class WorkoutSessionViewModel: ObservableObject {
     func addExerciseTapped() {
         editingContext = nil
         showExerciseEdit = true
+    }
+
+    func editMetrics(for exerciseId: UUID, approachIndex: Int? = nil) {
+        if let instance = exercises.first(where: { $0.id == exerciseId }) {
+            activeMetricEditorExercise = instance
+            metricEditorStartIndex = approachIndex
+        }
+    }
+
+    func updateMetrics(for exerciseId: UUID, approaches: [Approach]) {
+        if let idx = exercises.firstIndex(where: { $0.id == exerciseId }) {
+            exercises[idx].approaches = approaches
+            save()
+        }
+        activeMetricEditorExercise = nil
+        metricEditorStartIndex = nil
     }
 
     func editItemTapped(withId id: UUID) {
@@ -86,12 +107,15 @@ final class WorkoutSessionViewModel: ObservableObject {
         switch result {
         case .single(let instance):
             exercises.append(instance)
+            expandedGroupId = nil
         case .superset(let group, let instances):
             setGroups.append(group)
             exercises.append(contentsOf: instances)
+            expandedGroupId = group.id
         case .deleted:
-            break
+            expandedGroupId = nil
         }
+        save()
     }
 
     func replaceItem(_ result: WorkoutExerciseEditResult) {
@@ -120,6 +144,7 @@ final class WorkoutSessionViewModel: ObservableObject {
             }
             instance.section = context.instances.first?.section ?? .main
             exercises.insert(instance, at: insertionIndex)
+            expandedGroupId = nil
         case .superset(var group, var instances):
             if let oldGroup = context.group { group.notes = oldGroup.notes }
             for i in 0..<instances.count {
@@ -136,10 +161,12 @@ final class WorkoutSessionViewModel: ObservableObject {
             }
             setGroups.append(group)
             exercises.insert(contentsOf: instances, at: insertionIndex)
+            expandedGroupId = group.id
         case .deleted:
             // Handled outside this switch
-            break
+            expandedGroupId = nil
         }
+        save()
     }
 
     func completeEdit(_ result: WorkoutExerciseEditResult) {
@@ -156,6 +183,7 @@ final class WorkoutSessionViewModel: ObservableObject {
             addItem(result)
         }
         editingContext = nil
+        save()
     }
 
     func deleteItem(withId id: UUID) {
@@ -165,5 +193,12 @@ final class WorkoutSessionViewModel: ObservableObject {
         } else {
             exercises.removeAll { $0.id == id }
         }
+        save()
+    }
+
+    private func save() {
+        session.exerciseInstances = exercises
+        session.setGroups = setGroups
+        dataStore.updateSession(session)
     }
 }

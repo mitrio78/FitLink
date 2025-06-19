@@ -96,4 +96,5 @@ struct ScheduleView: View {
 
 #Preview {
     ScheduleView()
+        .environmentObject(WorkoutStore())
 }

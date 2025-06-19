@@ -91,14 +91,21 @@ VStack {
 - `CommonServices/` contains small services like `DateFormatterService` and `WorkoutStore` (in‑memory store used in previews and feature screens).
 - `Stubs/` holds factories such as `MockData` and `clientsMock` for previews and local testing.
 
+### Temporary In-Memory AppDataStore
+
+- Provides a centralized source of truth for all app data during development.
+- All features must read and write data solely through `AppDataStore`.
+- Only SwiftUI Previews may use mock data directly.
+- This is a transitional mechanism to be replaced by a real data source like SwiftData or an API.
+
 ---
 
 ## 🔌 UIAtoms and Previews
 
 - Reusable UI building blocks live in `UIAtoms/` (e.g. `ClientRow`, `SearchBarWithFilter`, components of the workout screen). Keep them simple and styling-consistent.
 - Every view and atom should have SwiftUI `#Preview` definitions next to the implementation to aid design‑time testing.
-
 ---
+
 
 ## ✅ Summary Checklist for New Code
 

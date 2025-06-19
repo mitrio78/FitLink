@@ -10,10 +10,21 @@ import Combine
 
 @MainActor
 final class TrainerDashboardViewModel: ObservableObject {
-    @Published var clients: [Client] = clientsMock
-    @Published var sessions: [WorkoutSession] = MockData.complexMockSessions
+    @Published var clients: [Client] = []
+    @Published var sessions: [WorkoutSession] = []
     @Published var searchText: String = ""
     @Published var currentFilter: FilterType = .none
+    private let dataStore: AppDataStore
+
+    init(dataStore: AppDataStore = .shared) {
+        self.dataStore = dataStore
+
+        dataStore.$clients
+            .assign(to: &$clients)
+
+        dataStore.$sessions
+            .assign(to: &$sessions)
+    }
 
     // Динамический поиск
     var filteredClients: [Client] {

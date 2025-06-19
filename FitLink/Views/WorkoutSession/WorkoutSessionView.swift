@@ -7,10 +7,15 @@
 import SwiftUI
 
 struct WorkoutSessionView: View {
+    @EnvironmentObject private var dataStore: AppDataStore
     @StateObject private var viewModel: WorkoutSessionViewModel
 
     init(session: WorkoutSession, client: Client?) {
-        _viewModel = StateObject(wrappedValue: WorkoutSessionViewModel(session: session, client: client))
+        _viewModel = StateObject(wrappedValue: WorkoutSessionViewModel(session: session, client: client, dataStore: AppDataStore.shared))
+    }
+
+    init(session: WorkoutSession, client: Client?, store: WorkoutStore) {
+        self.init(session: session, client: client)
     }
     
     var body: some View {
@@ -41,6 +46,11 @@ struct WorkoutSessionView: View {
         .sheet(isPresented: $viewModel.showExerciseEdit) {
             WorkoutExerciseEditView(initialExercises: viewModel.editingContext?.exercises ?? []) { result in
                 viewModel.completeEdit(result)
+            }
+        }
+        .sheet(item: $viewModel.activeMetricEditorExercise) { instance in
+            MetricEditorView(exercise: instance, scrollToIndex: viewModel.metricEditorStartIndex) { approaches in
+                viewModel.updateMetrics(for: instance.id, approaches: approaches)
             }
         }
     }
@@ -74,7 +84,7 @@ struct WorkoutSessionView: View {
     private func workoutSection(_ section: WorkoutSection, exercises: [ExerciseInstance]) -> some View {
         if !exercises.isEmpty {
             Section {
-                ForEach(exercises) { ex in
+                ForEach(exercises, id: \.id) { ex in
                     if let group = viewModel.group(for: ex), viewModel.isFirstExerciseInGroup(ex) {
                         let groupExercises = viewModel.groupExercises(for: group)
                         WorkoutExerciseRowView(
@@ -82,15 +92,23 @@ struct WorkoutSessionView: View {
                             group: group,
                             groupExercises: groupExercises,
                             onEdit: { viewModel.editItemTapped(withId: group.id) },
-                            onDelete: { viewModel.deleteItem(withId: group.id) }
+                            onDelete: { viewModel.deleteItem(withId: group.id) },
+                            onSetsEdit: { ex, idx in viewModel.editMetrics(for: ex.id, approachIndex: idx) },
+                            initiallyExpanded: viewModel.expandedGroupId == group.id
                         )
+                        .onAppear {
+                            if viewModel.expandedGroupId == group.id {
+                                viewModel.expandedGroupId = nil
+                            }
+                        }
                         .listRowSeparator(.hidden)
                     } else if !viewModel.isExerciseInAnyGroup(ex) {
                         WorkoutExerciseRowView(
                             exercise: ex,
                             group: nil,
                             onEdit: { viewModel.editItemTapped(withId: ex.id) },
-                            onDelete: { viewModel.deleteItem(withId: ex.id) }
+                            onDelete: { viewModel.deleteItem(withId: ex.id) },
+                            onSetsEdit: { ex, _ in viewModel.editMetrics(for: ex.id) }
                         )
                         .listRowSeparator(.hidden)
                     }
@@ -105,13 +123,13 @@ struct WorkoutSessionView: View {
 
 #Preview("Light") {
     NavigationStack {
-        WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0])
+        WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
     }
 }
 
 #Preview("Dark") {
     NavigationStack {
-        WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0])
+        WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
     }
     .preferredColorScheme(.dark)
 }

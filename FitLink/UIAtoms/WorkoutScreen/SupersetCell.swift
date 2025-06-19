@@ -4,13 +4,32 @@ import SwiftUI
 struct SupersetCell: View {
     let group: SetGroup
     let exercises: [ExerciseInstance]
+    var onEdit: () -> Void = {}
+    var onSetsEdit: (ExerciseInstance, Int) -> Void = { _, _ in }
+    var initiallyExpanded: Bool = false
 
-    @State private var isExpanded = false
+    @State private var isExpanded: Bool
 
-    private var approaches: [[(exercise: ExerciseInstance, approach: Approach)]] {
-        let minCount = exercises.map { $0.approaches.count }.min() ?? 0
-        return (0..<minCount).map { index in
-            exercises.map { ($0, $0.approaches[index]) }
+    init(group: SetGroup,
+         exercises: [ExerciseInstance],
+         initiallyExpanded: Bool = false,
+         onEdit: @escaping () -> Void = {},
+         onSetsEdit: @escaping (ExerciseInstance, Int) -> Void = { _, _ in }) {
+        self.group = group
+        self.exercises = exercises
+        self.onEdit = onEdit
+        self.onSetsEdit = onSetsEdit
+        self.initiallyExpanded = initiallyExpanded
+        _isExpanded = State(initialValue: initiallyExpanded)
+    }
+
+    private var approaches: [[(exercise: ExerciseInstance, approach: Approach?)]] {
+        let maxCount = exercises.map { $0.approaches.count }.max() ?? 0
+        if maxCount == 0 {
+            return [exercises.map { ($0, nil) }]
+        }
+        return (0..<maxCount).map { index in
+            exercises.map { ($0, $0.approaches[safe: index]) }
         }
     }
 
@@ -19,7 +38,7 @@ struct SupersetCell: View {
     }
 
     private var summary: String? {
-        let count = approaches.count
+        let count = exercises.map { $0.approaches.count }.max() ?? 0
         guard count > 1 else { return nil }
         return String(format: NSLocalizedString("WorkoutSetGroup.RepsMultiplier", comment: "× %d"), count)
     }
@@ -30,13 +49,15 @@ struct SupersetCell: View {
             if isExpanded {
                 VStack(alignment: .leading, spacing: Theme.spacing.small * 1.5) {
                     ForEach(Array(approaches.enumerated()), id: \.offset) { idx, data in
-                        SupersetApproachView(index: idx + 1, items: data)
-                            .padding(Theme.spacing.small)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(Theme.color.supersetSubcardBackground)
-                            )
+                        SupersetApproachView(index: idx + 1, items: data) { ex in
+                            onSetsEdit(ex, idx)
+                        }
+                        .padding(Theme.spacing.small)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(Theme.color.supersetSubcardBackground)
+                        )
                     }
                 }
                 .padding(.top, Theme.spacing.small)

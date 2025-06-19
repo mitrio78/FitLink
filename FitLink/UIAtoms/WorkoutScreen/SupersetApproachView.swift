@@ -1,15 +1,10 @@
-//
-//  Untitled.swift
-//  FitLink
-//
-//  Created by Дмитрий Гришечко on 16.06.2025.
-//
 import SwiftUI
 
 /// View representing a single approach in the superset.
 struct SupersetApproachView: View {
     let index: Int
-    let items: [(exercise: ExerciseInstance, approach: Approach)]
+    let items: [(exercise: ExerciseInstance, approach: Approach?)]
+    var onSetsEdit: (ExerciseInstance) -> Void = { _ in }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.spacing.small) {
@@ -24,18 +19,27 @@ struct SupersetApproachView: View {
                 VStack(alignment: .leading, spacing: Theme.spacing.small / 2) {
                     Text(item.exercise.exercise.name)
                         .font(Theme.font.body).bold()
-                    ExerciseSetMetricsView(
-                        sets: [approachSet(from: item.approach)],
-                        metrics: item.exercise.exercise.metrics
+                    ApproachListView(
+                        sets: combinedSets(for: item.approach),
+                        metrics: item.exercise.exercise.metrics,
+                        onTap: { onSetsEdit(item.exercise) }
                     )
                 }
             }
-        }
+        } //: VStack
     }
 
-    private func approachSet(from approach: Approach) -> ExerciseSet {
+    private func combinedSets(for approach: Approach?) -> [ExerciseSet] {
+        guard let approach else { return [] }
         var first = approach.sets.first ?? ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil)
         first.drops = Array(approach.sets.dropFirst())
-        return first
+        return [first]
     }
+}
+
+#Preview {
+    let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
+                   ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
+    let ex = ExerciseInstance(id: UUID(), exercise: Exercise(id: UUID(), name: "Test", variations: [], muscleGroups: [.chest], metrics: metrics), approaches: [], groupId: nil, notes: nil)
+    return SupersetApproachView(index: 1, items: [(ex, nil)])
 }
