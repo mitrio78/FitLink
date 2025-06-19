@@ -50,6 +50,9 @@ struct MetricEditorView: View {
                 }
             }
             .listStyle(.plain)
+            .simultaneousGesture(
+                TapGesture().onEnded { _ in hideKeyboard() }
+            )
             .navigationTitle(NSLocalizedString("MetricEditor.Title", comment: "Edit Sets"))
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
@@ -65,6 +68,7 @@ struct MetricEditorView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(NSLocalizedString("Common.Done", comment: "Done")) {
+                        hideKeyboard()
                         onComplete(viewModel.approaches)
                         dismiss()
                     }

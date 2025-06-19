@@ -36,6 +36,9 @@ struct DropSetEditorView: View {
                 }
             }
             .listStyle(.plain)
+            .simultaneousGesture(
+                TapGesture().onEnded { _ in hideKeyboard() }
+            )
             .navigationTitle(NSLocalizedString("DropEditor.Title", comment: "Edit Drops"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -44,6 +47,7 @@ struct DropSetEditorView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(NSLocalizedString("Common.Done", comment: "Done")) {
+                        hideKeyboard()
                         onComplete(viewModel.sets)
                         dismiss()
                     }

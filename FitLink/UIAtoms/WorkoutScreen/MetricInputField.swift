@@ -8,6 +8,7 @@ struct MetricInputField: View {
 
     @State private var text: String = ""
     @FocusState private var focused: Bool
+    var onCommit: (() -> Void)? = nil
 
     var body: some View {
         HStack {
@@ -23,10 +24,14 @@ struct MetricInputField: View {
                 TextField("0", text: $text)
                     .focused($focused)
                     .keyboardType(.decimalPad)
-                    .multilineTextAlignment(.trailing)
+                    .multilineTextAlignment(.center)
+                    .frame(minWidth: 48, minHeight: 48)
+                    .padding(.horizontal, 4)
+                    .background(RoundedRectangle(cornerRadius: 8).stroke(focused ? Theme.color.accent : Color.gray.opacity(0.3)))
                     .onTapGesture { handleTap() }
                     .onChange(of: text) { newValue in
                         text = newValue.trimLeadingZeros()
+                        syncBinding()
                     }
                 if metric.type != .reps {
                     Text(metric.unit?.displayName ?? "")
@@ -34,10 +39,10 @@ struct MetricInputField: View {
                 }
             }
             .font(Theme.font.body.bold())
-            .padding(6)
-            .background(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.3)))
         }
-        .onAppear { text = formattedValue }
+        .onAppear {
+            text = formattedValue
+        }
         .onChange(of: focused) { newValue in
             if !newValue { commit() }
         }
@@ -59,6 +64,14 @@ struct MetricInputField: View {
         DispatchQueue.main.async { self.focused = true }
     }
 
+    private func syncBinding() {
+        guard let number = Double(text), number != 0 else {
+            value = nil
+            return
+        }
+        value = number
+    }
+
     private func commit() {
         guard let number = Double(text), number != 0 else {
             value = nil
@@ -66,6 +79,7 @@ struct MetricInputField: View {
             return
         }
         value = number
+        onCommit?()
     }
 }
 
