@@ -32,8 +32,10 @@ struct DropSetEditorView: View {
                     }
                 }
                 .onDelete { offsets in
-                    let ids = offsets.compactMap { viewModel.sets[safe: $0]?.id }
-                    viewModel.deleteDrops(withIds: ids)
+                    withAnimation {
+                        let ids = offsets.compactMap { viewModel.sets[safe: $0]?.id }
+                        viewModel.deleteDrops(withIds: ids)
+                    }
                 }
 
                 Button(action: viewModel.addDrop) {
@@ -93,7 +95,12 @@ struct DropSetEditorView: View {
 
     private func binding(for id: ExerciseSet.ID) -> Binding<ExerciseSet> {
         Binding(
-            get: { viewModel.sets.first(where: { $0.id == id }) ?? ExerciseSet(id: id, metricValues: [:], notes: nil, drops: nil) },
+            get: {
+                guard let index = viewModel.sets.firstIndex(where: { $0.id == id }) else {
+                    preconditionFailure("binding not found for set id \(id)")
+                }
+                return viewModel.sets[index]
+            },
             set: { newValue in
                 if let index = viewModel.sets.firstIndex(where: { $0.id == id }) {
                     viewModel.sets[index] = newValue
