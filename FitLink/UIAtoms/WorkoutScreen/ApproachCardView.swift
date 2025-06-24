@@ -19,26 +19,29 @@ struct ApproachCardView: View {
     }
 
     var body: some View {
-        HStack(spacing: 4) {
+        let innerSpacing = Theme.isCompactUIEnabled ? Theme.spacing.compactInnerSpacing : 4
+        let outerPadding = Theme.isCompactUIEnabled ? Theme.spacing.compactPadding : Theme.spacing.small
+        let corner = Theme.isCompactUIEnabled ? Theme.radius.compact : Theme.radius.card
+        HStack(spacing: innerSpacing) {
             let drops = [set] + (set.drops ?? [])
             ForEach(drops.indices, id: \.self) { idx in
                 let drop = drops[idx]
-                VStack(spacing: 4) {
+                VStack(spacing: innerSpacing) {
                     if let repsMetric {
                         let val = drop.metricValues[.reps] ?? 0
                         Text(ExerciseMetric.formattedMetric(val, metric: repsMetric))
-                            .font(Theme.font.metrics1.bold())
+                            .font(Theme.isCompactUIEnabled ? Theme.font.compactMetric.bold() : Theme.font.metrics1.bold())
                             .foregroundColor(.primary)
                     }
                     if let weightMetric {
                         let val = drop.metricValues[.weight] ?? 0
                         Text(ExerciseMetric.formattedMetric(val, metric: weightMetric))
-                            .font(Theme.font.metrics2)
+                            .font(Theme.isCompactUIEnabled ? Theme.font.compactMetric : Theme.font.metrics2)
                             .foregroundColor(.primary)
                     } else if let timeMetric {
                         let val = drop.metricValues[.time] ?? 0
                         Text(ExerciseMetric.formattedMetric(val, metric: timeMetric))
-                            .font(Theme.font.metrics2)
+                            .font(Theme.isCompactUIEnabled ? Theme.font.compactMetric : Theme.font.metrics2)
                             .foregroundColor(.primary)
                     }
                 }
@@ -49,10 +52,10 @@ struct ApproachCardView: View {
                 }
             }
         }
-        .padding(Theme.spacing.small)
+        .padding(outerPadding)
         .frame(minWidth: 64, maxHeight: .infinity)
         .background(Theme.color.textSecondary.opacity(0.05))
-        .cornerRadius(Theme.radius.card)
+        .cornerRadius(corner)
         .contentShape(Rectangle())
         .onTapGesture { onTap(set.id) }
     }

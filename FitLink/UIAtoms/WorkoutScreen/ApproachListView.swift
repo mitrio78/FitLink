@@ -11,8 +11,10 @@ struct ApproachListView: View {
     private var gridRows: [GridItem] { [GridItem(.fixed(64))] }
 
     var body: some View {
+        let innerSpacing = Theme.isCompactUIEnabled ? Theme.spacing.compactInnerSpacing : Theme.spacing.small
+        let verticalPadding = Theme.isCompactUIEnabled ? Theme.spacing.compactPadding : Theme.spacing.small
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHGrid(rows: gridRows, spacing: Theme.spacing.small) {
+            LazyHGrid(rows: gridRows, spacing: innerSpacing) {
                 ForEach(sets) { set in
                     ApproachCardView(set: set, metrics: metrics) { id in
                         onSetTap(id)
@@ -24,7 +26,7 @@ struct ApproachListView: View {
                         .frame(width: 64, height: 64)
                 }
             }
-            .padding(.vertical, Theme.spacing.small)
+            .padding(.vertical, verticalPadding)
         } //: ScrollView
     }
 }
@@ -41,7 +43,7 @@ private struct AddSetButton: View {
         .buttonStyle(ScaleButtonStyle())
         .foregroundColor(.secondary)
         .background(Theme.color.textSecondary.opacity(0.1))
-        .cornerRadius(Theme.radius.card)
+        .cornerRadius(Theme.isCompactUIEnabled ? Theme.radius.compact : Theme.radius.card)
         .accessibilityLabel(NSLocalizedString("WorkoutExerciseEdit.AddSet", comment: "Add Set"))
     }
 }

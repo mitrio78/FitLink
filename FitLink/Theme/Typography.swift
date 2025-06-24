@@ -10,4 +10,10 @@ enum AppTypography {
     static let metadata = Font.system(size: 12, weight: .light)
     static let metrics1 = Font.system(size: 16, weight: .bold)
     static let metrics2 = Font.system(size: 16, weight: .semibold)
+
+    /// Metric font used in compact mode.
+    static let compactMetric = Font.system(size: 14, weight: .semibold)
+
+    /// Section header font for compact mode.
+    static let compactSectionHeader = Font.system(size: 14, weight: .medium)
 }

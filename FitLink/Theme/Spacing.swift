@@ -7,4 +7,10 @@ enum AppSpacing {
     static let extraLarge: CGFloat = 32
     static let sheetTopPadding: CGFloat = 4
     static let sheetBottomPadding: CGFloat = 4
+
+    /// Padding used when compact UI mode is enabled.
+    static let compactPadding: CGFloat = 8
+
+    /// Spacing between UI elements in compact mode.
+    static let compactInnerSpacing: CGFloat = 4
 }

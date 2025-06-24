@@ -7,4 +7,7 @@ enum Theme {
     static let radius = AppRadius.self
     static let shadow = AppShadows.self
     static let size = AppSize.self
+
+    /// Flag controlling the compact UI mode.
+    static var isCompactUIEnabled: Bool = true
 }

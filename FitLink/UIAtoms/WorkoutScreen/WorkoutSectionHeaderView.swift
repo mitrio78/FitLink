@@ -5,7 +5,7 @@ struct WorkoutSectionHeaderView: View {
     let title: String
     var body: some View {
         Text(title)
-            .font(Theme.font.subheading)
+            .font(Theme.isCompactUIEnabled ? Theme.font.compactSectionHeader : Theme.font.subheading)
             .foregroundColor(Theme.color.textSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
