@@ -5,24 +5,23 @@ struct CustomNumberPadView: View {
     let metrics: [ExerciseMetric]
     @Binding var metricValues: [ExerciseMetric.ID: Double]
     var onDone: () -> Void
-    var onCancel: (() -> Void)? = nil
 
     @State private var input: String = ""
     @State private var selectedMetricId: ExerciseMetric.ID
     @State private var metricUnits: [ExerciseMetric.ID: UnitType]
     @State private var selectedUnit: UnitType
-
-    init(metrics: [ExerciseMetric],
-         values: Binding<[ExerciseMetric.ID: Double]>,
-         onDone: @escaping () -> Void,
-         onCancel: (() -> Void)? = nil) {
+    
+    init(
+        metrics: [ExerciseMetric],
+        values: Binding<[ExerciseMetric.ID: Double]>,
+        onDone: @escaping () -> Void
+    ) {
         let sorted = metrics.sorted { (lhs: ExerciseMetric, rhs: ExerciseMetric) in
             lhs.type.sortIndex < rhs.type.sortIndex
         }
         self.metrics = sorted
         self._metricValues = values
         self.onDone = onDone
-        self.onCancel = onCancel
 
         let firstMetric = sorted.first!
         let defaultUnits: [ExerciseMetric.ID: UnitType] =
@@ -101,7 +100,7 @@ struct CustomNumberPadView: View {
     }
 
     var body: some View {
-        VStack(spacing: Theme.spacing.large) {
+        VStack(spacing: Theme.spacing.small) {
             topSection
             numberPad
             Button(NSLocalizedString("Common.Done", comment: "Done")) {
@@ -116,71 +115,51 @@ struct CustomNumberPadView: View {
             .foregroundColor(.white)
             .cornerRadius(Theme.radius.button)
         } //: VStack
-        .padding(.horizontal, Theme.spacing.large)
-        .padding(.bottom, Theme.spacing.large)
+        .padding(.horizontal, Theme.spacing.small)
+        .padding(.top, 4)
+        .padding(.bottom, 4)
         .background(Theme.color.background)
         .cornerRadius(Theme.radius.card)
-        .safeAreaInset(edge: .top) {
-            Spacer().frame(height: Theme.spacing.medium)
-        }
-        .safeAreaInset(edge: .bottom) {
-            Spacer().frame(height: Theme.spacing.large)
-        }
+//        .safeAreaInset(edge: .top) {
+//            Spacer().frame(height: Theme.spacing.small)
+//        }
+//        .safeAreaInset(edge: .bottom) {
+//            Spacer().frame(height: Theme.spacing.small)
+//        }
     }
 
     private var topSection: some View {
         VStack(spacing: Theme.spacing.small) {
             HStack {
                 Spacer()
-                if let onCancel {
-                    Button(action: onCancel) {
-                        Image(systemName: "xmark")
-                            .imageScale(.medium)
-                            .padding(8)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .foregroundColor(.secondary)
-                }
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color.secondary.opacity(0.4))
+                    .frame(width: 40, height: 4)
+                Spacer()
             } //: HStack
-
+            .padding(.top, 4)
+            .padding(.bottom, 2)
+ 
             Picker("", selection: metricSelection) {
                 ForEach(metrics, id: \.id) { metric in
                     Text(metric.displayName).tag(metric.id)
                 }
             }
             .pickerStyle(.segmented)
-
-            Picker("", selection: $selectedUnit) {
-                ForEach(unitOptions, id: \.self) { unit in
-                    Text(unit.displayName).tag(unit)
-                }
-            }
-           .pickerStyle(.segmented)
-            .onChange(of: selectedUnit) { _, newUnit in
-                metricUnits[selectedMetricId] = newUnit
-            }
-
-            Text(input.isEmpty ? "0" : input)
+            
+            Text(input.isEmpty ? "0" : input + " \(inputLabel ?? "")")
                 .font(Theme.font.titleLarge.monospacedDigit())
                 .frame(maxWidth: .infinity, alignment: .trailing)
-                .padding()
+                .padding(Theme.spacing.medium)
                 .background(Theme.color.backgroundSecondary)
                 .cornerRadius(Theme.radius.card)
-
-            if let label = inputLabel {
-                Text(label)
-                    .font(Theme.font.caption)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-            }
         } //: VStack
     }
 
     private var numberPad: some View {
-        VStack(spacing: Theme.spacing.medium) {
+        VStack(spacing: Theme.spacing.small) {
             ForEach(keys, id: \.self) { row in
-                HStack(spacing: Theme.spacing.medium) {
+                HStack(spacing: Theme.spacing.small) {
                     ForEach(row, id: \.self) { key in
                         Button(action: { handleKey(key) }) {
                             Text(key)

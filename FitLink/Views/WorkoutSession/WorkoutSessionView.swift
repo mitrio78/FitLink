@@ -57,8 +57,7 @@ struct WorkoutSessionView: View {
                 ),
                 onDone: {
                     viewModel.saveEditedSet()
-                },
-                onCancel: { viewModel.activeSetEdit = nil }
+                }
             )
             .presentationDetents([.fraction(0.65)])
         }
