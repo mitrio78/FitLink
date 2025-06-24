@@ -8,9 +8,15 @@ enum AppSpacing {
     static let sheetTopPadding: CGFloat = 4
     static let sheetBottomPadding: CGFloat = 4
 
-    /// Padding used when compact UI mode is enabled.
-    static let compactPadding: CGFloat = 8
+    /// Padding around workout blocks when compact UI mode is enabled.
+    static let compactBlockPadding: CGFloat = 8
 
-    /// Spacing between UI elements in compact mode.
+    /// Base spacing between inner UI elements in compact mode.
     static let compactInnerSpacing: CGFloat = 4
+
+    /// Spacing used between metric items and blocks in compact mode.
+    static let compactMetricSpacing: CGFloat = 2
+
+    /// Spacing between set rows when compact UI is active.
+    static let compactSetRowSpacing: CGFloat = 4
 }

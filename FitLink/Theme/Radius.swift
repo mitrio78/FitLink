@@ -5,6 +5,6 @@ enum AppRadius {
     static let button: CGFloat = 16
     static let image: CGFloat = 8
 
-    /// Radius used for small pills in compact mode.
-    static let compact: CGFloat = 8
+    /// Radius used for set metric cells in compact mode.
+    static let compactSetCell: CGFloat = 8
 }

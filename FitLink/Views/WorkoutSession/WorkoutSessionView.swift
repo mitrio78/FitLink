@@ -145,14 +145,23 @@ struct WorkoutSessionView: View {
 }
 
 
-#Preview("Light") {
-    NavigationStack {
+#Preview("Default Light") {
+    Theme.isCompactUIEnabled = false
+    return NavigationStack {
         WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
     }
 }
 
-#Preview("Dark") {
-    NavigationStack {
+#Preview("Compact Light") {
+    Theme.isCompactUIEnabled = true
+    return NavigationStack {
+        WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
+    }
+}
+
+#Preview("Compact Dark") {
+    Theme.isCompactUIEnabled = true
+    return NavigationStack {
         WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
     }
     .preferredColorScheme(.dark)
