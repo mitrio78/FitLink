@@ -21,7 +21,7 @@ struct ApproachListView: View {
                 }
                 if !isLocked {
                     AddSetButton(action: onAddTap)
-                        .frame(height: 64)
+                        .frame(width: 64, height: 64)
                 }
             }
             .padding(.vertical, Theme.spacing.small)
@@ -36,7 +36,7 @@ private struct AddSetButton: View {
         Button(action: action) {
             Image(systemName: "plus")
                 .font(.title2)
-                .frame(minWidth: 64, maxHeight: .infinity)
+                .frame(width: 64, height: 64)
         }
         .buttonStyle(ScaleButtonStyle())
         .foregroundColor(.secondary)

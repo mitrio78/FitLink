@@ -112,7 +112,6 @@ struct MetricInputField: View {
 
     private func commit() {
         value = value.trimLeadingZeros()
-        if value == "0" { value = "" }
         if !value.isEmpty {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
