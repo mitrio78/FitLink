@@ -31,17 +31,19 @@ struct CustomNumberPadView: View {
         VStack(spacing: Theme.spacing.small / 2) {
             topSection
             numberPad
-            Button(NSLocalizedString("Common.Done", comment: "Done")) {
+            Button(action: {
                 commit()
                 onDone()
+            }) {
+                Text(NSLocalizedString("Common.Done", comment: "Done"))
+                    .font(Theme.font.titleSmall)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(viewModel.isValid ? Theme.color.accent : Theme.color.accent.opacity(0.3))
+                    .foregroundColor(.white)
+                    .cornerRadius(Theme.radius.button)
             }
             .disabled(!viewModel.isValid)
-            .font(Theme.font.titleSmall)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(viewModel.isValid ? Theme.color.accent : Theme.color.accent.opacity(0.3))
-            .foregroundColor(.white)
-            .cornerRadius(Theme.radius.button)
         } //: VStack
         .padding(.horizontal, Theme.spacing.small)
         .padding(.top, Theme.spacing.small)
@@ -131,6 +133,8 @@ struct CustomNumberPadView: View {
             CustomNumberPadView(metrics: metrics, values: $values, onDone: {})
         }
     }
+    // Preview uses the fixed height detent (~394 pt) to mimic the real sheet.
+    // Switch to `.fraction(0.52)` if testing on extremely small devices.
     return PreviewWrapper()
         .presentationDetents([.height(Theme.size.numberPadSheetHeight)])
 }
