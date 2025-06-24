@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 @MainActor
 struct DropEditContext: Identifiable {
@@ -18,7 +19,9 @@ final class MetricEditorViewModel: ObservableObject {
 
     func addApproach() {
         let emptySet = ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil)
-        approaches.append(Approach(sets: [emptySet]))
+        withAnimation {
+            approaches.append(Approach(sets: [emptySet]))
+        }
     }
 
     func removeApproach(at offsets: IndexSet) {

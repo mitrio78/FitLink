@@ -16,7 +16,7 @@ final class ScheduleViewModel: ObservableObject {
     @Published var isCalendarMode: Bool = true
     private let dataStore: AppDataStore
 
-    init(dataStore: AppDataStore = .shared) {
+    init(dataStore: AppDataStore) {
         self.dataStore = dataStore
 
         dataStore.$sessions

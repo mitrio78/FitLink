@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 @MainActor
 final class DropSetEditorViewModel: ObservableObject {
@@ -11,11 +12,15 @@ final class DropSetEditorViewModel: ObservableObject {
     }
 
     func addDrop() {
-        sets.append(ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil))
+        withAnimation {
+            sets.append(ExerciseSet(id: UUID(), metricValues: [:], notes: nil, drops: nil))
+        }
     }
 
     func deleteDrops(at offsets: IndexSet) {
-        sets.remove(atOffsets: offsets)
+        withAnimation {
+            sets.remove(atOffsets: offsets)
+        }
     }
 
     func moveDrops(from offsets: IndexSet, to destination: Int) {

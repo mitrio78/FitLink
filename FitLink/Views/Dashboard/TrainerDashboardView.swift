@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct TrainerDashboardView: View {
-    @StateObject private var viewModel = TrainerDashboardViewModel()
+    @StateObject private var viewModel = TrainerDashboardViewModel(dataStore: .shared)
     @State private var showFilterDialog = false
     @State private var selectedFilter: FilterType = .none
 

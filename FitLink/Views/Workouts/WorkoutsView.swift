@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct WorkoutsView: View {
-    @StateObject private var viewModel = WorkoutsViewModel()
+    @StateObject private var viewModel = WorkoutsViewModel(dataStore: .shared)
 
     var body: some View {
         VStack {

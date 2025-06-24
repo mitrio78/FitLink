@@ -16,7 +16,7 @@ final class TrainerDashboardViewModel: ObservableObject {
     @Published var currentFilter: FilterType = .none
     private let dataStore: AppDataStore
 
-    init(dataStore: AppDataStore = .shared) {
+    init(dataStore: AppDataStore) {
         self.dataStore = dataStore
 
         dataStore.$clients
