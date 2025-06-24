@@ -4,7 +4,7 @@ import SwiftUI
 struct ApproachListView: View {
     let sets: [ExerciseSet]
     let metrics: [ExerciseMetric]
-    var onMetricTap: (ExerciseSet.ID, ExerciseMetric) -> Void = { _, _ in }
+    var onSetTap: (ExerciseSet.ID) -> Void = { _ in }
 
     private var gridRows: [GridItem] { [GridItem(.fixed(64))] }
 
@@ -12,8 +12,8 @@ struct ApproachListView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHGrid(rows: gridRows, spacing: Theme.spacing.small) {
                 ForEach(sets) { set in
-                    ApproachCardView(set: set, metrics: metrics) { id, metric in
-                        onMetricTap(id, metric)
+                    ApproachCardView(set: set, metrics: metrics) { id in
+                        onSetTap(id)
                     }
                     .frame(height: 64)
                 }

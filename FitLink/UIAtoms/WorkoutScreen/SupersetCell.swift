@@ -5,7 +5,7 @@ struct SupersetCell: View {
     let group: SetGroup
     let exercises: [ExerciseInstance]
     var onEdit: () -> Void = {}
-    var onMetricTap: (ExerciseInstance, ExerciseSet.ID, ExerciseMetric) -> Void = { _,_,_ in }
+    var onSetTap: (ExerciseInstance, ExerciseSet.ID) -> Void = { _,_ in }
     var initiallyExpanded: Bool = false
 
     @State private var isExpanded: Bool
@@ -14,11 +14,11 @@ struct SupersetCell: View {
          exercises: [ExerciseInstance],
          initiallyExpanded: Bool = false,
          onEdit: @escaping () -> Void = {},
-         onMetricTap: @escaping (ExerciseInstance, ExerciseSet.ID, ExerciseMetric) -> Void = { _,_,_ in }) {
+         onSetTap: @escaping (ExerciseInstance, ExerciseSet.ID) -> Void = { _,_ in }) {
         self.group = group
         self.exercises = exercises
         self.onEdit = onEdit
-        self.onMetricTap = onMetricTap
+        self.onSetTap = onSetTap
         self.initiallyExpanded = initiallyExpanded
         _isExpanded = State(initialValue: initiallyExpanded)
     }
@@ -49,8 +49,8 @@ struct SupersetCell: View {
             if isExpanded {
                 VStack(alignment: .leading, spacing: Theme.spacing.small * 1.5) {
                     ForEach(Array(approaches.enumerated()), id: \.offset) { idx, data in
-                        SupersetApproachView(index: idx + 1, items: data) { ex, setId, metric in
-                            onMetricTap(ex, setId, metric)
+                        SupersetApproachView(index: idx + 1, items: data) { ex, setId in
+                            onSetTap(ex, setId)
                         }
                         .padding(Theme.spacing.small)
                         .frame(maxWidth: .infinity, alignment: .leading)

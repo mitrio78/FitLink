@@ -5,7 +5,7 @@ struct ExerciseBlockCard: View {
     let group: SetGroup?
     let exerciseInstances: [ExerciseInstance]
     var onEdit: () -> Void = {}
-    var onMetricTap: (ExerciseInstance, ExerciseSet.ID, ExerciseMetric) -> Void = { _,_,_ in }
+    var onSetTap: (ExerciseInstance, ExerciseSet.ID) -> Void = { _,_ in }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.spacing.small) {
@@ -30,8 +30,8 @@ struct ExerciseBlockCard: View {
                         return first
                     },
                     metrics: main.exercise.metrics,
-                    onMetricTap: { setId, metric in
-                        onMetricTap(main, setId, metric)
+                    onSetTap: { setId in
+                        onSetTap(main, setId)
                     }
                 )
             }

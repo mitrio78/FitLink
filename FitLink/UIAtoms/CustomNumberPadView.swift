@@ -1,22 +1,37 @@
 import SwiftUI
 
-/// Bottom sheet numeric keypad for editing metric values.
+/// Bottom sheet numeric keypad for editing values of one or more metrics.
 struct CustomNumberPadView: View {
-    @Binding var value: Double
-    var unit: UnitType
+    let metrics: [ExerciseMetric]
+    @Binding var metricValues: [ExerciseMetric.ID: Double]
     var onDone: () -> Void
     var onCancel: (() -> Void)? = nil
 
     @State private var input: String = ""
+    @State private var selectedMetricId: ExerciseMetric.ID
+    @State private var metricUnits: [ExerciseMetric.ID: UnitType]
     @State private var selectedUnit: UnitType
 
-    init(value: Binding<Double>, unit: UnitType, onDone: @escaping () -> Void, onCancel: (() -> Void)? = nil) {
-        self._value = value
-        self.unit = unit
+    init(metrics: [ExerciseMetric],
+         values: Binding<[ExerciseMetric.ID: Double]>,
+         onDone: @escaping () -> Void,
+         onCancel: (() -> Void)? = nil) {
+        let sorted = metrics.sorted { (lhs: ExerciseMetric, rhs: ExerciseMetric) in
+            lhs.type.sortIndex < rhs.type.sortIndex
+        }
+        self.metrics = sorted
+        self._metricValues = values
         self.onDone = onDone
         self.onCancel = onCancel
-        _selectedUnit = State(initialValue: unit)
-        _input = State(initialValue: Self.formatNumber(value.wrappedValue))
+
+        let firstMetric = sorted.first!
+        let defaultUnits: [ExerciseMetric.ID: UnitType] =
+            Dictionary(uniqueKeysWithValues: sorted.map { ($0.id, DraftSet.defaultUnit(for: $0)) })
+        _selectedMetricId = State(initialValue: firstMetric.id)
+        _metricUnits = State(initialValue: defaultUnits)
+        let firstVal = values.wrappedValue[firstMetric.id] ?? 0
+        _selectedUnit = State(initialValue: defaultUnits[firstMetric.id] ?? firstMetric.unit ?? .repetition)
+        _input = State(initialValue: Self.formatNumber(firstVal))
     }
 
     private static func formatNumber(_ val: Double) -> String {
@@ -30,22 +45,25 @@ struct CustomNumberPadView: View {
         }
     }
 
-    private var metricName: String {
-        switch unit {
-        case .kilogram, .pound:
-            return NSLocalizedString("ExerciseMetricType.Weight", comment: "Вес")
-        case .second, .minute:
-            return NSLocalizedString("ExerciseMetricType.Time", comment: "Время")
-        case .meter, .kilometer:
-            return NSLocalizedString("ExerciseMetricType.Distance", comment: "Дистанция")
-        case .repetition:
-            return NSLocalizedString("ExerciseMetricType.Reps", comment: "Повторы")
-        case .calorie:
-            return NSLocalizedString("ExerciseMetricType.Calories", comment: "Калории")
-        case .custom(let name):
-            return name
+    private var currentMetric: ExerciseMetric {
+        metrics.first { $0.id == selectedMetricId } ?? metrics[0]
+    }
+
+    private func metric(for id: ExerciseMetric.ID) -> ExerciseMetric {
+        metrics.first { $0.id == id } ?? metrics[0]
+    }
+
+    private var unit: UnitType { metricUnits[selectedMetricId] ?? currentMetric.unit ?? .repetition }
+
+    private var inputLabel: String? {
+        if unit == .repetition {
+            return NSLocalizedString("CustomNumberPad.RepsLabel", comment: "× reps suffix")
+        } else {
+            let text = unit.displayName
+            return text.isEmpty ? nil : text
         }
     }
+
 
     private var unitOptions: [UnitType] {
         switch unit {
@@ -62,6 +80,20 @@ struct CustomNumberPadView: View {
         case .custom:
             return [unit]
         }
+    }
+
+    private var metricSelection: Binding<ExerciseMetric.ID> {
+        Binding(
+            get: { selectedMetricId },
+            set: { newID in
+                commit()
+                selectedMetricId = newID
+                let metric = metric(for: newID)
+                selectedUnit = metricUnits[newID] ?? DraftSet.defaultUnit(for: metric)
+                let newValue = metricValues[newID] ?? 0
+                input = Self.formatNumber(newValue)
+            }
+        )
     }
 
     private var isValid: Bool {
@@ -85,10 +117,12 @@ struct CustomNumberPadView: View {
             .cornerRadius(Theme.radius.button)
         } //: VStack
         .padding(.horizontal, Theme.spacing.large)
-        .padding(.top, Theme.spacing.large)
         .padding(.bottom, Theme.spacing.large)
         .background(Theme.color.background)
         .cornerRadius(Theme.radius.card)
+        .safeAreaInset(edge: .top) {
+            Spacer().frame(height: Theme.spacing.medium)
+        }
         .safeAreaInset(edge: .bottom) {
             Spacer().frame(height: Theme.spacing.large)
         }
@@ -97,23 +131,35 @@ struct CustomNumberPadView: View {
     private var topSection: some View {
         VStack(spacing: Theme.spacing.small) {
             HStack {
-                Text(metricName)
-                    .font(Theme.font.subheading)
                 Spacer()
                 if let onCancel {
                     Button(action: onCancel) {
                         Image(systemName: "xmark")
-                            .foregroundColor(.secondary)
+                            .imageScale(.medium)
+                            .padding(8)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .foregroundColor(.secondary)
                 }
             } //: HStack
+
+            Picker("", selection: metricSelection) {
+                ForEach(metrics, id: \.id) { metric in
+                    Text(metric.displayName).tag(metric.id)
+                }
+            }
+            .pickerStyle(.segmented)
+
             Picker("", selection: $selectedUnit) {
                 ForEach(unitOptions, id: \.self) { unit in
                     Text(unit.displayName).tag(unit)
                 }
             }
-            .pickerStyle(.segmented)
+           .pickerStyle(.segmented)
+            .onChange(of: selectedUnit) { _, newUnit in
+                metricUnits[selectedMetricId] = newUnit
+            }
 
             Text(input.isEmpty ? "0" : input)
                 .font(Theme.font.titleLarge.monospacedDigit())
@@ -121,6 +167,13 @@ struct CustomNumberPadView: View {
                 .padding()
                 .background(Theme.color.backgroundSecondary)
                 .cornerRadius(Theme.radius.card)
+
+            if let label = inputLabel {
+                Text(label)
+                    .font(Theme.font.caption)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+            }
         } //: VStack
     }
 
@@ -164,21 +217,25 @@ struct CustomNumberPadView: View {
         }
     }
 
-    private func commit() {
+    private func commit(to id: ExerciseMetric.ID? = nil) {
+        let target = id ?? selectedMetricId
         if let val = Double(input) {
-            value = val
+            metricValues[target] = val
         }
     }
 }
 
 #Preview {
     struct PreviewWrapper: View {
-        @State var value: Double = 75
+        @State var values: [ExerciseMetric.ID: Double] = [.reps: 8, .weight: 50]
+        let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
+                       ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
         var body: some View {
-            CustomNumberPadView(value: $value, unit: .kilogram, onDone: {})
+            CustomNumberPadView(metrics: metrics, values: $values, onDone: {})
         }
     }
     return PreviewWrapper()
         .presentationDetents([.height(360)])
 }
+
 

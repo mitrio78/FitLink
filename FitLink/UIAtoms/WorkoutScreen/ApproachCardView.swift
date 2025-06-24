@@ -4,7 +4,7 @@ import SwiftUI
 struct ApproachCardView: View {
     let set: ExerciseSet
     let metrics: [ExerciseMetric]
-    var onMetricTap: (ExerciseSet.ID, ExerciseMetric) -> Void = { _, _ in }
+    var onTap: (ExerciseSet.ID) -> Void = { _ in }
 
     private var weightMetric: ExerciseMetric? {
         metrics.first { $0.type == .weight }
@@ -24,22 +24,19 @@ struct ApproachCardView: View {
             ForEach(drops.indices, id: \.self) { idx in
                 let drop = drops[idx]
                 VStack(spacing: 4) {
-                    if let weightMetric, let val = drop.metricValues[.weight] {
-                        Text(ExerciseMetric.formattedMetric(val, metric: weightMetric))
-                            .font(Theme.font.metrics1.bold())
-                            .foregroundColor(.primary)
-                            .onTapGesture { onMetricTap(drop.id, weightMetric) }
-                    }
                     if let repsMetric, let val = drop.metricValues[.reps] {
                         Text(ExerciseMetric.formattedMetric(val, metric: repsMetric))
+                            .font(Theme.font.metrics1.bold())
+                            .foregroundColor(.primary)
+                    }
+                    if let weightMetric, let val = drop.metricValues[.weight] {
+                        Text(ExerciseMetric.formattedMetric(val, metric: weightMetric))
                             .font(Theme.font.metrics2)
                             .foregroundColor(.primary)
-                            .onTapGesture { onMetricTap(drop.id, repsMetric) }
                     } else if let timeMetric, let val = drop.metricValues[.time] {
                         Text(ExerciseMetric.formattedMetric(val, metric: timeMetric))
                             .font(Theme.font.metrics2)
                             .foregroundColor(.primary)
-                            .onTapGesture { onMetricTap(drop.id, timeMetric) }
                     }
                 }
                 if idx < drops.count - 1 {
@@ -54,6 +51,7 @@ struct ApproachCardView: View {
         .background(Theme.color.textSecondary.opacity(0.05))
         .cornerRadius(Theme.radius.card)
         .contentShape(Rectangle())
+        .onTapGesture { onTap(set.id) }
     }
 
 }

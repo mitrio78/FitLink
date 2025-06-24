@@ -4,7 +4,7 @@ import SwiftUI
 struct SupersetApproachView: View {
     let index: Int
     let items: [(exercise: ExerciseInstance, approach: Approach?)]
-    var onMetricTap: (ExerciseInstance, ExerciseSet.ID, ExerciseMetric) -> Void = { _,_,_ in }
+    var onSetTap: (ExerciseInstance, ExerciseSet.ID) -> Void = { _,_ in }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.spacing.small) {
@@ -22,8 +22,8 @@ struct SupersetApproachView: View {
                     ApproachListView(
                         sets: combinedSets(for: item.approach),
                         metrics: item.exercise.exercise.metrics,
-                        onMetricTap: { setId, metric in
-                            onMetricTap(item.exercise, setId, metric)
+                        onSetTap: { setId in
+                            onSetTap(item.exercise, setId)
                         }
                     )
                 }
