@@ -32,12 +32,12 @@ struct WorkoutSessionView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: viewModel.addExerciseTapped) {
                     Image(systemName: "plus")
-                        .padding(6)
-                        .background(Color.accentColor.opacity(0.15))
+                        .padding(8)
+                        .background(Theme.color.backgroundSecondary .opacity(0.5))
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 .controlSize(.large)
-                .foregroundColor(Color.accentColor)
+                .foregroundColor(Theme.color.accent)
                 .accessibilityLabel(NSLocalizedString("WorkoutDetail.AddExercise", comment: ""))
                 .accessibilityIdentifier("WorkoutDetail.AddExerciseButton")
             }
