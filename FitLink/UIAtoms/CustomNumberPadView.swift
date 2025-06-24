@@ -7,6 +7,8 @@ struct CustomNumberPadView: View {
     var onDone: () -> Void
     var onCancel: (() -> Void)? = nil
 
+    @Environment(\.safeAreaInsets) private var safeAreaInsets
+
     @State private var input: String = ""
     @State private var selectedUnit: UnitType
 
@@ -84,7 +86,9 @@ struct CustomNumberPadView: View {
             .foregroundColor(.white)
             .cornerRadius(Theme.radius.button)
         } //: VStack
-        .padding(Theme.spacing.large)
+        .padding(.horizontal, Theme.spacing.large)
+        .padding(.top, Theme.spacing.large)
+        .padding(.bottom, Theme.spacing.large + safeAreaInsets.bottom)
         .background(Theme.color.background)
         .cornerRadius(Theme.radius.card)
     }

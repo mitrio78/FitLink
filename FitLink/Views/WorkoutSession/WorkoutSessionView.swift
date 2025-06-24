@@ -60,7 +60,7 @@ struct WorkoutSessionView: View {
                 },
                 onCancel: { viewModel.activeMetricEdit = nil }
             )
-            .presentationDetents([.height(360)])
+            .presentationDetents([.fraction(0.65)])
         }
     }
 
