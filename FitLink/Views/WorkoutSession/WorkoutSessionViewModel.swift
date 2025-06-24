@@ -10,12 +10,21 @@ struct EditingContext: Identifiable {
     var exercises: [Exercise] { instances.map { $0.exercise } }
 }
 
+struct MetricEditContext: Identifiable {
+    let exerciseID: UUID
+    let setID: UUID
+    let metric: ExerciseMetric
+    var currentValue: Double
+    let unit: UnitType
+
+    var id: String { "\(exerciseID)-\(setID)-\(metric.type)" }
+}
+
 @MainActor
 final class WorkoutSessionViewModel: ObservableObject {
     @Published var showExerciseEdit: Bool = false
     @Published var editingContext: EditingContext? = nil
-    @Published var activeMetricEditorExercise: ExerciseInstance? = nil
-    var metricEditorStartIndex: Int? = nil
+    @Published var activeMetricEdit: MetricEditContext? = nil
     @Published var expandedGroupId: UUID? = nil
     @Published var session: WorkoutSession
     let client: Client?
@@ -49,20 +58,38 @@ final class WorkoutSessionViewModel: ObservableObject {
         showExerciseEdit = true
     }
 
-    func editMetrics(for exerciseId: UUID, approachIndex: Int? = nil) {
-        if let instance = exercises.first(where: { $0.id == exerciseId }) {
-            activeMetricEditorExercise = instance
-            metricEditorStartIndex = approachIndex
+    func edit(metric: ExerciseMetric, forSet setId: UUID, ofExercise exerciseId: UUID) {
+        guard let exerciseIndex = exercises.firstIndex(where: { $0.id == exerciseId }) else { return }
+        let exercise = exercises[exerciseIndex]
+        for approach in exercise.approaches {
+            if let set = approach.sets.first(where: { $0.id == setId }) {
+                let value = set.metricValues[metric.type] ?? 0
+                let unit = metric.unit ?? .repetition
+                activeMetricEdit = MetricEditContext(exerciseID: exerciseId,
+                                                    setID: setId,
+                                                    metric: metric,
+                                                    currentValue: value,
+                                                    unit: unit)
+                break
+            }
         }
     }
 
-    func updateMetrics(for exerciseId: UUID, approaches: [Approach]) {
-        if let idx = exercises.firstIndex(where: { $0.id == exerciseId }) {
-            exercises[idx].approaches = approaches
-            save()
+    func saveEditedMetric() {
+        guard let context = activeMetricEdit else { return }
+        guard let exIndex = exercises.firstIndex(where: { $0.id == context.exerciseID }) else { activeMetricEdit = nil; return }
+        for aIndex in exercises[exIndex].approaches.indices {
+            if let setIndex = exercises[exIndex].approaches[aIndex].sets.firstIndex(where: { $0.id == context.setID }) {
+                if context.currentValue == 0 {
+                    exercises[exIndex].approaches[aIndex].sets[setIndex].metricValues.removeValue(forKey: context.metric.type)
+                } else {
+                    exercises[exIndex].approaches[aIndex].sets[setIndex].metricValues[context.metric.type] = context.currentValue
+                }
+                save()
+                break
+            }
         }
-        activeMetricEditorExercise = nil
-        metricEditorStartIndex = nil
+        activeMetricEdit = nil
     }
 
     func editItemTapped(withId id: UUID) {
