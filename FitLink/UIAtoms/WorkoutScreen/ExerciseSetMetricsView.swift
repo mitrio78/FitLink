@@ -56,14 +56,17 @@ struct ExerciseSetMetricsView: View {
     
     private func weightString(for set: ExerciseSet) -> String {
         guard let weightMetric else { return "" }
-        return set.metricValues[.weight].map { ExerciseMetric.formattedMetric($0, metric: weightMetric) } ?? ""
+        let value = set.metricValues[.weight] ?? 0
+        return ExerciseMetric.formattedMetric(value, metric: weightMetric)
     }
     
     private func metricString(for set: ExerciseSet) -> String {
-        if let repsMetric, let value = set.metricValues[.reps] {
+        if let repsMetric {
+            let value = set.metricValues[.reps] ?? 0
             return ExerciseMetric.formattedMetric(value, metric: repsMetric)
         }
-        if let timeMetric, let value = set.metricValues[.time] {
+        if let timeMetric {
+            let value = set.metricValues[.time] ?? 0
             return ExerciseMetric.formattedMetric(value, metric: timeMetric)
         }
         return ""

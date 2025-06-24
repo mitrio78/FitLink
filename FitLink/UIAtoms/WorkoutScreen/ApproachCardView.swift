@@ -24,16 +24,19 @@ struct ApproachCardView: View {
             ForEach(drops.indices, id: \.self) { idx in
                 let drop = drops[idx]
                 VStack(spacing: 4) {
-                    if let repsMetric, let val = drop.metricValues[.reps] {
+                    if let repsMetric {
+                        let val = drop.metricValues[.reps] ?? 0
                         Text(ExerciseMetric.formattedMetric(val, metric: repsMetric))
                             .font(Theme.font.metrics1.bold())
                             .foregroundColor(.primary)
                     }
-                    if let weightMetric, let val = drop.metricValues[.weight] {
+                    if let weightMetric {
+                        let val = drop.metricValues[.weight] ?? 0
                         Text(ExerciseMetric.formattedMetric(val, metric: weightMetric))
                             .font(Theme.font.metrics2)
                             .foregroundColor(.primary)
-                    } else if let timeMetric, let val = drop.metricValues[.time] {
+                    } else if let timeMetric {
+                        let val = drop.metricValues[.time] ?? 0
                         Text(ExerciseMetric.formattedMetric(val, metric: timeMetric))
                             .font(Theme.font.metrics2)
                             .foregroundColor(.primary)

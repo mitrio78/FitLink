@@ -108,6 +108,10 @@ struct WorkoutSessionView: View {
                             onSetEdit: { ex, setId in
                                 viewModel.editSet(withID: setId, ofExercise: ex.id)
                             },
+                            onAddSet: { ex in
+                                viewModel.addSet(toExercise: ex.id)
+                            },
+                            isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled,
                             initiallyExpanded: viewModel.expandedGroupId == group.id
                         )
                         .onAppear {
@@ -124,7 +128,11 @@ struct WorkoutSessionView: View {
                             onDelete: { viewModel.deleteItem(withId: ex.id) },
                             onSetEdit: { ex, setId in
                                 viewModel.editSet(withID: setId, ofExercise: ex.id)
-                            }
+                            },
+                            onAddSet: { ex in
+                                viewModel.addSet(toExercise: ex.id)
+                            },
+                            isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled
                         )
                         .listRowSeparator(.hidden)
                     }

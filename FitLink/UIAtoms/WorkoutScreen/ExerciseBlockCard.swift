@@ -6,6 +6,8 @@ struct ExerciseBlockCard: View {
     let exerciseInstances: [ExerciseInstance]
     var onEdit: () -> Void = {}
     var onSetTap: (ExerciseInstance, ExerciseSet.ID) -> Void = { _,_ in }
+    var onAddSet: (ExerciseInstance) -> Void = { _ in }
+    var isLocked: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.spacing.small) {
@@ -32,7 +34,11 @@ struct ExerciseBlockCard: View {
                     metrics: main.exercise.metrics,
                     onSetTap: { setId in
                         onSetTap(main, setId)
-                    }
+                    },
+                    onAddTap: {
+                        onAddSet(main)
+                    },
+                    isLocked: isLocked
                 )
             }
         }
@@ -95,5 +101,5 @@ struct ExerciseBlockCard: View {
                 ]
             )
         ]
-    )
+        , onAddSet: { _ in }, isLocked: false)
 }

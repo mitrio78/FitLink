@@ -5,6 +5,8 @@ struct SupersetApproachView: View {
     let index: Int
     let items: [(exercise: ExerciseInstance, approach: Approach?)]
     var onSetTap: (ExerciseInstance, ExerciseSet.ID) -> Void = { _,_ in }
+    var onAddSet: (ExerciseInstance) -> Void = { _ in }
+    var isLocked: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.spacing.small) {
@@ -24,7 +26,11 @@ struct SupersetApproachView: View {
                         metrics: item.exercise.exercise.metrics,
                         onSetTap: { setId in
                             onSetTap(item.exercise, setId)
-                        }
+                        },
+                        onAddTap: {
+                            onAddSet(item.exercise)
+                        },
+                        isLocked: isLocked
                     )
                 }
             }
@@ -43,5 +49,9 @@ struct SupersetApproachView: View {
     let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
                    ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
     let ex = ExerciseInstance(id: UUID(), exercise: Exercise(id: UUID(), name: "Test", variations: [], muscleGroups: [.chest], metrics: metrics), approaches: [], groupId: nil, notes: nil)
-    return SupersetApproachView(index: 1, items: [(ex, nil)])
+    return SupersetApproachView(index: 1,
+                                items: [(ex, nil)],
+                                onSetTap: { _,_ in },
+                                onAddSet: { _ in },
+                                isLocked: false)
 }

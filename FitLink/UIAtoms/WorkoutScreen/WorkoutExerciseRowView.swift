@@ -7,6 +7,8 @@ struct WorkoutExerciseRowView: View {
     var onEdit: () -> Void
     var onDelete: () -> Void
     var onSetEdit: (ExerciseInstance, ExerciseSet.ID) -> Void
+    var onAddSet: (ExerciseInstance) -> Void = { _ in }
+    var isLocked: Bool = false
     var initiallyExpanded: Bool = false
 
     var body: some View {
@@ -32,20 +34,38 @@ struct WorkoutExerciseRowView: View {
             if group.type == .superset {
                 SupersetCell(group: group,
                              exercises: groupExercises,
-                             initiallyExpanded: initiallyExpanded,
                              onEdit: onEdit,
                              onSetTap: { ex, setId in
                                  onSetEdit(ex, setId)
-                             })
+                             },
+                             onAddSet: { ex in
+                                 onAddSet(ex)
+                             },
+                             initiallyExpanded: initiallyExpanded,
+                             isLocked: isLocked)
             } else {
-                ExerciseBlockCard(group: group, exerciseInstances: groupExercises, onEdit: onEdit, onSetTap: { ex, setId in
-                    onSetEdit(ex, setId)
-                })
+                ExerciseBlockCard(group: group,
+                                  exerciseInstances: groupExercises,
+                                  onEdit: onEdit,
+                                  onSetTap: { ex, setId in
+                                      onSetEdit(ex, setId)
+                                  },
+                                  onAddSet: { ex in
+                                      onAddSet(ex)
+                                  },
+                                  isLocked: isLocked)
             }
         } else {
-            ExerciseBlockCard(group: nil, exerciseInstances: [exercise], onEdit: onEdit, onSetTap: { _, setId in
-                onSetEdit(exercise, setId)
-            })
+            ExerciseBlockCard(group: nil,
+                              exerciseInstances: [exercise],
+                              onEdit: onEdit,
+                              onSetTap: { _, setId in
+                                  onSetEdit(exercise, setId)
+                              },
+                              onAddSet: { _ in
+                                  onAddSet(exercise)
+                              },
+                              isLocked: isLocked)
         }
     }
 }
@@ -58,6 +78,8 @@ struct WorkoutExerciseRowView: View {
                                   onEdit: {},
                                   onDelete: {},
                                   onSetEdit: { _,_ in },
+                                  onAddSet: { _ in },
+                                  isLocked: false,
                                   initiallyExpanded: false)
         .padding()
 }

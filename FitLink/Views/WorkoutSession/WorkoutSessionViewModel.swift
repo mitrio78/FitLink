@@ -73,23 +73,39 @@ final class WorkoutSessionViewModel: ObservableObject {
         }
     }
 
+    func addSet(toExercise exerciseId: UUID) {
+        guard let exercise = exercises.first(where: { $0.id == exerciseId }) else { return }
+        let metrics = exercise.exercise.metrics.sorted { metricOrder($0.type) < metricOrder($1.type) }
+        var values: [ExerciseMetric.ID: Double] = [:]
+        for metric in metrics { values[metric.id] = 0 }
+        activeSetEdit = SetEditContext(exerciseID: exerciseId, setID: UUID(), metrics: metrics, values: values)
+    }
+
     func saveEditedSet() {
         guard let context = activeSetEdit else { return }
         guard let exIndex = exercises.firstIndex(where: { $0.id == context.exerciseID }) else { activeSetEdit = nil; return }
+        var updated = false
         for aIndex in exercises[exIndex].approaches.indices {
             if let setIndex = exercises[exIndex].approaches[aIndex].sets.firstIndex(where: { $0.id == context.setID }) {
                 for metric in context.metrics {
                     let val = context.values[metric.id] ?? 0
-                    if val == 0 {
-                        exercises[exIndex].approaches[aIndex].sets[setIndex].metricValues.removeValue(forKey: metric.type)
-                    } else {
-                        exercises[exIndex].approaches[aIndex].sets[setIndex].metricValues[metric.type] = val
-                    }
+                    exercises[exIndex].approaches[aIndex].sets[setIndex].metricValues[metric.type] = val
                 }
-                save()
+                updated = true
                 break
             }
         }
+
+        if !updated {
+            var metricValues: [ExerciseMetricType: Double] = [:]
+            for metric in context.metrics {
+                metricValues[metric.type] = context.values[metric.id] ?? 0
+            }
+            let newSet = ExerciseSet(id: context.setID, metricValues: metricValues, notes: nil, drops: nil)
+            exercises[exIndex].approaches.append(Approach(sets: [newSet]))
+        }
+
+        save()
         activeSetEdit = nil
     }
 
