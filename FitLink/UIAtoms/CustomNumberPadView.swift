@@ -16,17 +16,9 @@ struct CustomNumberPadView: View {
          values: Binding<[ExerciseMetric.ID: Double]>,
          onDone: @escaping () -> Void,
          onCancel: (() -> Void)? = nil) {
-        let sorted = metrics.sorted(by: { lhs, rhs in
-            switch (lhs.type, rhs.type) {
-            case (.reps, .reps): return false
-            case (.reps, _): return true
-            case (_, .reps): return false
-            case (.weight, .weight): return false
-            case (.weight, _): return true
-            case (_, .weight): return false
-            default: return lhs.type.rawValue < rhs.type.rawValue
-            }
-        })
+        let sorted = metrics.sorted { (lhs: ExerciseMetric, rhs: ExerciseMetric) in
+            lhs.type.sortIndex < rhs.type.sortIndex
+        }
         self.metrics = sorted
         self._metricValues = values
         self.onDone = onDone
@@ -57,6 +49,10 @@ struct CustomNumberPadView: View {
         metrics.first { $0.id == selectedMetricId } ?? metrics[0]
     }
 
+    private func metric(for id: ExerciseMetric.ID) -> ExerciseMetric {
+        metrics.first { $0.id == id } ?? metrics[0]
+    }
+
     private var unit: UnitType { metricUnits[selectedMetricId] ?? currentMetric.unit ?? .repetition }
 
     private var inputLabel: String? {
@@ -84,6 +80,20 @@ struct CustomNumberPadView: View {
         case .custom:
             return [unit]
         }
+    }
+
+    private var metricSelection: Binding<ExerciseMetric.ID> {
+        Binding(
+            get: { selectedMetricId },
+            set: { newID in
+                commit()
+                selectedMetricId = newID
+                let metric = metric(for: newID)
+                selectedUnit = metricUnits[newID] ?? DraftSet.defaultUnit(for: metric)
+                let newValue = metricValues[newID] ?? 0
+                input = Self.formatNumber(newValue)
+            }
+        )
     }
 
     private var isValid: Bool {
@@ -134,18 +144,12 @@ struct CustomNumberPadView: View {
                 }
             } //: HStack
 
-            Picker("", selection: $selectedMetricId) {
+            Picker("", selection: metricSelection) {
                 ForEach(metrics, id: \.id) { metric in
                     Text(metric.displayName).tag(metric.id)
                 }
             }
             .pickerStyle(.segmented)
-            .onChange(of: selectedMetricId) { oldID, newID in
-                commit(to: oldID)
-                selectedUnit = metricUnits[newID] ?? DraftSet.defaultUnit(for: currentMetric)
-                let newValue = metricValues[newID] ?? 0
-                input = Self.formatNumber(newValue)
-            }
 
             Picker("", selection: $selectedUnit) {
                 ForEach(unitOptions, id: \.self) { unit in
