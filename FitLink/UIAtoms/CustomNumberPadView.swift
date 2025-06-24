@@ -28,23 +28,25 @@ struct CustomNumberPadView: View {
     }
 
     var body: some View {
-        VStack(spacing: Theme.spacing.small) {
+        VStack(spacing: Theme.spacing.small / 2) {
             topSection
             numberPad
-            Button(NSLocalizedString("Common.Done", comment: "Done")) {
+            Button(action: {
                 commit()
                 onDone()
+            }) {
+                Text(NSLocalizedString("Common.Done", comment: "Done"))
+                    .font(Theme.font.titleSmall)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(viewModel.isValid ? Theme.color.accent : Theme.color.accent.opacity(0.3))
+                    .foregroundColor(.white)
+                    .cornerRadius(Theme.radius.button)
             }
             .disabled(!viewModel.isValid)
-            .font(Theme.font.titleSmall)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(viewModel.isValid ? Theme.color.accent : Theme.color.accent.opacity(0.3))
-            .foregroundColor(.white)
-            .cornerRadius(Theme.radius.button)
         } //: VStack
         .padding(.horizontal, Theme.spacing.small)
-        .padding(.top, Theme.spacing.sheetTopPadding)
+        .padding(.top, Theme.spacing.small)
         .padding(.bottom, Theme.spacing.sheetBottomPadding)
         .background(Theme.color.background)
         .cornerRadius(Theme.radius.card)
@@ -58,16 +60,6 @@ struct CustomNumberPadView: View {
 
     private var topSection: some View {
         VStack(spacing: Theme.spacing.small) {
-            HStack {
-                Spacer()
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color.secondary.opacity(0.4))
-                    .frame(width: Theme.size.sheetHandleWidth, height: Theme.size.sheetHandleHeight)
-                Spacer()
-            } //: HStack
-            .padding(.top, Theme.spacing.sheetTopPadding)
-            .padding(.bottom, 2)
- 
             Picker("", selection: metricSelection) {
                 ForEach(viewModel.metrics, id: \.id) { metric in
                     Text(metric.displayName).tag(metric.id)
@@ -141,8 +133,10 @@ struct CustomNumberPadView: View {
             CustomNumberPadView(metrics: metrics, values: $values, onDone: {})
         }
     }
+    // Preview uses the fixed height detent (~394 pt) to mimic the real sheet.
+    // Switch to `.fraction(0.52)` if testing on extremely small devices.
     return PreviewWrapper()
-        .presentationDetents([.height(360)])
+        .presentationDetents([.height(Theme.size.numberPadSheetHeight)])
 }
 
 
