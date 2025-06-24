@@ -132,7 +132,7 @@ struct CustomNumberPadView: View {
         }
     }
     return PreviewWrapper()
-        .presentationDetents([.height(360)])
+        .presentationDetents([.height(Theme.size.numberPadSheetHeight)])
 }
 
 

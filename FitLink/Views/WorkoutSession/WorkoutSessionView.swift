@@ -59,7 +59,10 @@ struct WorkoutSessionView: View {
                     viewModel.saveEditedSet()
                 }
             )
-            .presentationDetents([.fraction(0.65)])
+            // Use a fixed height so the sheet hugs the content like the system
+            // calculator (~360 pt by default). On very small screens consider
+            // `.fraction(0.4)` instead.
+            .presentationDetents([.height(Theme.size.numberPadSheetHeight)])
             .presentationDragIndicator(.visible)
         }
     }
