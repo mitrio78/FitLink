@@ -104,7 +104,7 @@ struct CustomNumberPadView: View {
                 }
             } //: HStack
             Picker("", selection: $selectedUnit) {
-                ForEach(unitOptions, id: .self) { unit in
+                ForEach(unitOptions, id: \.self) { unit in
                     Text(unit.displayName).tag(unit)
                 }
             }
@@ -121,9 +121,9 @@ struct CustomNumberPadView: View {
 
     private var numberPad: some View {
         VStack(spacing: Theme.spacing.medium) {
-            ForEach(keys, id: .self) { row in
+            ForEach(keys, id: \.self) { row in
                 HStack(spacing: Theme.spacing.medium) {
-                    ForEach(row, id: .self) { key in
+                    ForEach(row, id: \.self) { key in
                         Button(action: { handleKey(key) }) {
                             Text(key)
                                 .font(Theme.font.titleMedium)
