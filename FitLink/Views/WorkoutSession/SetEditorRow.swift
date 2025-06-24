@@ -51,7 +51,7 @@ struct SetEditorRow: View {
             },
             set: { newValue in
                 let cleaned = newValue.trimLeadingZeros()
-                if let number = Double(cleaned), number != 0 {
+                if let number = Double(cleaned) {
                     set.metricValues[type] = number
                 } else {
                     set.metricValues.removeValue(forKey: type)

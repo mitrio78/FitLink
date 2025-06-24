@@ -5,6 +5,8 @@ struct ApproachListView: View {
     let sets: [ExerciseSet]
     let metrics: [ExerciseMetric]
     var onSetTap: (ExerciseSet.ID) -> Void = { _ in }
+    var onAddTap: () -> Void = {}
+    var isLocked: Bool = false
 
     private var gridRows: [GridItem] { [GridItem(.fixed(64))] }
 
@@ -17,9 +19,38 @@ struct ApproachListView: View {
                     }
                     .frame(height: 64)
                 }
+                if !isLocked {
+                    AddSetButton(action: onAddTap)
+                        .frame(width: 64, height: 64)
+                }
             }
             .padding(.vertical, Theme.spacing.small)
         } //: ScrollView
+    }
+}
+
+private struct AddSetButton: View {
+    var action: () -> Void = {}
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "plus")
+                .font(.title2)
+                .frame(width: 64, height: 64)
+        }
+        .buttonStyle(ScaleButtonStyle())
+        .foregroundColor(.secondary)
+        .background(Theme.color.textSecondary.opacity(0.1))
+        .cornerRadius(Theme.radius.card)
+        .accessibilityLabel(NSLocalizedString("WorkoutExerciseEdit.AddSet", comment: "Add Set"))
+    }
+}
+
+private struct ScaleButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+            .opacity(configuration.isPressed ? 0.6 : 1)
     }
 }
 
@@ -32,6 +63,10 @@ struct ApproachListView: View {
     let set4 = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8], notes: nil, drops: nil)
     let set5 = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8], notes: nil, drops: nil)
     let set6 = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8], notes: nil, drops: nil)
-    return ApproachListView(sets: [set1, set2, set3, set4, set5, set6], metrics: metrics)
+    return ApproachListView(sets: [set1, set2, set3, set4, set5, set6],
+                            metrics: metrics,
+                            onSetTap: { _ in },
+                            onAddTap: {},
+                            isLocked: false)
         .padding()
 }
