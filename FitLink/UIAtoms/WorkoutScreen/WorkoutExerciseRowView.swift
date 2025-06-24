@@ -34,6 +34,7 @@ struct WorkoutExerciseRowView: View {
             if group.type == .superset {
                 SupersetCell(group: group,
                              exercises: groupExercises,
+                             initiallyExpanded: initiallyExpanded,
                              onEdit: onEdit,
                              onSetTap: { ex, setId in
                                  onSetEdit(ex, setId)
@@ -41,7 +42,6 @@ struct WorkoutExerciseRowView: View {
                              onAddSet: { ex in
                                  onAddSet(ex)
                              },
-                             initiallyExpanded: initiallyExpanded,
                              isLocked: isLocked)
             } else {
                 ExerciseBlockCard(group: group,
