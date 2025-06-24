@@ -16,7 +16,7 @@ struct CustomNumberPadView: View {
          values: Binding<[ExerciseMetric.ID: Double]>,
          onDone: @escaping () -> Void,
          onCancel: (() -> Void)? = nil) {
-        let sorted = metrics.sorted { lhs, rhs in
+        let sorted = metrics.sorted(by: { lhs, rhs in
             switch (lhs.type, rhs.type) {
             case (.reps, .reps): return false
             case (.reps, _): return true
@@ -26,14 +26,15 @@ struct CustomNumberPadView: View {
             case (_, .weight): return false
             default: return lhs.type.rawValue < rhs.type.rawValue
             }
-        }
+        })
         self.metrics = sorted
         self._metricValues = values
         self.onDone = onDone
         self.onCancel = onCancel
 
         let firstMetric = sorted.first!
-        let defaultUnits = Dictionary(uniqueKeysWithValues: sorted.map { ($0.id, DraftSet.defaultUnit(for: $0)) })
+        let defaultUnits: [ExerciseMetric.ID: UnitType] =
+            Dictionary(uniqueKeysWithValues: sorted.map { ($0.id, DraftSet.defaultUnit(for: $0)) })
         _selectedMetricId = State(initialValue: firstMetric.id)
         _metricUnits = State(initialValue: defaultUnits)
         let firstVal = values.wrappedValue[firstMetric.id] ?? 0
