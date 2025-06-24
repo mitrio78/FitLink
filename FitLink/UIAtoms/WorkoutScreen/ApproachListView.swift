@@ -4,30 +4,18 @@ import SwiftUI
 struct ApproachListView: View {
     let sets: [ExerciseSet]
     let metrics: [ExerciseMetric]
-    var onTap: () -> Void = {}
+    var onMetricTap: (ExerciseSet.ID, ExerciseMetric) -> Void = { _, _ in }
 
     private var gridRows: [GridItem] { [GridItem(.fixed(64))] }
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHGrid(rows: gridRows, spacing: Theme.spacing.small) {
-                if sets.isEmpty {
-                    Button(action: onTap) {
-                        Image(systemName: "plus")
-                            .frame(width: 64, height: 64)
-                            .foregroundColor(.primary)
-                            .background(Theme.color.backgroundSecondary)
-                            .cornerRadius(Theme.radius.card)
+                ForEach(sets) { set in
+                    ApproachCardView(set: set, metrics: metrics) { id, metric in
+                        onMetricTap(id, metric)
                     }
-                    .buttonStyle(.plain)
-                } else {
-                    ForEach(sets) { set in
-                        Button(action: onTap) {
-                            ApproachCardView(set: set, metrics: metrics)
-                                .frame(height: 64)
-                        }
-                        .buttonStyle(.plain)
-                    }
+                    .frame(height: 64)
                 }
             }
             .padding(.vertical, Theme.spacing.small)

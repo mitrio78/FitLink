@@ -6,7 +6,7 @@ struct WorkoutExerciseRowView: View {
     var groupExercises: [ExerciseInstance] = []
     var onEdit: () -> Void
     var onDelete: () -> Void
-    var onSetsEdit: (ExerciseInstance, Int?) -> Void
+    var onMetricEdit: (ExerciseInstance, ExerciseSet.ID, ExerciseMetric) -> Void
     var initiallyExpanded: Bool = false
 
     var body: some View {
@@ -34,14 +34,18 @@ struct WorkoutExerciseRowView: View {
                              exercises: groupExercises,
                              initiallyExpanded: initiallyExpanded,
                              onEdit: onEdit,
-                             onSetsEdit: { ex, index in
-                                 onSetsEdit(ex, index)
+                             onMetricTap: { ex, setId, metric in
+                                 onMetricEdit(ex, setId, metric)
                              })
             } else {
-                ExerciseBlockCard(group: group, exerciseInstances: groupExercises, onEdit: onEdit, onSetsTap: { ex in onSetsEdit(ex, nil) })
+                ExerciseBlockCard(group: group, exerciseInstances: groupExercises, onEdit: onEdit, onMetricTap: { ex, setId, metric in
+                    onMetricEdit(ex, setId, metric)
+                })
             }
         } else {
-            ExerciseBlockCard(group: nil, exerciseInstances: [exercise], onEdit: onEdit, onSetsTap: { _ in onSetsEdit(exercise, nil) })
+            ExerciseBlockCard(group: nil, exerciseInstances: [exercise], onEdit: onEdit, onMetricTap: { _, setId, metric in
+                onMetricEdit(exercise, setId, metric)
+            })
         }
     }
 }
@@ -53,7 +57,7 @@ struct WorkoutExerciseRowView: View {
                                   group: nil,
                                   onEdit: {},
                                   onDelete: {},
-                                  onSetsEdit: { _, _ in },
+                                  onMetricEdit: { _,_,_ in },
                                   initiallyExpanded: false)
         .padding()
 }

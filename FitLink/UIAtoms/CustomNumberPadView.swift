@@ -84,9 +84,14 @@ struct CustomNumberPadView: View {
             .foregroundColor(.white)
             .cornerRadius(Theme.radius.button)
         } //: VStack
-        .padding(Theme.spacing.large)
+        .padding(.horizontal, Theme.spacing.large)
+        .padding(.top, Theme.spacing.large)
+        .padding(.bottom, Theme.spacing.large)
         .background(Theme.color.background)
         .cornerRadius(Theme.radius.card)
+        .safeAreaInset(edge: .bottom) {
+            Spacer().frame(height: Theme.spacing.large)
+        }
     }
 
     private var topSection: some View {

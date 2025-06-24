@@ -4,6 +4,7 @@ import SwiftUI
 struct ApproachCardView: View {
     let set: ExerciseSet
     let metrics: [ExerciseMetric]
+    var onMetricTap: (ExerciseSet.ID, ExerciseMetric) -> Void = { _, _ in }
 
     private var weightMetric: ExerciseMetric? {
         metrics.first { $0.type == .weight }
@@ -21,15 +22,25 @@ struct ApproachCardView: View {
         HStack(spacing: 4) {
             let drops = [set] + (set.drops ?? [])
             ForEach(drops.indices, id: \.self) { idx in
+                let drop = drops[idx]
                 VStack(spacing: 4) {
-                    if let weight = weightString(for: drops[idx]) {
-                        Text(weight)
+                    if let weightMetric, let val = drop.metricValues[.weight] {
+                        Text(ExerciseMetric.formattedMetric(val, metric: weightMetric))
                             .font(Theme.font.metrics1.bold())
                             .foregroundColor(.primary)
+                            .onTapGesture { onMetricTap(drop.id, weightMetric) }
                     }
-                    Text(metricString(for: drops[idx]))
-                        .font(Theme.font.metrics2)
-                        .foregroundColor(.primary)
+                    if let repsMetric, let val = drop.metricValues[.reps] {
+                        Text(ExerciseMetric.formattedMetric(val, metric: repsMetric))
+                            .font(Theme.font.metrics2)
+                            .foregroundColor(.primary)
+                            .onTapGesture { onMetricTap(drop.id, repsMetric) }
+                    } else if let timeMetric, let val = drop.metricValues[.time] {
+                        Text(ExerciseMetric.formattedMetric(val, metric: timeMetric))
+                            .font(Theme.font.metrics2)
+                            .foregroundColor(.primary)
+                            .onTapGesture { onMetricTap(drop.id, timeMetric) }
+                    }
                 }
                 if idx < drops.count - 1 {
                     Image(systemName: "chevron.right")
@@ -45,20 +56,6 @@ struct ApproachCardView: View {
         .contentShape(Rectangle())
     }
 
-    private func weightString(for set: ExerciseSet) -> String? {
-        guard let weightMetric else { return nil }
-        return set.metricValues[.weight].map { ExerciseMetric.formattedMetric($0, metric: weightMetric) }
-    }
-
-    private func metricString(for set: ExerciseSet) -> String {
-        if let repsMetric, let value = set.metricValues[.reps] {
-            return ExerciseMetric.formattedMetric(value, metric: repsMetric)
-        }
-        if let timeMetric, let value = set.metricValues[.time] {
-            return ExerciseMetric.formattedMetric(value, metric: timeMetric)
-        }
-        return ""
-    }
 }
 
 #Preview {

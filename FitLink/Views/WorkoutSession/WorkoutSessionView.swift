@@ -48,10 +48,19 @@ struct WorkoutSessionView: View {
                 viewModel.completeEdit(result)
             }
         }
-        .sheet(item: $viewModel.activeMetricEditorExercise) { instance in
-            MetricEditorView(exercise: instance, scrollToIndex: viewModel.metricEditorStartIndex) { approaches in
-                viewModel.updateMetrics(for: instance.id, approaches: approaches)
-            }
+        .sheet(item: $viewModel.activeMetricEdit) { context in
+            CustomNumberPadView(
+                value: Binding(
+                    get: { viewModel.activeMetricEdit?.currentValue ?? 0 },
+                    set: { viewModel.activeMetricEdit?.currentValue = $0 }
+                ),
+                unit: context.unit,
+                onDone: {
+                    viewModel.saveEditedMetric()
+                },
+                onCancel: { viewModel.activeMetricEdit = nil }
+            )
+            .presentationDetents([.fraction(0.65)])
         }
     }
 
@@ -93,7 +102,9 @@ struct WorkoutSessionView: View {
                             groupExercises: groupExercises,
                             onEdit: { viewModel.editItemTapped(withId: group.id) },
                             onDelete: { viewModel.deleteItem(withId: group.id) },
-                            onSetsEdit: { ex, idx in viewModel.editMetrics(for: ex.id, approachIndex: idx) },
+                            onMetricEdit: { ex, setId, metric in
+                                viewModel.edit(metric: metric, forSet: setId, ofExercise: ex.id)
+                            },
                             initiallyExpanded: viewModel.expandedGroupId == group.id
                         )
                         .onAppear {
@@ -108,7 +119,9 @@ struct WorkoutSessionView: View {
                             group: nil,
                             onEdit: { viewModel.editItemTapped(withId: ex.id) },
                             onDelete: { viewModel.deleteItem(withId: ex.id) },
-                            onSetsEdit: { ex, _ in viewModel.editMetrics(for: ex.id) }
+                            onMetricEdit: { ex, setId, metric in
+                                viewModel.edit(metric: metric, forSet: setId, ofExercise: ex.id)
+                            }
                         )
                         .listRowSeparator(.hidden)
                     }
