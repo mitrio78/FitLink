@@ -61,6 +61,7 @@ VStack {
   **TODO:** existing code rarely uses these comments. New code should adopt them for consistency.
 
 - Keep layout minimalistic and readable. Use built‑in modifiers rather than custom ones when possible.
+- **Bottom Sheets**: Keep vertical spacing minimal and match native system sheets. Avoid stacking multiple padding modifiers and prefer safe‑area‑aware layout.
 
 ## View Structure Conventions
 

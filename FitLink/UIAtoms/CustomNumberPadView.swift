@@ -28,7 +28,7 @@ struct CustomNumberPadView: View {
     }
 
     var body: some View {
-        VStack(spacing: Theme.spacing.small) {
+        VStack(spacing: Theme.spacing.small / 2) {
             topSection
             numberPad
             Button(NSLocalizedString("Common.Done", comment: "Done")) {
@@ -44,7 +44,7 @@ struct CustomNumberPadView: View {
             .cornerRadius(Theme.radius.button)
         } //: VStack
         .padding(.horizontal, Theme.spacing.small)
-        .padding(.top, Theme.spacing.sheetTopPadding)
+        .padding(.top, Theme.spacing.small)
         .padding(.bottom, Theme.spacing.sheetBottomPadding)
         .background(Theme.color.background)
         .cornerRadius(Theme.radius.card)
@@ -58,16 +58,6 @@ struct CustomNumberPadView: View {
 
     private var topSection: some View {
         VStack(spacing: Theme.spacing.small) {
-            HStack {
-                Spacer()
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color.secondary.opacity(0.4))
-                    .frame(width: Theme.size.sheetHandleWidth, height: Theme.size.sheetHandleHeight)
-                Spacer()
-            } //: HStack
-            .padding(.top, Theme.spacing.sheetTopPadding)
-            .padding(.bottom, 2)
- 
             Picker("", selection: metricSelection) {
                 ForEach(viewModel.metrics, id: \.id) { metric in
                     Text(metric.displayName).tag(metric.id)

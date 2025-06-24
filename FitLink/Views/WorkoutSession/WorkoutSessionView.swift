@@ -60,6 +60,7 @@ struct WorkoutSessionView: View {
                 }
             )
             .presentationDetents([.fraction(0.65)])
+            .presentationDragIndicator(.visible)
         }
     }
 
