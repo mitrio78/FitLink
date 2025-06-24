@@ -6,7 +6,7 @@ struct WorkoutExerciseRowView: View {
     var groupExercises: [ExerciseInstance] = []
     var onEdit: () -> Void
     var onDelete: () -> Void
-    var onMetricEdit: (ExerciseInstance, ExerciseSet.ID, ExerciseMetric) -> Void
+    var onSetEdit: (ExerciseInstance, ExerciseSet.ID) -> Void
     var initiallyExpanded: Bool = false
 
     var body: some View {
@@ -34,17 +34,17 @@ struct WorkoutExerciseRowView: View {
                              exercises: groupExercises,
                              initiallyExpanded: initiallyExpanded,
                              onEdit: onEdit,
-                             onMetricTap: { ex, setId, metric in
-                                 onMetricEdit(ex, setId, metric)
+                             onSetTap: { ex, setId in
+                                 onSetEdit(ex, setId)
                              })
             } else {
-                ExerciseBlockCard(group: group, exerciseInstances: groupExercises, onEdit: onEdit, onMetricTap: { ex, setId, metric in
-                    onMetricEdit(ex, setId, metric)
+                ExerciseBlockCard(group: group, exerciseInstances: groupExercises, onEdit: onEdit, onSetTap: { ex, setId in
+                    onSetEdit(ex, setId)
                 })
             }
         } else {
-            ExerciseBlockCard(group: nil, exerciseInstances: [exercise], onEdit: onEdit, onMetricTap: { _, setId, metric in
-                onMetricEdit(exercise, setId, metric)
+            ExerciseBlockCard(group: nil, exerciseInstances: [exercise], onEdit: onEdit, onSetTap: { _, setId in
+                onSetEdit(exercise, setId)
             })
         }
     }
@@ -57,7 +57,7 @@ struct WorkoutExerciseRowView: View {
                                   group: nil,
                                   onEdit: {},
                                   onDelete: {},
-                                  onMetricEdit: { _,_,_ in },
+                                  onSetEdit: { _,_ in },
                                   initiallyExpanded: false)
         .padding()
 }

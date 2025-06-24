@@ -8,7 +8,7 @@ struct SetEditorRow: View {
     var scrollProxy: ScrollViewProxy? = nil
 
     var body: some View {
-        ForEach(metrics, id: \.type) { metric in
+        ForEach(sortedMetrics, id: \.type) { metric in
             HStack {
                 if showLabels { Text(metric.displayName) }
                 Spacer()
@@ -23,6 +23,20 @@ struct SetEditorRow: View {
                 )
             } //: HStack
         } //: ForEach
+    }
+
+    private var sortedMetrics: [ExerciseMetric] {
+        metrics.sorted { lhs, rhs in
+            order(lhs.type) < order(rhs.type)
+        }
+    }
+
+    private func order(_ type: ExerciseMetricType) -> Int {
+        switch type {
+        case .reps: return 0
+        case .weight: return 1
+        default: return 2
+        }
     }
 
     private func binding(for type: ExerciseMetricType) -> Binding<String> {
