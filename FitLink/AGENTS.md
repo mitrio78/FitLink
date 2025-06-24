@@ -119,3 +119,5 @@ VStack {
 8. Provide a `#Preview` section for every View/Atom.
 
 Following this guide will keep the FitLink codebase consistent and easy to maintain.
+
+❗ Do not place formatting or business logic inside SwiftUI Views. Keep views declarative. Use extensions or ViewModels.

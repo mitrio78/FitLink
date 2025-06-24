@@ -6,4 +6,5 @@ enum Theme {
     static let spacing = AppSpacing.self
     static let radius = AppRadius.self
     static let shadow = AppShadows.self
+    static let size = AppSize.self
 }
