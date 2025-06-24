@@ -16,12 +16,22 @@ struct CustomNumberPadView: View {
          values: Binding<[ExerciseMetric.ID: Double]>,
          onDone: @escaping () -> Void,
          onCancel: (() -> Void)? = nil) {
-        self.metrics = metrics
+        let sorted = metrics.sorted { lhs, rhs in
+            switch (lhs.type, rhs.type) {
+            case (.reps, .reps): return false
+            case (.reps, _): return true
+            case (_, .reps): return false
+            case (.weight, .weight): return false
+            case (.weight, _): return true
+            case (_, .weight): return false
+            default: return lhs.type.rawValue < rhs.type.rawValue
+            }
+        }
+        self.metrics = sorted
         self._metricValues = values
         self.onDone = onDone
         self.onCancel = onCancel
 
-        let sorted = metrics
         let firstMetric = sorted.first!
         let defaultUnits = Dictionary(uniqueKeysWithValues: sorted.map { ($0.id, DraftSet.defaultUnit(for: $0)) })
         _selectedMetricId = State(initialValue: firstMetric.id)
@@ -48,22 +58,15 @@ struct CustomNumberPadView: View {
 
     private var unit: UnitType { metricUnits[selectedMetricId] ?? currentMetric.unit ?? .repetition }
 
-    private var metricName: String {
-        switch unit {
-        case .kilogram, .pound:
-            return NSLocalizedString("ExerciseMetricType.Weight", comment: "Вес")
-        case .second, .minute:
-            return NSLocalizedString("ExerciseMetricType.Time", comment: "Время")
-        case .meter, .kilometer:
-            return NSLocalizedString("ExerciseMetricType.Distance", comment: "Дистанция")
-        case .repetition:
-            return NSLocalizedString("ExerciseMetricType.Reps", comment: "Повторы")
-        case .calorie:
-            return NSLocalizedString("ExerciseMetricType.Calories", comment: "Калории")
-        case .custom(let name):
-            return name
+    private var inputLabel: String? {
+        if unit == .repetition {
+            return NSLocalizedString("CustomNumberPad.RepsLabel", comment: "× reps suffix")
+        } else {
+            let text = unit.displayName
+            return text.isEmpty ? nil : text
         }
     }
+
 
     private var unitOptions: [UnitType] {
         switch unit {
@@ -103,10 +106,12 @@ struct CustomNumberPadView: View {
             .cornerRadius(Theme.radius.button)
         } //: VStack
         .padding(.horizontal, Theme.spacing.large)
-        .padding(.top, Theme.spacing.large)
         .padding(.bottom, Theme.spacing.large)
         .background(Theme.color.background)
         .cornerRadius(Theme.radius.card)
+        .safeAreaInset(edge: .top) {
+            Spacer().frame(height: Theme.spacing.medium)
+        }
         .safeAreaInset(edge: .bottom) {
             Spacer().frame(height: Theme.spacing.large)
         }
@@ -115,15 +120,16 @@ struct CustomNumberPadView: View {
     private var topSection: some View {
         VStack(spacing: Theme.spacing.small) {
             HStack {
-                Text(metricName)
-                    .font(Theme.font.subheading)
                 Spacer()
                 if let onCancel {
                     Button(action: onCancel) {
                         Image(systemName: "xmark")
-                            .foregroundColor(.secondary)
+                            .imageScale(.medium)
+                            .padding(8)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .foregroundColor(.secondary)
                 }
             } //: HStack
 
@@ -156,6 +162,13 @@ struct CustomNumberPadView: View {
                 .padding()
                 .background(Theme.color.backgroundSecondary)
                 .cornerRadius(Theme.radius.card)
+
+            if let label = inputLabel {
+                Text(label)
+                    .font(Theme.font.caption)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+            }
         } //: VStack
     }
 

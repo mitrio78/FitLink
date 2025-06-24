@@ -114,6 +114,7 @@
 "UnitType.Kilometer" = "км";
 "UnitType.Repetition" = "x";
 "UnitType.Calorie" = "ккал";
+"CustomNumberPad.RepsLabel" = "× раз";
 
 /* Muscle groups */
 "MuscleGroup.Chest" = "Грудные";
