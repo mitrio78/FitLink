@@ -38,8 +38,8 @@ struct SupersetApproachView: View {
 }
 
 #Preview {
-    let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
-                   ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
+    let metrics = [ExerciseMetric(type: .reps, unit: .reps, isRequired: true),
+                   ExerciseMetric(type: .weight, unit: .kg, isRequired: false)]
     let ex = ExerciseInstance(id: UUID(), exercise: Exercise(id: UUID(), name: "Test", variations: [], muscleGroups: [.chest], metrics: metrics), approaches: [], groupId: nil, notes: nil)
     return SupersetApproachView(index: 1, items: [(ex, nil)])
 }

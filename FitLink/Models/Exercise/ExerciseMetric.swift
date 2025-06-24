@@ -8,7 +8,8 @@
 import Foundation
 
 /// Описание метрики для конкретного упражнения
-struct ExerciseMetric: Codable, Equatable, Hashable {
+struct ExerciseMetric: Identifiable, Codable, Equatable, Hashable {
+    var id: UUID = UUID()
     var type: ExerciseMetricType
     var unit: UnitType?
     var isRequired: Bool
@@ -77,41 +78,22 @@ enum ExerciseMetricType: Codable, CaseIterable, Equatable, Hashable {
 }
 
 /// Типы единиц измерения
-enum UnitType: Codable, CaseIterable, Equatable, Hashable {
-    case kilogram
-    case pound
-    case second
-    case minute
-    case meter
-    case kilometer
-    case repetition
-    case calorie
-    case custom(String)
+enum UnitType: Codable, Equatable, Hashable {
+    case kg
+    case lb
+    case reps
+    case sec
 
     var displayName: String {
         switch self {
-        case .kilogram:
+        case .kg:
             return NSLocalizedString("UnitType.Kilogram", comment: "кг")
-        case .pound:
+        case .lb:
             return NSLocalizedString("UnitType.Pound", comment: "фунты")
-        case .second:
-            return NSLocalizedString("UnitType.Second", comment: "сек")
-        case .minute:
-            return NSLocalizedString("UnitType.Minute", comment: "мин")
-        case .meter:
-            return NSLocalizedString("UnitType.Meter", comment: "м")
-        case .kilometer:
-            return NSLocalizedString("UnitType.Kilometer", comment: "км")
-        case .repetition:
+        case .reps:
             return NSLocalizedString("UnitType.Repetition", comment: "повт.")
-        case .calorie:
-            return NSLocalizedString("UnitType.Calorie", comment: "ккал")
-        case .custom(let value):
-            return value
+        case .sec:
+            return NSLocalizedString("UnitType.Second", comment: "сек")
         }
-    }
-    
-    static var allCases: [UnitType] {
-        return [.kilogram, .pound, .second, .minute, .meter, .kilometer, .repetition, .calorie]
     }
 }

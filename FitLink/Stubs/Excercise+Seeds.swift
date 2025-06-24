@@ -15,8 +15,8 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Классический", "Наклонная скамья", "Узкий хват"],
         muscleGroups: [.chest, .triceps, .shoulders],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
-            ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true),
+            ExerciseMetric(type: .weight, unit: .kg, isRequired: false)
         ]
     ),
     Exercise(
@@ -27,8 +27,8 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Классическая", "Сумо", "Румынская"],
         muscleGroups: [.back, .legs, .glutes, .forearms],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
-            ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true),
+            ExerciseMetric(type: .weight, unit: .kg, isRequired: false)
         ]
     ),
     Exercise(
@@ -39,8 +39,8 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Классические", "Фронтальные", "С широкой постановкой ног"],
         muscleGroups: [.legs, .glutes, .core],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
-            ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true),
+            ExerciseMetric(type: .weight, unit: .kg, isRequired: false)
         ]
     ),
     Exercise(
@@ -51,7 +51,7 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Обычные", "Обратным хватом", "Широким хватом"],
         muscleGroups: [.back, .biceps, .forearms],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true)
         ]
     ),
     Exercise(
@@ -62,7 +62,7 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Грудные", "Трицепсовые"],
         muscleGroups: [.chest, .triceps, .shoulders],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true)
         ]
     ),
     Exercise(
@@ -73,8 +73,8 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Сидя", "Стоя"],
         muscleGroups: [.shoulders, .triceps],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
-            ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true),
+            ExerciseMetric(type: .weight, unit: .kg, isRequired: false)
         ]
     ),
     Exercise(
@@ -85,8 +85,8 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Стоя", "Супинированным хватом", "Молотковые"],
         muscleGroups: [.biceps, .forearms],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
-            ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true),
+            ExerciseMetric(type: .weight, unit: .kg, isRequired: false)
         ]
     ),
     Exercise(
@@ -97,8 +97,8 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Верёвочная рукоять", "Прямая рукоять"],
         muscleGroups: [.triceps],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
-            ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true),
+            ExerciseMetric(type: .weight, unit: .kg, isRequired: false)
         ]
     ),
     Exercise(
@@ -109,7 +109,7 @@ let exercisesCatalog: [Exercise] = [
         variations: ["На локтях", "Боковая", "С поднятой ногой"],
         muscleGroups: [.core, .abs],
         metrics: [
-            ExerciseMetric(type: .time, unit: .repetition, isRequired: true)
+            ExerciseMetric(type: .time, unit: .sec, isRequired: true)
         ]
     ),
     Exercise(
@@ -120,7 +120,7 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Обычные", "С поднятыми ногами", "На скамье"],
         muscleGroups: [.abs],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true)
         ]
     ),
     Exercise(
@@ -131,8 +131,8 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Классические", "С гантелями", "Назад"],
         muscleGroups: [.legs, .glutes],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
-            ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true),
+            ExerciseMetric(type: .weight, unit: .kg, isRequired: false)
         ]
     ),
     Exercise(
@@ -143,7 +143,7 @@ let exercisesCatalog: [Exercise] = [
         variations: ["На скамье", "С весом"],
         muscleGroups: [.back, .glutes, .core],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true)
         ]
     ),
     Exercise(
@@ -154,8 +154,8 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Сидя", "Стоя"],
         muscleGroups: [.shoulders],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
-            ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true),
+            ExerciseMetric(type: .weight, unit: .kg, isRequired: false)
         ]
     ),
     Exercise(
@@ -166,8 +166,8 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Классика", "Обратным хватом"],
         muscleGroups: [.back, .biceps],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
-            ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true),
+            ExerciseMetric(type: .weight, unit: .kg, isRequired: false)
         ]
     ),
     Exercise(
@@ -178,8 +178,8 @@ let exercisesCatalog: [Exercise] = [
         variations: ["К груди", "За голову"],
         muscleGroups: [.back, .biceps],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
-            ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true),
+            ExerciseMetric(type: .weight, unit: .kg, isRequired: false)
         ]
     ),
     Exercise(
@@ -190,7 +190,7 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Стоя", "Сидя"],
         muscleGroups: [.calves],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true)
         ]
     ),
     Exercise(
@@ -201,7 +201,7 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Обычные", "Узким хватом", "Широким хватом"],
         muscleGroups: [.chest, .shoulders, .triceps],
         metrics: [
-            ExerciseMetric(type: .reps, unit: .repetition, isRequired: true)
+            ExerciseMetric(type: .reps, unit: .reps, isRequired: true)
         ]
     ),
     Exercise(
@@ -212,8 +212,8 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Быстрый бег", "Интервальный бег"],
         muscleGroups: [.cardio, .legs, .fullBody],
         metrics: [
-            ExerciseMetric(type: .time, unit: .minute, isRequired: true),
-            ExerciseMetric(type: .distance, unit: .kilometer, isRequired: false)
+            ExerciseMetric(type: .time, unit: .sec, isRequired: true),
+            ExerciseMetric(type: .distance, unit: nil, isRequired: false)
         ]
     ),
     Exercise(
@@ -224,7 +224,7 @@ let exercisesCatalog: [Exercise] = [
         variations: ["Двойные", "Скоростные"],
         muscleGroups: [.cardio, .legs, .fullBody],
         metrics: [
-            ExerciseMetric(type: .time, unit: .minute, isRequired: true)
+            ExerciseMetric(type: .time, unit: .sec, isRequired: true)
         ]
     ),
     Exercise(
@@ -235,7 +235,7 @@ let exercisesCatalog: [Exercise] = [
         variations: ["На ноги", "На спину"],
         muscleGroups: [.mobility, .legs, .back],
         metrics: [
-            ExerciseMetric(type: .time, unit: .second, isRequired: true)
+            ExerciseMetric(type: .time, unit: .sec, isRequired: true)
         ]
     )
 ]

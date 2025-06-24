@@ -98,8 +98,8 @@ struct DropSetEditorView: View {
 }
 
 #Preview {
-    let metrics = [ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false),
-                   ExerciseMetric(type: .reps, unit: .repetition, isRequired: true)]
+    let metrics = [ExerciseMetric(type: .weight, unit: .kg, isRequired: false),
+                   ExerciseMetric(type: .reps, unit: .reps, isRequired: true)]
     let first = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8])
     let drop = ExerciseSet(id: UUID(), metricValues: [.weight: 40, .reps: 8])
     return DropSetEditorView(sets: [first, drop], metrics: metrics) { _ in }

@@ -62,8 +62,8 @@ struct ApproachCardView: View {
 }
 
 #Preview {
-    let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
-                   ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
+    let metrics = [ExerciseMetric(type: .reps, unit: .reps, isRequired: true),
+                   ExerciseMetric(type: .weight, unit: .kg, isRequired: false)]
     let set1 = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8], notes: nil, drops: [ExerciseSet(id: UUID(), metricValues: [.weight: 40, .reps: 8], notes: nil, drops: nil)])
     return ApproachCardView(set: set1, metrics: metrics)
         .frame(height: 64)
