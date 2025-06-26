@@ -51,7 +51,6 @@ struct ApproachCardView: View {
                 }
             }
         } //: HStack
-        .frame(minWidth: 64)
         .metricCardStyle()
         .contentShape(Rectangle())
         .onTapGesture { onTap(set.id) }
