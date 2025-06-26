@@ -97,14 +97,20 @@ struct CustomNumberPadView: View {
         } //: VStack
     }
 
-    private var keys: [[String]] { [["1","2","3"],["4","5","6"],["7","8","9"],[".","0","⌫"]] }
+    private var keys: [[String]] {
+        if viewModel.currentMetric.type.requiresInteger {
+            return [["1","2","3"],["4","5","6"],["7","8","9"],["0","⌫"]]
+        } else {
+            return [["1","2","3"],["4","5","6"],["7","8","9"],[".","0","⌫"]]
+        }
+    }
 
     private func handleKey(_ key: String) {
         switch key {
         case "⌫":
             if !viewModel.input.isEmpty { viewModel.input.removeLast() }
         case ".":
-            if !viewModel.input.contains(".") {
+            if !viewModel.currentMetric.type.requiresInteger && !viewModel.input.contains(".") {
                 viewModel.input.append(viewModel.input.isEmpty ? "0." : ".")
             }
         default:
