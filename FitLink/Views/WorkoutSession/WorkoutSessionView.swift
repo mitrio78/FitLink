@@ -21,13 +21,14 @@ struct WorkoutSessionView: View {
     var body: some View {
         List {
             headerSection
+                .listRowInsets(.init(top: 8, leading: 16, bottom: 8, trailing: 16))
 
             workoutSection(.warmUp, exercises: viewModel.warmUpExercises)
             workoutSection(.main, exercises: viewModel.mainExercises)
             workoutSection(.coolDown, exercises: viewModel.coolDownExercises)
         }
         .listStyle(.plain)
-        .padding(.horizontal, Theme.current.layoutMode == .compact ? Theme.spacing.compactHorizontal : Theme.spacing.horizontal)
+        .padding(.horizontal, Theme.spacing.horizontal)
         .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -70,7 +71,7 @@ struct WorkoutSessionView: View {
 
     private var headerSection: some View {
         Section {
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: .zero) {
                 Text(
                     String(
                         format: NSLocalizedString("WorkoutSession.Header", comment: "Тренировка для %@"),
@@ -78,7 +79,7 @@ struct WorkoutSessionView: View {
                     )
                 )
                 .font(Theme.font.titleMedium).bold()
-                .padding(.vertical)
+                .padding(.vertical, Theme.spacing.compactInnerSpacing)
                 if let date = viewModel.session.date {
                     Text("\(date.formatted(date: .long, time: .shortened))")
                         .foregroundColor(Theme.color.textSecondary)
@@ -87,10 +88,10 @@ struct WorkoutSessionView: View {
                     Text(notes)
                         .font(Theme.font.body)
                         .foregroundColor(Theme.color.accent)
-                        .padding(.vertical, Theme.spacing.small)
+                        .padding(.top, Theme.spacing.small)
                 }
             } //: VStack
-        }
+        } //: Section
     }
 
     @ViewBuilder
@@ -121,10 +122,12 @@ struct WorkoutSessionView: View {
                             }
                         }
                         .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets(top: Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small,
-                                                leading: 0,
-                                                bottom: Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small,
-                                                trailing: 0))
+                        .listRowInsets(EdgeInsets(
+                            top: Theme.current.spacing.compactSetRowSpacing,
+                            leading: 8,
+                            bottom: Theme.spacing.compactSetRowSpacing,
+                            trailing: 8
+                        ))
                     } else if !viewModel.isExerciseInAnyGroup(ex) {
                         WorkoutExerciseRowView(
                             exercise: ex,
@@ -140,10 +143,12 @@ struct WorkoutSessionView: View {
                             isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled
                         )
                         .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets(top: Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small,
-                                                leading: 0,
-                                                bottom: Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small,
-                                                trailing: 0))
+                        .listRowInsets(EdgeInsets(
+                            top: Theme.current.spacing.compactSetRowSpacing,
+                            leading: 8,
+                            bottom: Theme.spacing.compactSetRowSpacing,
+                            trailing: 8
+                        ))
                     }
                 }
             } header: {

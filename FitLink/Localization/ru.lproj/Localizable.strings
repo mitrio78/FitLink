@@ -1,5 +1,5 @@
 /* WorkoutSession header with client name */
-"WorkoutSession.Header" = "Тренировка для %@";
+"WorkoutSession.Header" = "%@";
 "WorkoutSession.ClientPlaceholder" = "Клиента";
 "WorkoutSession.Title" = "Тренировка";
 

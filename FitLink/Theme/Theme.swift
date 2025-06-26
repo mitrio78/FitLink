@@ -8,7 +8,7 @@ enum Theme {
 
     /// Controls which layout mode is active. In the future this should come
     /// from user settings.
-    static var layoutMode: LayoutMode = .compact
+    static var layoutMode: LayoutMode = .regular
 
     static let color = AppColors.self
     static let font = AppTypography.self
