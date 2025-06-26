@@ -172,3 +172,7 @@
 "Common.Done" = "Готово";
 "Common.Delete" = "Удалить";
 "Common.Edit" = "Изменить";
+
+/* Developer settings */
+"DeveloperSettings.SectionTitle" = "Настройки разработчика";
+"DeveloperSettings.CompactMode" = "Компактный интерфейс";
