@@ -8,13 +8,13 @@ struct ApproachListView: View {
     var onAddTap: () -> Void = {}
     var isLocked: Bool = false
 
-    private var gridRows: [GridItem] { [GridItem(.flexible())] }
 
     var body: some View {
         let innerSpacing = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricSpacing : Theme.spacing.small
         let verticalPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small
+        let rows = [GridItem(.flexible(), spacing: innerSpacing, alignment: .top)]
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHGrid(rows: gridRows, spacing: innerSpacing) {
+            LazyHGrid(rows: rows, spacing: innerSpacing) {
                 ForEach(sets) { set in
                     ApproachCardView(set: set, metrics: metrics) { id in
                         onSetTap(id)
