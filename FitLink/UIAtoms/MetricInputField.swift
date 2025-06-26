@@ -3,6 +3,7 @@ import SwiftUI
 /// Reusable numeric input component with optional prefix/suffix and presets.
 struct MetricInputField: View {
     @Binding var value: String
+    var metricType: ExerciseMetricType? = nil
     var labelPrefix: String? = nil
     var labelSuffix: String? = nil
     var placeholder: String? = nil
@@ -15,6 +16,11 @@ struct MetricInputField: View {
 
     @State private var width: CGFloat = 0
     @FocusState private var focused: Bool
+    @State private var lastValidValue: String = ""
+
+    private var currentKeyboardType: UIKeyboardType {
+        metricType == .reps ? .numberPad : keyboardType
+    }
 
     private let size: CGFloat = 48
     private let buttonRowHeight: CGFloat = 40
@@ -39,7 +45,7 @@ struct MetricInputField: View {
 
                     TextField("", text: $value, prompt: placeholder.map { Text($0) })
                         .focused($focused)
-                        .keyboardType(keyboardType)
+                        .keyboardType(currentKeyboardType)
                         .multilineTextAlignment(.center)
                         .frame(width: max(size, width), height: size)
                         .background(
@@ -52,8 +58,23 @@ struct MetricInputField: View {
                         )
                         .onTapGesture(count: 1) { handleTap() }
                         .onTapGesture(count: 2) { reset() }
-                        .onChange(of: value) { _, newVal in
-                            value = newVal.trimLeadingZeros()
+                        .onChange(of: value) { oldVal, newVal in
+                            if metricType == .reps {
+                                if newVal.isEmpty {
+                                    lastValidValue = ""
+                                }
+                                if newVal.allSatisfy({ $0.isNumber }) {
+                                    let trimmed = newVal.trimLeadingZeros()
+                                    lastValidValue = trimmed
+                                    if trimmed != newVal {
+                                        value = trimmed
+                                    }
+                                } else {
+                                    value = lastValidValue
+                                }
+                            } else {
+                                value = newVal.trimLeadingZeros()
+                            }
                         }
                 }
                 .onPreferenceChange(WidthKey.self) { width = $0 }
@@ -82,7 +103,10 @@ struct MetricInputField: View {
         .padding(.bottom, focused && !presets.isEmpty ? buttonRowHeight + Theme.spacing.medium : 0)
         .id(scrollId)
         .font(Theme.font.body.bold())
-        .onAppear { value = value.trimLeadingZeros() }
+        .onAppear {
+            value = value.trimLeadingZeros()
+            lastValidValue = value
+        }
         .onChange(of: focused) { _, isFocused in
             if isFocused {
                 scrollToSelf()
@@ -150,6 +174,6 @@ private struct WidthKey: PreferenceKey {
 }
 
 #Preview {
-    MetricInputField(value: .constant("75"), labelPrefix: "×", labelSuffix: "kg", presets: [2.5,5,10])
+    MetricInputField(value: .constant("75"), metricType: .weight, labelPrefix: "×", labelSuffix: "kg", presets: [2.5,5,10])
         .padding()
 }

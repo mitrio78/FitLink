@@ -14,6 +14,7 @@ struct SetEditorRow: View {
                 Spacer()
                 MetricInputField(
                     value: binding(for: metric.type),
+                    metricType: metric.type,
                     labelPrefix: metric.type == .reps ? NSLocalizedString("CustomNumberPad.RepsLabel", comment: "× reps") : nil,
                     labelSuffix: metric.type != .reps ? metric.unit?.displayName : nil,
                     keyboardType: .decimalPad,
