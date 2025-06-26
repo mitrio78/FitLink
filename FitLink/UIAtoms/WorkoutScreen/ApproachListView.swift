@@ -42,9 +42,11 @@ private struct AddSetButton: View {
     var action: () -> Void = {}
 
     var body: some View {
+        let innerPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactInnerSpacing : Theme.spacing.small
         Button(action: action) {
             Image(systemName: "plus")
                 .font(.title2)
+                .padding(innerPadding)
         }
         .buttonStyle(ScaleButtonStyle())
         .foregroundColor(.secondary)

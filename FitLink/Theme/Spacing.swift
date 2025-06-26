@@ -8,6 +8,12 @@ enum AppSpacing {
     static let sheetTopPadding: CGFloat = 4
     static let sheetBottomPadding: CGFloat = 4
 
+    /// Standard horizontal padding for lists and views.
+    static let horizontal: CGFloat = 16
+
+    /// Reduced horizontal padding when compact UI mode is enabled.
+    static let compactHorizontal: CGFloat = 12
+
     /// Padding around workout blocks when compact UI mode is enabled.
     static let compactBlockPadding: CGFloat = 8
 

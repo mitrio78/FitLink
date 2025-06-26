@@ -27,6 +27,7 @@ struct WorkoutSessionView: View {
             workoutSection(.coolDown, exercises: viewModel.coolDownExercises)
         }
         .listStyle(.plain)
+        .padding(.horizontal, Theme.current.layoutMode == .compact ? Theme.spacing.compactHorizontal : Theme.spacing.horizontal)
         .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
