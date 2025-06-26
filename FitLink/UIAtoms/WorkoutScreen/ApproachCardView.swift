@@ -20,9 +20,6 @@ struct ApproachCardView: View {
 
     var body: some View {
         let innerSpacing = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactInnerSpacing : Theme.spacing.small / 2
-        let horizontalPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricHorizontalPadding : Theme.spacing.small
-        let verticalPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricVerticalPadding : Theme.spacing.small
-        let corner = Theme.current.layoutMode == .compact ? Theme.current.radius.compactSetCell : Theme.radius.card
         HStack(spacing: innerSpacing) {
             let drops = [set] + (set.drops ?? [])
             ForEach(drops.indices, id: \.self) { idx in
@@ -53,11 +50,8 @@ struct ApproachCardView: View {
                 }
             }
         }
-        .padding(.horizontal, horizontalPadding)
-        .padding(.vertical, verticalPadding)
-        .frame(minWidth: 64, maxHeight: .infinity)
-        .background(Theme.color.textSecondary.opacity(0.05))
-        .cornerRadius(corner)
+        .metricCardStyle()
+        .frame(minWidth: 64)
         .contentShape(Rectangle())
         .onTapGesture { onTap(set.id) }
     }
@@ -69,6 +63,5 @@ struct ApproachCardView: View {
                    ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
     let set1 = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8], notes: nil, drops: [ExerciseSet(id: UUID(), metricValues: [.weight: 40, .reps: 8], notes: nil, drops: nil)])
     return ApproachCardView(set: set1, metrics: metrics)
-        .frame(height: 64)
         .padding()
 }

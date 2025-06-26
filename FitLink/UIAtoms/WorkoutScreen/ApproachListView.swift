@@ -8,14 +8,7 @@ struct ApproachListView: View {
     var onAddTap: () -> Void = {}
     var isLocked: Bool = false
 
-    private var rowHeight: CGFloat {
-        if Theme.current.layoutMode == .compact {
-            return metrics.count > 1 ? Theme.size.compactApproachMultiHeight : Theme.size.compactApproachSingleHeight
-        }
-        return Theme.size.approachCardHeight
-    }
-
-    private var gridRows: [GridItem] { [GridItem(.fixed(rowHeight))] }
+    private var gridRows: [GridItem] { [GridItem(.flexible())] }
 
     var body: some View {
         let innerSpacing = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricSpacing : Theme.spacing.small
@@ -26,11 +19,9 @@ struct ApproachListView: View {
                     ApproachCardView(set: set, metrics: metrics) { id in
                         onSetTap(id)
                     }
-                    .frame(height: rowHeight)
                 }
                 if !isLocked {
                     AddSetButton(action: onAddTap)
-                        .frame(width: rowHeight, height: rowHeight)
                 }
             }
             .padding(.vertical, verticalPadding)
@@ -42,18 +33,14 @@ private struct AddSetButton: View {
     var action: () -> Void = {}
 
     var body: some View {
-        let innerPaddingH = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricHorizontalPadding : Theme.spacing.small
-        let innerPaddingV = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricVerticalPadding : Theme.spacing.small
         Button(action: action) {
             Image(systemName: "plus")
                 .font(.title2)
-                .padding(.horizontal, innerPaddingH)
-                .padding(.vertical, innerPaddingV)
         }
+        .metricCardStyle()
         .buttonStyle(ScaleButtonStyle())
         .foregroundColor(.secondary)
-        .background(Theme.color.textSecondary.opacity(0.1))
-        .cornerRadius(Theme.current.layoutMode == .compact ? Theme.current.radius.compactSetCell : Theme.radius.card)
+        .frame(minWidth: 64)
         .accessibilityLabel(NSLocalizedString("WorkoutExerciseEdit.AddSet", comment: "Add Set"))
     }
 }
