@@ -42,11 +42,13 @@ private struct AddSetButton: View {
     var action: () -> Void = {}
 
     var body: some View {
-        let innerPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactInnerSpacing : Theme.spacing.small
+        let innerPaddingH = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricHorizontalPadding : Theme.spacing.small
+        let innerPaddingV = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricVerticalPadding : Theme.spacing.small
         Button(action: action) {
             Image(systemName: "plus")
                 .font(.title2)
-                .padding(innerPadding)
+                .padding(.horizontal, innerPaddingH)
+                .padding(.vertical, innerPaddingV)
         }
         .buttonStyle(ScaleButtonStyle())
         .foregroundColor(.secondary)

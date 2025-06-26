@@ -20,7 +20,8 @@ struct ApproachCardView: View {
 
     var body: some View {
         let innerSpacing = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactInnerSpacing : Theme.spacing.small / 2
-        let outerPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactInnerSpacing : Theme.spacing.small
+        let horizontalPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricHorizontalPadding : Theme.spacing.small
+        let verticalPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricVerticalPadding : Theme.spacing.small
         let corner = Theme.current.layoutMode == .compact ? Theme.current.radius.compactSetCell : Theme.radius.card
         HStack(spacing: innerSpacing) {
             let drops = [set] + (set.drops ?? [])
@@ -52,7 +53,8 @@ struct ApproachCardView: View {
                 }
             }
         }
-        .padding(outerPadding)
+        .padding(.horizontal, horizontalPadding)
+        .padding(.vertical, verticalPadding)
         .frame(minWidth: 64, maxHeight: .infinity)
         .background(Theme.color.textSecondary.opacity(0.05))
         .cornerRadius(corner)

@@ -25,4 +25,10 @@ enum AppSpacing {
 
     /// Spacing between set rows when compact UI is active.
     static let compactSetRowSpacing: CGFloat = 4
+
+    /// Horizontal padding inside metric pills when compact UI is active.
+    static let compactMetricHorizontalPadding: CGFloat = 6
+
+    /// Vertical padding inside metric pills when compact UI is active.
+    static let compactMetricVerticalPadding: CGFloat = 4
 }
