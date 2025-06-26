@@ -19,9 +19,9 @@ struct ApproachCardView: View {
     }
 
     var body: some View {
-        let innerSpacing = Theme.isCompactUIEnabled ? Theme.spacing.compactInnerSpacing : Theme.spacing.small / 2
-        let outerPadding = Theme.isCompactUIEnabled ? Theme.spacing.compactBlockPadding : Theme.spacing.small
-        let corner = Theme.isCompactUIEnabled ? Theme.radius.compactSetCell : Theme.radius.card
+        let innerSpacing = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactInnerSpacing : Theme.spacing.small / 2
+        let outerPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactInnerSpacing : Theme.spacing.small
+        let corner = Theme.current.layoutMode == .compact ? Theme.current.radius.compactSetCell : Theme.radius.card
         HStack(spacing: innerSpacing) {
             let drops = [set] + (set.drops ?? [])
             ForEach(drops.indices, id: \.self) { idx in
@@ -30,18 +30,18 @@ struct ApproachCardView: View {
                     if let repsMetric {
                         let val = drop.metricValues[.reps] ?? 0
                         Text(ExerciseMetric.formattedMetric(val, metric: repsMetric))
-                            .font(Theme.isCompactUIEnabled ? Theme.font.compactMetricValue.bold() : Theme.font.metrics1.bold())
+                            .font(Theme.current.layoutMode == .compact ? Theme.font.compactMetricValue.bold() : Theme.font.metrics1.bold())
                             .foregroundColor(.primary)
                     }
                     if let weightMetric {
                         let val = drop.metricValues[.weight] ?? 0
                         Text(ExerciseMetric.formattedMetric(val, metric: weightMetric))
-                            .font(Theme.isCompactUIEnabled ? Theme.font.compactMetricValue : Theme.font.metrics2)
+                            .font(Theme.current.layoutMode == .compact ? Theme.font.compactMetricValue : Theme.font.metrics2)
                             .foregroundColor(.primary)
                     } else if let timeMetric {
                         let val = drop.metricValues[.time] ?? 0
                         Text(ExerciseMetric.formattedMetric(val, metric: timeMetric))
-                            .font(Theme.isCompactUIEnabled ? Theme.font.compactMetricValue : Theme.font.metrics2)
+                            .font(Theme.current.layoutMode == .compact ? Theme.font.compactMetricValue : Theme.font.metrics2)
                             .foregroundColor(.primary)
                     }
                 }

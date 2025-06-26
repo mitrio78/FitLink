@@ -120,6 +120,10 @@ struct WorkoutSessionView: View {
                             }
                         }
                         .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small,
+                                                leading: 0,
+                                                bottom: Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small,
+                                                trailing: 0))
                     } else if !viewModel.isExerciseInAnyGroup(ex) {
                         WorkoutExerciseRowView(
                             exercise: ex,
@@ -135,6 +139,10 @@ struct WorkoutSessionView: View {
                             isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled
                         )
                         .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small,
+                                                leading: 0,
+                                                bottom: Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small,
+                                                trailing: 0))
                     }
                 }
             } header: {
@@ -146,21 +154,21 @@ struct WorkoutSessionView: View {
 
 
 #Preview("Default Light") {
-    Theme.isCompactUIEnabled = false
+    Theme.layoutMode = .regular
     return NavigationStack {
         WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
     }
 }
 
 #Preview("Compact Light") {
-    Theme.isCompactUIEnabled = true
+    Theme.layoutMode = .compact
     return NavigationStack {
         WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
     }
 }
 
 #Preview("Compact Dark") {
-    Theme.isCompactUIEnabled = true
+    Theme.layoutMode = .compact
     return NavigationStack {
         WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
     }

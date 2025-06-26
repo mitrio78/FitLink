@@ -18,10 +18,10 @@ struct ExerciseSetMetricsView: View {
     }
     
     var body: some View {
-        let dividerPadding = Theme.isCompactUIEnabled ? Theme.spacing.compactInnerSpacing : Theme.spacing.small / 2
-        let outerSpacing = Theme.isCompactUIEnabled ? Theme.spacing.compactMetricSpacing : Theme.spacing.medium
-        let innerSpacing = Theme.isCompactUIEnabled ? Theme.spacing.compactMetricSpacing : Theme.spacing.small
-        let vSpacing = Theme.isCompactUIEnabled ? Theme.spacing.compactMetricSpacing / 2 : Theme.spacing.small / 2
+        let dividerPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactInnerSpacing : Theme.spacing.small / 2
+        let outerSpacing = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricSpacing : Theme.spacing.medium
+        let innerSpacing = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricSpacing : Theme.spacing.small
+        let vSpacing = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricSpacing / 2 : Theme.spacing.small / 2
 
         VStack {
             Divider()
@@ -35,18 +35,18 @@ struct ExerciseSetMetricsView: View {
                                 VStack(spacing: vSpacing) {
                                     // Верхняя строка — вес
                                     Text(weightString(for: drops[idx]))
-                                        .font(Theme.isCompactUIEnabled ? Theme.font.compactMetricValue.bold() : .headline.bold())
+                                        .font(Theme.current.layoutMode == .compact ? Theme.font.compactMetricValue.bold() : .headline.bold())
                                         .foregroundColor(.primary)
                                     // Нижняя строка — метрика
                                     Text(metricString(for: drops[idx]))
-                                        .font(Theme.isCompactUIEnabled ? Theme.font.compactMetricValue : .subheadline)
+                                        .font(Theme.current.layoutMode == .compact ? Theme.font.compactMetricValue : .subheadline)
                                         .foregroundColor(.primary)
                                 }
                                 // Стрелка — если не последний дроп
                                 if idx < drops.count - 1 {
                                     Text("→")
-                                        .font(Theme.isCompactUIEnabled ? Theme.font.compactMetricValue.bold() : .headline.bold())
-                                        .padding(.horizontal, Theme.isCompactUIEnabled ? Theme.spacing.compactMetricSpacing / 2 : Theme.spacing.small / 2)
+                                        .font(Theme.current.layoutMode == .compact ? Theme.font.compactMetricValue.bold() : .headline.bold())
+                                        .padding(.horizontal, Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricSpacing / 2 : Theme.spacing.small / 2)
                                 } else {
                                     Divider()
                                         .padding(.leading)

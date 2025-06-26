@@ -10,8 +10,8 @@ struct ExerciseBlockCard: View {
     var isLocked: Bool = false
 
     var body: some View {
-        let innerSpacing = Theme.isCompactUIEnabled ? Theme.spacing.compactInnerSpacing : Theme.spacing.small
-        let outerPadding = Theme.isCompactUIEnabled ? Theme.spacing.compactBlockPadding : Theme.spacing.medium
+        let innerSpacing = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactInnerSpacing : Theme.spacing.small
+        let outerPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactBlockPadding : Theme.spacing.medium
         VStack(alignment: .leading, spacing: innerSpacing) {
             if let group {
                 Text(group.type.displayName)
@@ -20,7 +20,7 @@ struct ExerciseBlockCard: View {
             }
 
             Text(title)
-                .font(Theme.isCompactUIEnabled ? Theme.font.compactExerciseTitle : Theme.font.subheading)
+                .font(Theme.current.layoutMode == .compact ? Theme.font.compactExerciseTitle : Theme.font.subheading)
                 .lineLimit(2)
                 .truncationMode(.tail)
             

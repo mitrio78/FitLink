@@ -13,4 +13,15 @@ enum AppSize {
     ///  - Remaining paddings between blocks
     ///  = ~394 pt total
     static let numberPadSheetHeight: CGFloat = 394
+
+    /// Default height for an approach card in the workout session.
+    static let approachCardHeight: CGFloat = 64
+
+    /// Height of an approach card when only one metric is displayed in
+    /// compact mode.
+    static let compactApproachSingleHeight: CGFloat = 44
+
+    /// Height of an approach card when two or more metrics are displayed in
+    /// compact mode.
+    static let compactApproachMultiHeight: CGFloat = 56
 }
