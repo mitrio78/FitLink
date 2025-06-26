@@ -24,8 +24,9 @@ struct ApproachListView: View {
                     AddSetButton(action: onAddTap)
                 }
             }
-            .padding(.vertical, verticalPadding)
         } //: ScrollView
+        .padding(.vertical, verticalPadding)
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 
@@ -38,6 +39,7 @@ private struct AddSetButton: View {
                 .font(Theme.current.layoutMode == .compact ? Theme.font.compactMetricValue : Theme.font.metrics1)
         } //: Button
         .metricCardStyle()
+        .frame(maxHeight: .infinity)
         .buttonStyle(ScaleButtonStyle())
         .foregroundColor(.secondary)
         .accessibilityLabel(NSLocalizedString("WorkoutExerciseEdit.AddSet", comment: "Add Set"))

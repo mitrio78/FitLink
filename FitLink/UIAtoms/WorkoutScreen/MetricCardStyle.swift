@@ -7,7 +7,6 @@ struct MetricCardStyle: ViewModifier {
         let verticalPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricVerticalPadding : Theme.spacing.small
         let corner = Theme.current.layoutMode == .compact ? Theme.current.radius.compactSetCell : Theme.radius.card
         content
-            .fixedSize(horizontal: false, vertical: true)
             .padding(.vertical, verticalPadding)
             .padding(.horizontal, horizontalPadding)
             .background(Theme.color.textSecondary.opacity(0.05))

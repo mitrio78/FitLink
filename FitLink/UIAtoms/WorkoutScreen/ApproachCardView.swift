@@ -51,6 +51,7 @@ struct ApproachCardView: View {
                 }
             }
         } //: HStack
+        .fixedSize(horizontal: false, vertical: true)
         .metricCardStyle()
         .contentShape(Rectangle())
         .onTapGesture { onTap(set.id) }
