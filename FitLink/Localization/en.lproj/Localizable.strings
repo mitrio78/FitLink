@@ -172,3 +172,7 @@
 "Common.Done" = "Done";
 "Common.Delete" = "Delete";
 "Common.Edit" = "Edit";
+
+/* Developer settings */
+"DeveloperSettings.SectionTitle" = "Developer Settings";
+"DeveloperSettings.CompactMode" = "Compact UI Mode";
