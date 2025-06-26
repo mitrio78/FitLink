@@ -27,6 +27,7 @@ struct WorkoutSessionView: View {
             workoutSection(.coolDown, exercises: viewModel.coolDownExercises)
         }
         .listStyle(.plain)
+        .padding(.horizontal, Theme.current.layoutMode == .compact ? Theme.spacing.compactHorizontal : Theme.spacing.horizontal)
         .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -120,6 +121,10 @@ struct WorkoutSessionView: View {
                             }
                         }
                         .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small,
+                                                leading: 0,
+                                                bottom: Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small,
+                                                trailing: 0))
                     } else if !viewModel.isExerciseInAnyGroup(ex) {
                         WorkoutExerciseRowView(
                             exercise: ex,
@@ -135,6 +140,10 @@ struct WorkoutSessionView: View {
                             isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled
                         )
                         .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small,
+                                                leading: 0,
+                                                bottom: Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small,
+                                                trailing: 0))
                     }
                 }
             } header: {
@@ -145,14 +154,23 @@ struct WorkoutSessionView: View {
 }
 
 
-#Preview("Light") {
-    NavigationStack {
+#Preview("Default Light") {
+    Theme.layoutMode = .regular
+    return NavigationStack {
         WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
     }
 }
 
-#Preview("Dark") {
-    NavigationStack {
+#Preview("Compact Light") {
+    Theme.layoutMode = .compact
+    return NavigationStack {
+        WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
+    }
+}
+
+#Preview("Compact Dark") {
+    Theme.layoutMode = .compact
+    return NavigationStack {
         WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
     }
     .preferredColorScheme(.dark)

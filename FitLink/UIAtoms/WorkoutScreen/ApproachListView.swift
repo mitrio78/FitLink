@@ -8,23 +8,32 @@ struct ApproachListView: View {
     var onAddTap: () -> Void = {}
     var isLocked: Bool = false
 
-    private var gridRows: [GridItem] { [GridItem(.fixed(64))] }
+    private var rowHeight: CGFloat {
+        if Theme.current.layoutMode == .compact {
+            return metrics.count > 1 ? Theme.size.compactApproachMultiHeight : Theme.size.compactApproachSingleHeight
+        }
+        return Theme.size.approachCardHeight
+    }
+
+    private var gridRows: [GridItem] { [GridItem(.fixed(rowHeight))] }
 
     var body: some View {
+        let innerSpacing = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricSpacing : Theme.spacing.small
+        let verticalPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactSetRowSpacing : Theme.spacing.small
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHGrid(rows: gridRows, spacing: Theme.spacing.small) {
+            LazyHGrid(rows: gridRows, spacing: innerSpacing) {
                 ForEach(sets) { set in
                     ApproachCardView(set: set, metrics: metrics) { id in
                         onSetTap(id)
                     }
-                    .frame(height: 64)
+                    .frame(height: rowHeight)
                 }
                 if !isLocked {
                     AddSetButton(action: onAddTap)
-                        .frame(width: 64, height: 64)
+                        .frame(width: rowHeight, height: rowHeight)
                 }
             }
-            .padding(.vertical, Theme.spacing.small)
+            .padding(.vertical, verticalPadding)
         } //: ScrollView
     }
 }
@@ -33,15 +42,18 @@ private struct AddSetButton: View {
     var action: () -> Void = {}
 
     var body: some View {
+        let innerPaddingH = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricHorizontalPadding : Theme.spacing.small
+        let innerPaddingV = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactMetricVerticalPadding : Theme.spacing.small
         Button(action: action) {
             Image(systemName: "plus")
                 .font(.title2)
-                .frame(width: 64, height: 64)
+                .padding(.horizontal, innerPaddingH)
+                .padding(.vertical, innerPaddingV)
         }
         .buttonStyle(ScaleButtonStyle())
         .foregroundColor(.secondary)
         .background(Theme.color.textSecondary.opacity(0.1))
-        .cornerRadius(Theme.radius.card)
+        .cornerRadius(Theme.current.layoutMode == .compact ? Theme.current.radius.compactSetCell : Theme.radius.card)
         .accessibilityLabel(NSLocalizedString("WorkoutExerciseEdit.AddSet", comment: "Add Set"))
     }
 }
