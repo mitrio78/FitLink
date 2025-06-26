@@ -37,7 +37,7 @@ private struct AddSetButton: View {
             Image(systemName: "plus")
                 .font(Theme.current.layoutMode == .compact ? Theme.font.compactMetricValue : Theme.font.metrics1)
         } //: Button
-        .frame(minWidth: 64, maxHeight: .infinity)
+        .frame(minWidth: 64)
         .metricCardStyle()
         .buttonStyle(ScaleButtonStyle())
         .foregroundColor(.secondary)

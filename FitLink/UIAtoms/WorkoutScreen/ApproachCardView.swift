@@ -20,11 +20,12 @@ struct ApproachCardView: View {
 
     var body: some View {
         let innerSpacing = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactInnerSpacing : Theme.spacing.small / 2
+        let lineSpacing = Theme.spacing.metricLineSpacing
         HStack(spacing: innerSpacing) {
             let drops = [set] + (set.drops ?? [])
             ForEach(drops.indices, id: \.self) { idx in
                 let drop = drops[idx]
-                VStack(spacing: innerSpacing) {
+                VStack(spacing: lineSpacing) {
                     if let repsMetric {
                         let val = drop.metricValues[.reps] ?? 0
                         Text(ExerciseMetric.formattedMetric(val, metric: repsMetric))
@@ -50,7 +51,7 @@ struct ApproachCardView: View {
                 }
             }
         } //: HStack
-        .frame(minWidth: 64, maxHeight: .infinity)
+        .frame(minWidth: 64)
         .metricCardStyle()
         .contentShape(Rectangle())
         .onTapGesture { onTap(set.id) }

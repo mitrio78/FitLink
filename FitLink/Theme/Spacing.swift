@@ -31,4 +31,7 @@ enum AppSpacing {
 
     /// Vertical padding inside metric pills when compact UI is active.
     static let compactMetricVerticalPadding: CGFloat = 4
+
+    /// Vertical spacing between metric lines inside approach cards.
+    static let metricLineSpacing: CGFloat = 2
 }
