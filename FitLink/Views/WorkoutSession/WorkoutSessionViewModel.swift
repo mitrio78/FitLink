@@ -139,6 +139,11 @@ final class WorkoutSessionViewModel: ObservableObject {
         return group.exerciseInstanceIds.first == exercise.id
     }
 
+    func isLastExerciseInGroup(_ exercise: ExerciseInstance) -> Bool {
+        guard let group = group(for: exercise) else { return false }
+        return group.exerciseInstanceIds.last == exercise.id
+    }
+
     func groupExercises(for group: SetGroup) -> [ExerciseInstance] {
         exercises.filter { group.exerciseInstanceIds.contains($0.id) }
     }

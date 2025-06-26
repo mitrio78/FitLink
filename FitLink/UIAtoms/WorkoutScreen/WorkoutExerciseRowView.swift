@@ -10,6 +10,9 @@ struct WorkoutExerciseRowView: View {
     var onAddSet: (ExerciseInstance) -> Void = { _ in }
     var isLocked: Bool = false
     var initiallyExpanded: Bool = false
+    var isFirstInGroup: Bool = true
+    var isLastInGroup: Bool = true
+    var isGrouped: Bool = false
 
     var body: some View {
         ZStack {
@@ -30,31 +33,17 @@ struct WorkoutExerciseRowView: View {
 
     @ViewBuilder
     private var content: some View {
-        if let group, !groupExercises.isEmpty {
-            if group.type == .superset {
-                SupersetCell(group: group,
-                             exercises: groupExercises,
-                             initiallyExpanded: initiallyExpanded,
-                             onEdit: onEdit,
-                             onSetTap: { ex, setId in
-                                 onSetEdit(ex, setId)
-                             },
-                             onAddSet: { ex in
-                                 onAddSet(ex)
-                             },
-                             isLocked: isLocked)
-            } else {
-                ExerciseBlockCard(group: group,
-                                  exerciseInstances: groupExercises,
-                                  onEdit: onEdit,
-                                  onSetTap: { ex, setId in
-                                      onSetEdit(ex, setId)
-                                  },
-                                  onAddSet: { ex in
-                                      onAddSet(ex)
-                                  },
-                                  isLocked: isLocked)
-            }
+        if let group, !groupExercises.isEmpty, group.type != .superset {
+            ExerciseBlockCard(group: group,
+                              exerciseInstances: groupExercises,
+                              onEdit: onEdit,
+                              onSetTap: { ex, setId in
+                                  onSetEdit(ex, setId)
+                              },
+                              onAddSet: { ex in
+                                  onAddSet(ex)
+                              },
+                              isLocked: isLocked)
         } else {
             ExerciseBlockCard(group: nil,
                               exerciseInstances: [exercise],
@@ -65,7 +54,10 @@ struct WorkoutExerciseRowView: View {
                               onAddSet: { _ in
                                   onAddSet(exercise)
                               },
-                              isLocked: isLocked)
+                              isLocked: isLocked,
+                              isFirstInGroup: isFirstInGroup,
+                              isLastInGroup: isLastInGroup,
+                              isGrouped: isGrouped)
         }
     }
 }
@@ -80,6 +72,9 @@ struct WorkoutExerciseRowView: View {
                                   onSetEdit: { _,_ in },
                                   onAddSet: { _ in },
                                   isLocked: false,
-                                  initiallyExpanded: false)
+                                  initiallyExpanded: false,
+                                  isFirstInGroup: true,
+                                  isLastInGroup: true,
+                                  isGrouped: false)
         .padding()
 }
