@@ -35,12 +35,12 @@ private struct AddSetButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "plus")
-                .font(.title2)
-        }
+                .font(Theme.current.layoutMode == .compact ? Theme.font.compactMetricValue : Theme.font.metrics1)
+        } //: Button
+        .frame(minWidth: 64, maxHeight: .infinity)
         .metricCardStyle()
         .buttonStyle(ScaleButtonStyle())
         .foregroundColor(.secondary)
-        .frame(minWidth: 64)
         .accessibilityLabel(NSLocalizedString("WorkoutExerciseEdit.AddSet", comment: "Add Set"))
     }
 }

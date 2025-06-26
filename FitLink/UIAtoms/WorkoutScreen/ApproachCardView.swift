@@ -42,16 +42,16 @@ struct ApproachCardView: View {
                             .font(Theme.current.layoutMode == .compact ? Theme.font.compactMetricValue : Theme.font.metrics2)
                             .foregroundColor(.primary)
                     }
-                }
+                } //: VStack
                 if idx < drops.count - 1 {
                     Image(systemName: "chevron.right")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
             }
-        }
+        } //: HStack
+        .frame(minWidth: 64, maxHeight: .infinity)
         .metricCardStyle()
-        .frame(minWidth: 64)
         .contentShape(Rectangle())
         .onTapGesture { onTap(set.id) }
     }
