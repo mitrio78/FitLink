@@ -38,7 +38,7 @@ extension DraftSet {
     /// Create a new draft for the provided metrics
     static func newDraft(for metrics: [ExerciseMetric]) -> DraftSet {
         let values = Dictionary(uniqueKeysWithValues: metrics.map {
-            ($0.id, $0.type.requiresInteger ? .int(0) : .double(0))
+            ($0.id, $0.type.requiresInteger ? ExerciseMetricValue.int(0) : ExerciseMetricValue.double(0))
         })
         let units = Dictionary(uniqueKeysWithValues: metrics.map { ($0.id, defaultUnit(for: $0)) })
         return DraftSet(id: UUID(), metricValues: values, metricUnits: units, sourceSetID: nil)
