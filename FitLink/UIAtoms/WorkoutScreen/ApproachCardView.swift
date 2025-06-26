@@ -44,7 +44,6 @@ struct ApproachCardView: View {
                             .foregroundColor(.primary)
                     }
                 } //: VStack
-                .fixedSize(horizontal: false, vertical: true)
                 if idx < drops.count - 1 {
                     Image(systemName: "chevron.right")
                         .font(.caption)
