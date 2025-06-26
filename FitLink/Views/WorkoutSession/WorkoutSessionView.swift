@@ -53,7 +53,7 @@ struct WorkoutSessionView: View {
         .sheet(item: $viewModel.activeSetEdit) { context in
             CustomNumberPadView(
                 metrics: context.metrics,
-                values: Binding<[ExerciseMetric.ID: Double]>(
+                values: Binding<[ExerciseMetric.ID: ExerciseMetricValue]>(
                     get: { viewModel.activeSetEdit?.values ?? [:] },
                     set: { viewModel.activeSetEdit?.values = $0 }
                 ),

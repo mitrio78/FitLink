@@ -75,8 +75,8 @@ struct ExerciseBlockCard: View {
 }
 
 #Preview {
-    let set1 = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8], notes: nil, drops: nil)
-    let set2 = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8], notes: nil, drops: nil)
+    let set1 = ExerciseSet(id: UUID(), metricValues: [.weight: .double(50), .reps: .int(8)], notes: nil, drops: nil)
+    let set2 = ExerciseSet(id: UUID(), metricValues: [.weight: .double(50), .reps: .int(8)], notes: nil, drops: nil)
     ExerciseBlockCard(
         group: .some(
             .init(id: UUID(),

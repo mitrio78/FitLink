@@ -14,7 +14,7 @@ struct SetEditContext: Identifiable {
     let exerciseID: UUID
     let setID: UUID
     let metrics: [ExerciseMetric]
-    var values: [ExerciseMetric.ID: Double]
+    var values: [ExerciseMetric.ID: ExerciseMetricValue]
 
     var id: String { "\(exerciseID)-\(setID)" }
 }
@@ -63,9 +63,9 @@ final class WorkoutSessionViewModel: ObservableObject {
         let metrics = exercise.exercise.metrics.sorted { metricOrder($0.type) < metricOrder($1.type) }
         for approach in exercise.approaches {
             if let set = approach.sets.first(where: { $0.id == setId }) {
-                var values: [ExerciseMetric.ID: Double] = [:]
+                var values: [ExerciseMetric.ID: ExerciseMetricValue] = [:]
                 for metric in metrics {
-                    values[metric.id] = set.metricValues[metric.type] ?? 0
+                    values[metric.id] = set.metricValues[metric.type] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
                 }
                 activeSetEdit = SetEditContext(exerciseID: exerciseId, setID: setId, metrics: metrics, values: values)
                 break
@@ -76,8 +76,10 @@ final class WorkoutSessionViewModel: ObservableObject {
     func addSet(toExercise exerciseId: UUID) {
         guard let exercise = exercises.first(where: { $0.id == exerciseId }) else { return }
         let metrics = exercise.exercise.metrics.sorted { metricOrder($0.type) < metricOrder($1.type) }
-        var values: [ExerciseMetric.ID: Double] = [:]
-        for metric in metrics { values[metric.id] = 0 }
+        var values: [ExerciseMetric.ID: ExerciseMetricValue] = [:]
+        for metric in metrics {
+            values[metric.id] = metric.type.requiresInteger ? .int(0) : .double(0)
+        }
         activeSetEdit = SetEditContext(exerciseID: exerciseId, setID: UUID(), metrics: metrics, values: values)
     }
 
@@ -88,7 +90,7 @@ final class WorkoutSessionViewModel: ObservableObject {
         for aIndex in exercises[exIndex].approaches.indices {
             if let setIndex = exercises[exIndex].approaches[aIndex].sets.firstIndex(where: { $0.id == context.setID }) {
                 for metric in context.metrics {
-                    let val = context.values[metric.id] ?? 0
+                    let val = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
                     exercises[exIndex].approaches[aIndex].sets[setIndex].metricValues[metric.type] = val
                 }
                 updated = true
@@ -97,9 +99,9 @@ final class WorkoutSessionViewModel: ObservableObject {
         }
 
         if !updated {
-            var metricValues: [ExerciseMetricType: Double] = [:]
+            var metricValues: [ExerciseMetricType: ExerciseMetricValue] = [:]
             for metric in context.metrics {
-                metricValues[metric.type] = context.values[metric.id] ?? 0
+                metricValues[metric.type] = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
             }
             let newSet = ExerciseSet(id: context.setID, metricValues: metricValues, notes: nil, drops: nil)
             exercises[exIndex].approaches.append(Approach(sets: [newSet]))

@@ -2,14 +2,14 @@ import SwiftUI
 
 /// Bottom sheet numeric keypad for editing values of one or more metrics.
 struct CustomNumberPadView: View {
-    @Binding var metricValues: [ExerciseMetric.ID: Double]
+    @Binding var metricValues: [ExerciseMetric.ID: ExerciseMetricValue]
     var onDone: () -> Void
 
     @StateObject private var viewModel: CustomNumberPadViewModel
     
     init(
         metrics: [ExerciseMetric],
-        values: Binding<[ExerciseMetric.ID: Double]>,
+        values: Binding<[ExerciseMetric.ID: ExerciseMetricValue]>,
         onDone: @escaping () -> Void
     ) {
         self._metricValues = values
@@ -119,14 +119,19 @@ struct CustomNumberPadView: View {
     private func commit(to id: ExerciseMetric.ID? = nil) {
         let target = id ?? viewModel.selectedMetricId
         if let val = Double(viewModel.input) {
-            metricValues[target] = val
+            let metric = viewModel.metric(for: target)
+            if metric.type.requiresInteger {
+                metricValues[target] = .int(Int(val))
+            } else {
+                metricValues[target] = .double(val)
+            }
         }
     }
 }
 
 #Preview {
     struct PreviewWrapper: View {
-        @State var values: [ExerciseMetric.ID: Double] = [.reps: 8, .weight: 50]
+        @State var values: [ExerciseMetric.ID: ExerciseMetricValue] = [.reps: .int(8), .weight: .double(50)]
         let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
                        ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
         var body: some View {

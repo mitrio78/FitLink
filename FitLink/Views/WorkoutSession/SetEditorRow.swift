@@ -16,10 +16,11 @@ struct SetEditorRow: View {
                     value: binding(for: metric.type),
                     labelPrefix: metric.type == .reps ? NSLocalizedString("CustomNumberPad.RepsLabel", comment: "× reps") : nil,
                     labelSuffix: metric.type != .reps ? metric.unit?.displayName : nil,
-                    keyboardType: .decimalPad,
+                    keyboardType: metric.type.requiresInteger ? .numberPad : .decimalPad,
                     presets: presets(for: metric.type),
                     scrollProxy: scrollProxy,
-                    scrollId: "\(set.id)-\(String(describing: metric.type))"
+                    scrollId: "\(set.id)-\(String(describing: metric.type))",
+                    requiresInteger: metric.type.requiresInteger
                 )
             } //: HStack
         } //: ForEach
@@ -43,18 +44,20 @@ struct SetEditorRow: View {
         Binding<String>(
             get: {
                 guard let value = set.metricValues[type] else { return "" }
-                if value == floor(value) {
-                    return String(Int(value))
-                } else {
-                    return String(value)
-                }
+                return value.formatted
             },
             set: { newValue in
                 let cleaned = newValue.trimLeadingZeros()
-                if let number = Double(cleaned) {
-                    set.metricValues[type] = number
-                } else {
+                if cleaned.isEmpty {
                     set.metricValues.removeValue(forKey: type)
+                    return
+                }
+                if type.requiresInteger {
+                    if let number = Int(cleaned) {
+                        set.metricValues[type] = .int(number)
+                    }
+                } else if let number = Double(cleaned) {
+                    set.metricValues[type] = .double(number)
                 }
             }
         )
@@ -68,7 +71,7 @@ struct SetEditorRow: View {
 #Preview {
     let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
                    ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
-    let set = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8])
+    let set = ExerciseSet(id: UUID(), metricValues: [.weight: .double(50), .reps: .int(8)])
     return SetEditorRow(set: .constant(set), metrics: metrics)
         .padding()
 }

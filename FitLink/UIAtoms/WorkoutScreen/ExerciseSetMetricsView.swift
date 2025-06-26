@@ -61,17 +61,17 @@ struct ExerciseSetMetricsView: View {
     
     private func weightString(for set: ExerciseSet) -> String {
         guard let weightMetric else { return "" }
-        let value = set.metricValues[.weight] ?? 0
+        let value = set.metricValues[.weight] ?? .double(0)
         return ExerciseMetric.formattedMetric(value, metric: weightMetric)
     }
     
     private func metricString(for set: ExerciseSet) -> String {
         if let repsMetric {
-            let value = set.metricValues[.reps] ?? 0
+            let value = set.metricValues[.reps] ?? .int(0)
             return ExerciseMetric.formattedMetric(value, metric: repsMetric)
         }
         if let timeMetric {
-            let value = set.metricValues[.time] ?? 0
+            let value = set.metricValues[.time] ?? .double(0)
             return ExerciseMetric.formattedMetric(value, metric: timeMetric)
         }
         return ""
@@ -81,8 +81,8 @@ struct ExerciseSetMetricsView: View {
 #Preview {
     let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
                    ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
-    let set1 = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8], notes: nil, drops: [ExerciseSet(id: UUID(), metricValues: [.weight: 40, .reps: 8], notes: nil, drops: nil)])
-    let set2 = ExerciseSet(id: UUID(), metricValues: [.weight: 55, .reps: 6], notes: nil, drops: nil)
+    let set1 = ExerciseSet(id: UUID(), metricValues: [.weight: .double(50), .reps: .int(8)], notes: nil, drops: [ExerciseSet(id: UUID(), metricValues: [.weight: .double(40), .reps: .int(8)], notes: nil, drops: nil)])
+    let set2 = ExerciseSet(id: UUID(), metricValues: [.weight: .double(55), .reps: .int(6)], notes: nil, drops: nil)
     return ExerciseSetMetricsView(sets: [set1, set2, set1, set2, set1, set2, set1, set2], metrics: metrics)
         .padding()
 }

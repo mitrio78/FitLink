@@ -11,6 +11,7 @@ struct MetricInputField: View {
     var presets: [Double] = []
     var scrollProxy: ScrollViewProxy? = nil
     var scrollId: AnyHashable = UUID()
+    var requiresInteger: Bool = false
     var onCommit: () -> Void = {}
 
     @State private var width: CGFloat = 0
@@ -53,7 +54,11 @@ struct MetricInputField: View {
                         .onTapGesture(count: 1) { handleTap() }
                         .onTapGesture(count: 2) { reset() }
                         .onChange(of: value) { _, newVal in
-                            value = newVal.trimLeadingZeros()
+                            if requiresInteger {
+                                value = newVal.filter { $0.isNumber }
+                            } else {
+                                value = newVal.trimLeadingZeros()
+                            }
                         }
                 }
                 .onPreferenceChange(WidthKey.self) { width = $0 }
@@ -107,7 +112,11 @@ struct MetricInputField: View {
     private func addPreset(_ preset: Double) {
         let current = Double(value) ?? 0
         let newVal = current + preset
-        value = formatValue(newVal)
+        if requiresInteger {
+            value = String(Int(newVal))
+        } else {
+            value = formatValue(newVal)
+        }
     }
 
     private func commit() {
