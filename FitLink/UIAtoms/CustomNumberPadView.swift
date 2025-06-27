@@ -3,6 +3,8 @@ import SwiftUI
 /// Bottom sheet numeric keypad for editing values of one or more metrics.
 struct CustomNumberPadView: View {
     @Binding var metricValues: [ExerciseMetric.ID: ExerciseMetricValue]
+    var headerTitle: String
+    var onAddDrop: () -> Void
     var onDone: () -> Void
 
     @StateObject private var viewModel: CustomNumberPadViewModel
@@ -10,9 +12,13 @@ struct CustomNumberPadView: View {
     init(
         metrics: [ExerciseMetric],
         values: Binding<[ExerciseMetric.ID: ExerciseMetricValue]>,
+        headerTitle: String,
+        onAddDrop: @escaping () -> Void,
         onDone: @escaping () -> Void
     ) {
         self._metricValues = values
+        self.headerTitle = headerTitle
+        self.onAddDrop = onAddDrop
         self.onDone = onDone
         _viewModel = StateObject(wrappedValue: CustomNumberPadViewModel(metrics: metrics, values: values.wrappedValue))
     }
@@ -53,6 +59,16 @@ struct CustomNumberPadView: View {
 
     private var topSection: some View {
         VStack(spacing: Theme.spacing.small) {
+            HStack {
+                Button(action: onAddDrop) {
+                    Image(systemName: "plus")
+                        .font(Theme.font.titleSmall)
+                }
+                Spacer()
+                Text(headerTitle)
+                    .font(Theme.font.titleSmall)
+            } //: HStack
+
             Picker("", selection: metricSelection) {
                 ForEach(viewModel.metrics, id: \.id) { metric in
                     Text(metric.displayName).tag(metric.id)
@@ -134,7 +150,13 @@ struct CustomNumberPadView: View {
         let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
                        ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
         var body: some View {
-            CustomNumberPadView(metrics: metrics, values: $values, onDone: {})
+            CustomNumberPadView(
+                metrics: metrics,
+                values: $values,
+                headerTitle: "Main set",
+                onAddDrop: {},
+                onDone: {}
+            )
         }
     }
     return PreviewWrapper()

@@ -111,6 +111,50 @@ final class WorkoutSessionViewModel: ObservableObject {
         activeSetEdit = nil
     }
 
+    // MARK: - Drop Handling
+
+    var headerTitle: String {
+        guard let context = activeSetEdit else { return "" }
+        return label(for: context.setID, in: context.exerciseID)
+    }
+
+    func addDropStep() {
+        guard let context = activeSetEdit else { return }
+        guard let exIndex = exercises.firstIndex(where: { $0.id == context.exerciseID }) else { return }
+
+        for aIndex in exercises[exIndex].approaches.indices {
+            if let setIndex = exercises[exIndex].approaches[aIndex].sets.firstIndex(where: { $0.id == context.setID }) {
+                var metricValues: [ExerciseMetricType: ExerciseMetricValue] = [:]
+                for metric in context.metrics {
+                    metricValues[metric.type] = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
+                }
+                let newSet = ExerciseSet(id: UUID(), metricValues: metricValues, notes: nil, drops: nil)
+                exercises[exIndex].approaches[aIndex].sets.insert(newSet, at: setIndex + 1)
+                save()
+                var newValues: [ExerciseMetric.ID: ExerciseMetricValue] = [:]
+                for metric in context.metrics {
+                    newValues[metric.id] = metricValues[metric.type]
+                }
+                activeSetEdit = SetEditContext(exerciseID: context.exerciseID, setID: newSet.id, metrics: context.metrics, values: newValues)
+                break
+            }
+        }
+    }
+
+    private func label(for setID: UUID, in exerciseID: UUID) -> String {
+        guard let exercise = exercises.first(where: { $0.id == exerciseID }) else { return "" }
+        for approach in exercise.approaches {
+            if let index = approach.sets.firstIndex(where: { $0.id == setID }) {
+                if index == 0 {
+                    return NSLocalizedString("CustomNumberPad.MainHeader", comment: "Main set")
+                } else {
+                    return String(format: NSLocalizedString("CustomNumberPad.DropHeader", comment: "Drop header"), index)
+                }
+            }
+        }
+        return ""
+    }
+
     func editItemTapped(withId id: UUID) {
         if let group = setGroups.first(where: { $0.id == id }) {
             let exercisesInGroup = groupExercises(for: group)

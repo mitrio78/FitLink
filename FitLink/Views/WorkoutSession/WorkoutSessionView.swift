@@ -57,6 +57,8 @@ struct WorkoutSessionView: View {
                     get: { viewModel.activeSetEdit?.values ?? [:] },
                     set: { viewModel.activeSetEdit?.values = $0 }
                 ),
+                headerTitle: viewModel.headerTitle,
+                onAddDrop: { viewModel.addDropStep() },
                 onDone: {
                     viewModel.saveEditedSet()
                 }

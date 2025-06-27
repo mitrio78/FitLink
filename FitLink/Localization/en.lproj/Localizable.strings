@@ -115,6 +115,8 @@
 "UnitType.Repetition" = "x";
 "UnitType.Calorie" = "kcal";
 "CustomNumberPad.RepsLabel" = "reps";
+"CustomNumberPad.MainHeader" = "Main set";
+"CustomNumberPad.DropHeader" = "Drop #%d";
 
 /* Muscle groups */
 "MuscleGroup.Chest" = "Thoracic";
