@@ -3,16 +3,23 @@ import SwiftUI
 /// Bottom sheet numeric keypad for editing values of one or more metrics.
 struct CustomNumberPadView: View {
     @Binding var metricValues: [ExerciseMetric.ID: ExerciseMetricValue]
+    var headerTitle: String
+    var onAddSet: () -> Void
     var onDone: () -> Void
+
 
     @StateObject private var viewModel: CustomNumberPadViewModel
     
     init(
         metrics: [ExerciseMetric],
         values: Binding<[ExerciseMetric.ID: ExerciseMetricValue]>,
+        headerTitle: String,
+        onAddSet: @escaping () -> Void,
         onDone: @escaping () -> Void
     ) {
         self._metricValues = values
+        self.headerTitle = headerTitle
+        self.onAddSet = onAddSet
         self.onDone = onDone
         _viewModel = StateObject(wrappedValue: CustomNumberPadViewModel(metrics: metrics, values: values.wrappedValue))
     }
@@ -27,32 +34,67 @@ struct CustomNumberPadView: View {
         )
     }
 
+    private var canAddSet: Bool {
+        var combined = metricValues
+        if let val = Double(viewModel.input) {
+            let metric = viewModel.metric(for: viewModel.selectedMetricId)
+            combined[metric.id] = metric.type.requiresInteger ? .int(Int(val)) : .double(val)
+        }
+        for metric in viewModel.metrics where metric.isRequired {
+            let value = combined[metric.id]?.doubleValue ?? 0
+            if value == 0 { return false }
+        }
+        return true
+    }
+
     var body: some View {
-        VStack(spacing: Theme.spacing.small / 2) {
-            topSection
-            numberPad
-            Button(action: {
-                commit()
-                onDone()
-            }) {
-                Text(NSLocalizedString("Common.Done", comment: "Done"))
-                    .font(Theme.font.titleSmall)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(viewModel.isValid ? Theme.color.accent : Theme.color.accent.opacity(0.3))
-                    .foregroundColor(.white)
-                    .cornerRadius(Theme.radius.button)
-            }
-            .disabled(!viewModel.isValid)
-        } //: VStack
-        .padding(.horizontal, Theme.spacing.small)
-        .padding(.top, Theme.spacing.small)
-        .padding(.bottom, Theme.spacing.sheetBottomPadding)
-        .cornerRadius(Theme.radius.card)
+        GeometryReader { proxy in
+            VStack(spacing: Theme.spacing.small / 2) {
+                topSection
+                numberPad
+                Button(action: {
+                    commit()
+                    onDone()
+                }) {
+                    Text(NSLocalizedString("Common.Done", comment: "Done"))
+                        .font(Theme.font.titleSmall)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(viewModel.isValid ? Theme.color.accent : Theme.color.accent.opacity(0.3))
+                        .foregroundColor(.white)
+                        .cornerRadius(Theme.radius.button)
+                }
+                .disabled(!viewModel.isValid)
+            } //: VStack
+            .padding(.horizontal, Theme.spacing.small)
+            .padding(.top, Theme.spacing.small)
+            .padding(.bottom, Theme.spacing.sheetBottomPadding + proxy.safeAreaInsets.bottom)
+            .cornerRadius(Theme.radius.card)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        }
     }
 
     private var topSection: some View {
         VStack(spacing: Theme.spacing.small) {
+            HStack {
+                Text(headerTitle)
+                    .font(Theme.font.titleSmall)
+                Spacer()
+                Button(action: {
+                    commit()
+                    onAddSet()
+                }) {
+                    Image(systemName: "plus")
+                        .font(Theme.font.titleSmall)
+                        .foregroundColor(Theme.color.accent)
+                        .padding(Theme.spacing.small / 2)
+                        .background(Theme.color.backgroundSecondary)
+                        .cornerRadius(Theme.radius.button)
+                }
+                .buttonStyle(.plain)
+                .disabled(!canAddSet)
+            } //: HStack
+
             Picker("", selection: metricSelection) {
                 ForEach(viewModel.metrics, id: \.id) { metric in
                     Text(metric.displayName).tag(metric.id)
@@ -134,7 +176,13 @@ struct CustomNumberPadView: View {
         let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
                        ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
         var body: some View {
-            CustomNumberPadView(metrics: metrics, values: $values, onDone: {})
+            CustomNumberPadView(
+                metrics: metrics,
+                values: $values,
+                headerTitle: "Main 1",
+                onAddSet: {},
+                onDone: {}
+            )
         }
     }
     return PreviewWrapper()
