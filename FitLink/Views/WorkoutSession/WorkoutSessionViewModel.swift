@@ -118,32 +118,37 @@ final class WorkoutSessionViewModel: ObservableObject {
         return label(for: context.setID, in: context.exerciseID)
     }
 
-    /// Saves the current editing values and immediately inserts a new set after the current one.
+    /// Saves the current editing values and immediately inserts a new drop after the current one.
     func addNextSet() {
         guard let context = activeSetEdit else { return }
         guard let exIndex = exercises.firstIndex(where: { $0.id == context.exerciseID }) else { return }
 
-        var insertionIndex: Int? = nil
+        var approachIndex: Int? = nil
+        var setIndex: Int? = nil
+
         // Save current set or create if not existing
         for aIndex in exercises[exIndex].approaches.indices {
-            if let setIndex = exercises[exIndex].approaches[aIndex].sets.firstIndex(where: { $0.id == context.setID }) {
+            if let sIndex = exercises[exIndex].approaches[aIndex].sets.firstIndex(where: { $0.id == context.setID }) {
                 for metric in context.metrics {
                     let val = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
-                    exercises[exIndex].approaches[aIndex].sets[setIndex].metricValues[metric.type] = val
+                    exercises[exIndex].approaches[aIndex].sets[sIndex].metricValues[metric.type] = val
                 }
-                insertionIndex = aIndex + 1
+                approachIndex = aIndex
+                setIndex = sIndex
                 break
             }
         }
 
-        if insertionIndex == nil {
+        if approachIndex == nil || setIndex == nil {
+            // Create a new approach with the current set if it was not found
             var metricValues: [ExerciseMetricType: ExerciseMetricValue] = [:]
             for metric in context.metrics {
                 metricValues[metric.type] = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
             }
             let newSet = ExerciseSet(id: context.setID, metricValues: metricValues, notes: nil, drops: nil)
             exercises[exIndex].approaches.append(Approach(sets: [newSet]))
-            insertionIndex = exercises[exIndex].approaches.count
+            approachIndex = exercises[exIndex].approaches.count - 1
+            setIndex = 0
         }
 
         // Prepare new set values cloned from current
@@ -152,11 +157,10 @@ final class WorkoutSessionViewModel: ObservableObject {
             nextValues[metric.type] = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
         }
         let newID = UUID()
-        let newApproach = Approach(sets: [ExerciseSet(id: newID, metricValues: nextValues, notes: nil, drops: nil)])
-        if let idx = insertionIndex {
-            exercises[exIndex].approaches.insert(newApproach, at: idx)
-        } else {
-            exercises[exIndex].approaches.append(newApproach)
+        let newSet = ExerciseSet(id: newID, metricValues: nextValues, notes: nil, drops: nil)
+
+        if let aIdx = approachIndex, let sIdx = setIndex {
+            exercises[exIndex].approaches[aIdx].sets.insert(newSet, at: sIdx + 1)
         }
         save()
 
@@ -169,9 +173,13 @@ final class WorkoutSessionViewModel: ObservableObject {
 
     private func label(for setID: UUID, in exerciseID: UUID) -> String {
         guard let exercise = exercises.first(where: { $0.id == exerciseID }) else { return "" }
-        for (index, approach) in exercise.approaches.enumerated() {
-            if approach.sets.contains(where: { $0.id == setID }) {
-                return String(format: NSLocalizedString("CustomNumberPad.SetHeader", comment: "Set header"), index + 1)
+        for (approachIndex, approach) in exercise.approaches.enumerated() {
+            if let dropIndex = approach.sets.firstIndex(where: { $0.id == setID }) {
+                if dropIndex == 0 {
+                    return String(format: NSLocalizedString("CustomNumberPad.SetHeader", comment: "Set header"), approachIndex + 1)
+                } else {
+                    return String(format: NSLocalizedString("CustomNumberPad.DropHeader", comment: "Drop header"), dropIndex)
+                }
             }
         }
         return ""
