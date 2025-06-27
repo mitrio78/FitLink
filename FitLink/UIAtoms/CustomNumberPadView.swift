@@ -7,7 +7,6 @@ struct CustomNumberPadView: View {
     var onAddDrop: () -> Void
     var onDone: () -> Void
 
-    @Environment(\.safeAreaInsets) private var safeAreaInsets
 
     @StateObject private var viewModel: CustomNumberPadViewModel
     
@@ -36,27 +35,30 @@ struct CustomNumberPadView: View {
     }
 
     var body: some View {
-        VStack(spacing: Theme.spacing.small / 2) {
-            topSection
-            numberPad
-            Button(action: {
-                commit()
-                onDone()
-            }) {
-                Text(NSLocalizedString("Common.Done", comment: "Done"))
-                    .font(Theme.font.titleSmall)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(viewModel.isValid ? Theme.color.accent : Theme.color.accent.opacity(0.3))
-                    .foregroundColor(.white)
-                    .cornerRadius(Theme.radius.button)
-            }
-            .disabled(!viewModel.isValid)
-        } //: VStack
-        .padding(.horizontal, Theme.spacing.small)
-        .padding(.top, Theme.spacing.small)
-        .padding(.bottom, Theme.spacing.sheetBottomPadding + safeAreaInsets.bottom)
-        .cornerRadius(Theme.radius.card)
+        GeometryReader { proxy in
+            VStack(spacing: Theme.spacing.small / 2) {
+                topSection
+                numberPad
+                Button(action: {
+                    commit()
+                    onDone()
+                }) {
+                    Text(NSLocalizedString("Common.Done", comment: "Done"))
+                        .font(Theme.font.titleSmall)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(viewModel.isValid ? Theme.color.accent : Theme.color.accent.opacity(0.3))
+                        .foregroundColor(.white)
+                        .cornerRadius(Theme.radius.button)
+                }
+                .disabled(!viewModel.isValid)
+            } //: VStack
+            .padding(.horizontal, Theme.spacing.small)
+            .padding(.top, Theme.spacing.small)
+            .padding(.bottom, Theme.spacing.sheetBottomPadding + proxy.safeAreaInsets.bottom)
+            .cornerRadius(Theme.radius.card)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        }
     }
 
     private var topSection: some View {
