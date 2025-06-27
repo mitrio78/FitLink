@@ -129,11 +129,13 @@ struct WorkoutSessionView: View {
                             )
                             .listRowSeparator(.hidden)
                             .listRowInsets(EdgeInsets(
-                                top: first ? Theme.current.spacing.compactSetRowSpacing : 0,
+                                top: 0,
                                 leading: 8,
-                                bottom: last ? Theme.spacing.compactSetRowSpacing : 0,
+                                bottom: 0,
                                 trailing: 8
                             ))
+                            .padding(.top, first ? Theme.current.spacing.compactSetRowSpacing : 0)
+                            .padding(.bottom, last ? Theme.spacing.compactSetRowSpacing : 0)
                         } else if viewModel.isFirstExerciseInGroup(ex) {
                             let groupExercises = viewModel.groupExercises(for: group)
                             WorkoutExerciseRowView(
@@ -158,11 +160,12 @@ struct WorkoutSessionView: View {
                             }
                             .listRowSeparator(.hidden)
                             .listRowInsets(EdgeInsets(
-                                top: Theme.current.spacing.compactSetRowSpacing,
+                                top: 0,
                                 leading: 8,
-                                bottom: Theme.spacing.compactSetRowSpacing,
+                                bottom: 0,
                                 trailing: 8
                             ))
+                            .padding(.vertical, Theme.spacing.compactSetRowSpacing)
                         }
                     } else {
                         WorkoutExerciseRowView(
@@ -180,11 +183,12 @@ struct WorkoutSessionView: View {
                         )
                         .listRowSeparator(.hidden)
                         .listRowInsets(EdgeInsets(
-                            top: Theme.current.spacing.compactSetRowSpacing,
+                            top: 0,
                             leading: 8,
-                            bottom: Theme.spacing.compactSetRowSpacing,
+                            bottom: 0,
                             trailing: 8
                         ))
+                        .padding(.vertical, Theme.spacing.compactSetRowSpacing)
                     }
                 }
             } header: {
