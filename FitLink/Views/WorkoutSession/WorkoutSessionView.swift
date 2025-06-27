@@ -115,6 +115,14 @@ struct WorkoutSessionView: View {
             Section {
                 ForEach(rows) { row in
                     rowView(for: row)
+                        // Disable the drag handle for non-representative rows
+                        .moveDisabled(!row.isRepresentative)
+                        // Provide a custom drag preview that displays the whole
+                        // superset when the first cell is dragged. For regular
+                        // exercises the preview matches the cell itself.
+                        .listRowDragPreview {
+                            dragPreview(for: row)
+                        }
                 }
                 .onMove { indexes, newOffset in
                     viewModel.moveRow(fromOffsets: indexes, toOffset: newOffset, in: section)
@@ -126,7 +134,7 @@ struct WorkoutSessionView: View {
     }
 
     @ViewBuilder
-    private func rowView(for row: WorkoutSessionViewModel.RowInfo) -> some View {
+private func rowView(for row: WorkoutSessionViewModel.RowInfo) -> some View {
         if let group = row.group {
             if group.type == .superset {
                 WorkoutExerciseRowView(
@@ -195,6 +203,43 @@ struct WorkoutSessionView: View {
             .padding(.vertical, Theme.spacing.compactSetRowSpacing)
             .id(row.id)
         }
+    }
+
+    /// Returns the preview shown when dragging a row. If the row belongs to a
+    /// superset the preview stacks all exercises from that superset so the
+    /// group appears as a single block during the drag operation.
+    @ViewBuilder
+    private func dragPreview(for row: WorkoutSessionViewModel.RowInfo) -> some View {
+        if let group = row.group, group.type == .superset {
+            VStack(spacing: .zero) {
+                ForEach(row.groupExercises) { ex in
+                    previewRow(for: ex, group: group)
+                }
+            }
+        } else {
+            previewRow(for: row.exercise, group: row.group)
+        }
+    }
+
+    /// A simplified row used for drag previews. Interactions are disabled and
+    /// the row is locked to prevent accidental taps while dragging.
+    private func previewRow(for exercise: ExerciseInstance, group: SetGroup?) -> some View {
+        WorkoutExerciseRowView(
+            exercise: exercise,
+            group: group,
+            groupExercises: group.map { viewModel.groupExercises(for: $0) } ?? [exercise],
+            onEdit: {},
+            onDelete: {},
+            onSetEdit: { _,_ in },
+            onAddSet: { _ in },
+            isLocked: true,
+            initiallyExpanded: false,
+            isFirstInGroup: viewModel.isFirstExerciseInGroup(exercise),
+            isLastInGroup: viewModel.isLastExerciseInGroup(exercise),
+            isGrouped: group != nil
+        )
+        .listRowSeparator(.hidden)
+        .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
     }
 }
 
