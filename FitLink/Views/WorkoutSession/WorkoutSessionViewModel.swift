@@ -49,6 +49,10 @@ final class WorkoutSessionViewModel: ObservableObject {
     @Published private(set) var exercises: [ExerciseInstance]
     @Published private(set) var setGroups: [SetGroup]
 
+    /// Context of the row currently being dragged. Used for drag & drop across
+    /// workout sections.
+    private var draggingContext: (id: String, section: WorkoutSection)? = nil
+
     init(session: WorkoutSession, client: Client?, dataStore: AppDataStore) {
         self.session = session
         self.client = client
@@ -143,6 +147,78 @@ final class WorkoutSessionViewModel: ObservableObject {
         case .warmUp: reorder(&warmRows)
         case .main: reorder(&mainRows)
         case .coolDown: reorder(&coolRows)
+        }
+
+        rebuildRows(warm: warmRows, main: mainRows, cool: coolRows)
+    }
+
+    // MARK: - Cross-section Drag & Drop
+
+    /// Called when a drag gesture begins to store the dragged row context.
+    func startDrag(for row: RowInfo, in section: WorkoutSection) {
+        draggingContext = (row.id, section)
+    }
+
+    /// Moves the currently dragged row into a new section before a target row.
+    /// - Parameters:
+    ///   - targetId: Identifier of the row before which the dragged item should be inserted.
+    ///               If `nil` the item is appended at the end of the section.
+    ///   - section: Destination section.
+    func dropItem(before targetId: String?, in section: WorkoutSection) {
+        guard let context = draggingContext else { return }
+        moveRow(id: context.id, from: context.section, to: section, before: targetId)
+        draggingContext = nil
+    }
+
+    /// Internal helper used by dropItem to perform the actual movement and
+    /// update all exercises and groups. Keeps group integrity by always moving
+    /// all exercises belonging to the same superset together.
+    private func moveRow(id: String, from source: WorkoutSection, to destination: WorkoutSection, before targetId: String?) {
+        var warmRows = rows(for: .warmUp)
+        var mainRows = rows(for: .main)
+        var coolRows = rows(for: .coolDown)
+
+        func remove(from rows: inout [RowInfo], id: String) -> [RowInfo] {
+            guard let index = rows.firstIndex(where: { $0.id == id }) else { return [] }
+            let groupId = rows[index].group?.id
+            var moveIndexes = [index]
+            if let gid = groupId {
+                moveIndexes = rows.enumerated().compactMap { $0.element.group?.id == gid ? $0.offset : nil }
+            }
+            let moving = moveIndexes.sorted().map { rows[$0] }
+            rows.remove(atOffsets: IndexSet(moveIndexes))
+            return moving
+        }
+
+        func insert(_ moving: [RowInfo], into rows: inout [RowInfo], before targetId: String?) {
+            let insertIndex: Int
+            if let tId = targetId, let idx = rows.firstIndex(where: { $0.id == tId }) {
+                insertIndex = idx
+            } else {
+                insertIndex = rows.count
+            }
+            var updated = moving
+            for i in 0..<updated.count {
+                updated[i].groupExercises = updated[i].groupExercises.map { ex in
+                    var copy = ex
+                    copy.section = destination
+                    return copy
+                }
+            }
+            rows.insert(contentsOf: updated, at: insertIndex)
+        }
+
+        var moving: [RowInfo] = []
+        switch source {
+        case .warmUp: moving = remove(from: &warmRows, id: id)
+        case .main: moving = remove(from: &mainRows, id: id)
+        case .coolDown: moving = remove(from: &coolRows, id: id)
+        }
+
+        switch destination {
+        case .warmUp: insert(moving, into: &warmRows, before: targetId)
+        case .main: insert(moving, into: &mainRows, before: targetId)
+        case .coolDown: insert(moving, into: &coolRows, before: targetId)
         }
 
         rebuildRows(warm: warmRows, main: mainRows, cool: coolRows)
@@ -438,7 +514,10 @@ final class WorkoutSessionViewModel: ObservableObject {
                 instance.approaches = old.approaches
                 instance.notes = old.notes
             }
-            instance.section = context.instances.first?.section ?? .main
+            // Preserve the section chosen during editing. Previously the
+            // section of the replaced exercise was always used which made it
+            // impossible to move an exercise to a different section via the
+            // picker.
             exercises.insert(instance, at: insertionIndex)
             expandedGroupId = nil
         case .superset(var group, var instances):
@@ -451,7 +530,6 @@ final class WorkoutSessionViewModel: ObservableObject {
                         item.approaches = old.approaches
                         item.notes = old.notes
                     }
-                    item.section = old.section
                 }
                 instances[i] = item
             }

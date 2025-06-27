@@ -5,6 +5,7 @@
 //  Created by Дмитрий Гришечко on 29.05.2025.
 //
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct WorkoutSessionView: View {
     @EnvironmentObject private var dataStore: AppDataStore
@@ -114,7 +115,15 @@ struct WorkoutSessionView: View {
         if !rows.isEmpty {
             Section {
                 ForEach(rows) { row in
-                    rowView(for: row)
+                    rowView(for: row, in: section)
+                        .onDrag {
+                            viewModel.startDrag(for: row, in: section)
+                            return NSItemProvider(object: NSString(string: row.id))
+                        }
+                        .onDrop(of: [UTType.text]) { _ in
+                            viewModel.dropItem(before: row.id, in: section)
+                            return true
+                        }
                 }
                 .onMove { indexes, newOffset in
                     viewModel.moveRow(fromOffsets: indexes, toOffset: newOffset, in: section)
@@ -122,11 +131,15 @@ struct WorkoutSessionView: View {
             } header: {
                 WorkoutSectionHeaderView(title: section.displayTitle)
             }
+            .onDrop(of: [UTType.text]) { _ in
+                viewModel.dropItem(before: nil, in: section)
+                return true
+            }
         }
     }
 
     @ViewBuilder
-    private func rowView(for row: WorkoutSessionViewModel.RowInfo) -> some View {
+    private func rowView(for row: WorkoutSessionViewModel.RowInfo, in _ section: WorkoutSection) -> some View {
         if let group = row.group {
             if group.type == .superset {
                 WorkoutExerciseRowView(
