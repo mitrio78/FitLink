@@ -70,6 +70,14 @@ struct WorkoutSessionView: View {
             .presentationDetents([.height(Theme.size.numberPadSheetHeight)])
             .presentationDragIndicator(.visible)
         }
+        .sheet(item: $viewModel.historyExercise) { exercise in
+            Text("History for \(exercise.exercise.name)")
+                .padding()
+        }
+        .sheet(item: $viewModel.detailExercise) { exercise in
+            Text("Details for \(exercise.exercise.name)")
+                .padding()
+        }
     }
 
     private var headerSection: some View {
@@ -109,7 +117,10 @@ struct WorkoutSessionView: View {
                             WorkoutExerciseRowView(
                                 exercise: ex,
                                 group: group,
+                                onHistory: { viewModel.showHistory(for: ex.id) },
                                 onEdit: { viewModel.editItemTapped(withId: group.id) },
+                                onDuplicate: { viewModel.duplicateItem(withId: ex.id) },
+                                onDetails: { viewModel.showDetails(for: ex.id) },
                                 onDelete: {
                                     withAnimation {
                                         viewModel.deleteExercise(ex.id, fromSuperset: group.id)
@@ -143,7 +154,10 @@ struct WorkoutSessionView: View {
                                 exercise: ex,
                                 group: group,
                                 groupExercises: groupExercises,
+                                onHistory: { viewModel.showHistory(for: group.id) },
                                 onEdit: { viewModel.editItemTapped(withId: group.id) },
+                                onDuplicate: { viewModel.duplicateItem(withId: group.id) },
+                                onDetails: { viewModel.showDetails(for: group.id) },
                                 onDelete: { viewModel.deleteItem(withId: group.id) },
                                 onSetEdit: { ex, setId in
                                     viewModel.editSet(withID: setId, ofExercise: ex.id)
@@ -172,7 +186,10 @@ struct WorkoutSessionView: View {
                         WorkoutExerciseRowView(
                             exercise: ex,
                             group: nil,
+                            onHistory: { viewModel.showHistory(for: ex.id) },
                             onEdit: { viewModel.editItemTapped(withId: ex.id) },
+                            onDuplicate: { viewModel.duplicateItem(withId: ex.id) },
+                            onDetails: { viewModel.showDetails(for: ex.id) },
                             onDelete: { viewModel.deleteItem(withId: ex.id) },
                             onSetEdit: { ex, setId in
                                 viewModel.editSet(withID: setId, ofExercise: ex.id)

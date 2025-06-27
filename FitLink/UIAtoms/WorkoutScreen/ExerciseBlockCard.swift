@@ -7,6 +7,7 @@ struct ExerciseBlockCard: View {
     var onEdit: () -> Void = {}
     var onSetTap: (ExerciseInstance, ExerciseSet.ID) -> Void = { _,_ in }
     var onAddSet: (ExerciseInstance) -> Void = { _ in }
+    var onMenuTap: () -> Void = {}
     var isLocked: Bool = false
     var isFirstInGroup: Bool = true
     var isLastInGroup: Bool = true
@@ -22,10 +23,23 @@ struct ExerciseBlockCard: View {
                     .foregroundColor(Theme.color.textSecondary)
             }
 
-            Text(title)
-                .font(Theme.current.layoutMode == .compact ? Theme.font.compactExerciseTitle : Theme.font.subheading)
-                .lineLimit(2)
-                .truncationMode(.tail)
+            HStack(alignment: .top) {
+                Text(title)
+                    .font(Theme.current.layoutMode == .compact ? Theme.font.compactExerciseTitle : Theme.font.subheading)
+                    .lineLimit(2)
+                    .truncationMode(.tail)
+                Spacer(minLength: Theme.spacing.small)
+                Button(action: onMenuTap) {
+                    Image(systemName: "line.3.horizontal")
+                        .padding(8)
+                        .background(Theme.color.backgroundSecondary.opacity(0.5))
+                        .clipShape(RoundedRectangle(cornerRadius: Theme.radius.button))
+                }
+                .foregroundColor(Theme.color.textSecondary)
+                .buttonStyle(.plain)
+            } //: HStack
+            .contentShape(Rectangle())
+            .onTapGesture { onMenuTap() }
 
             if let main = exerciseInstances.first {
                 ApproachListView(
@@ -125,5 +139,5 @@ struct ExerciseBlockCard: View {
                 ]
             )
         ]
-        , onAddSet: { _ in }, isLocked: false)
+        , onAddSet: { _ in }, onMenuTap: {}, isLocked: false)
 }
