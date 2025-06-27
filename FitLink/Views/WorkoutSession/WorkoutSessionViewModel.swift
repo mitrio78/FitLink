@@ -117,6 +117,9 @@ final class WorkoutSessionViewModel: ObservableObject {
     }
 
     /// Handles moving rows via drag & drop while keeping groups intact.
+    /// The `offsets` provided by the List always reference the tapped row. If
+    /// that row belongs to a group the method collects all rows for that group
+    /// and moves them together so the user can never split a group.
     func moveRow(fromOffsets offsets: IndexSet, toOffset destination: Int, in section: WorkoutSection) {
         var warmRows = rows(for: .warmUp)
         var mainRows = rows(for: .main)
@@ -124,15 +127,16 @@ final class WorkoutSessionViewModel: ObservableObject {
 
         func reorder(_ rows: inout [RowInfo]) {
             guard let start = offsets.first else { return }
+            // Determine all rows that belong to the same group as the dragged row.
             let groupId = rows[start].group?.id
             var moveIndexes = [start]
             if let gid = groupId {
                 moveIndexes = rows.enumerated().compactMap { $0.element.group?.id == gid ? $0.offset : nil }
             }
 
-            var adjustedDestination = destination
-            if destination > moveIndexes.first! { adjustedDestination -= moveIndexes.count }
-            rows.move(fromOffsets: IndexSet(moveIndexes), toOffset: adjustedDestination)
+            // Using Swift's `move` ensures the destination offset is adjusted
+            // for the removed rows so the group is inserted at the correct position.
+            rows.move(fromOffsets: IndexSet(moveIndexes), toOffset: destination)
         }
 
         switch section {
