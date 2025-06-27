@@ -61,7 +61,8 @@ struct WorkoutSessionView: View {
                 onAddSet: { viewModel.addNextSet() },
                 onDone: {
                     viewModel.saveEditedSet()
-                }
+                },
+                onDelete: viewModel.canDeleteActiveSet ? { viewModel.deleteActiveSet() } : nil
             )
             // Use a fixed height so the sheet hugs the content like the system
             // calculator (~452 pt including safe area). On very small screens consider
