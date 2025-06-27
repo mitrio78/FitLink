@@ -9,28 +9,30 @@ import Foundation
 
 func generateRegularApproaches(for exercise: Exercise, count: Int) -> [Approach] {
     (0..<count).map { index in
-        var metricValues: [ExerciseMetricType: Double] = [:]
+        var metricValues: [ExerciseMetricType: ExerciseMetricValue] = [:]
         for metric in exercise.metrics {
             switch metric.type {
             case .reps:
-                metricValues[.reps] = Double(8 + Int.random(in: 0...4))
+                metricValues[.reps] = .int(8 + Int.random(in: 0...4))
             case .weight:
-                metricValues[.weight] = Double(30 + 10 * index)
+                metricValues[.weight] = .double(Double(30 + 10 * index))
             case .time:
-                metricValues[.time] = Double(30 + 10 * index)
+                metricValues[.time] = .double(Double(30 + 10 * index))
             case .distance:
-                metricValues[.distance] = Double(1 + index)
+                metricValues[.distance] = .double(Double(1 + index))
             default:
                 break
             }
         }
         return Approach(
-            set: ExerciseSet(
-                id: UUID(),
-                metricValues: metricValues,
-                notes: (index == 0 && Bool.random()) ? "Техника, фокус!" : nil
-            ),
-            drops: [.init(id: UUID(), metricValues: [.weight: 10, .reps: 2])]
+            sets: [
+                ExerciseSet(
+                    id: UUID(),
+                    metricValues: metricValues,
+                    notes: (index == 0 && Bool.random()) ? "Техника, фокус!" : nil,
+                    drops: nil
+                )
+            ]
         )
     }
 }

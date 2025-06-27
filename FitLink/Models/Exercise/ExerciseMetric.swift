@@ -21,12 +21,12 @@ struct ExerciseMetric: Codable, Equatable, Hashable {
         type.iconName
     }
     
-    static func formattedMetric(_ value: Double, metric: ExerciseMetric) -> String {
-        let intValue = value == floor(value) ? String(Int(value)) : String(format: "%.1f", value)
+    static func formattedMetric(_ value: ExerciseMetricValue, metric: ExerciseMetric) -> String {
+        let text = value.formatted
         if let unit = metric.unit?.displayName, !unit.isEmpty {
-            return "\(intValue) \(unit)"
+            return "\(text) \(unit)"
         }
-        return intValue
+        return text
     }
 }
 
@@ -111,5 +111,16 @@ enum UnitType: Codable, CaseIterable, Equatable, Hashable {
     
     static var allCases: [UnitType] {
         return [.kilogram, .pound, .second, .minute, .meter, .kilometer, .repetition, .calorie]
+    }
+}
+
+extension ExerciseMetricType {
+    var requiresInteger: Bool {
+        switch self {
+        case .reps:
+            return true
+        default:
+            return false
+        }
     }
 }

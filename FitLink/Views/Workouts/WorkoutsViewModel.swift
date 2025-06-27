@@ -1,7 +1,15 @@
-//
-//  WorkoutsViewModel.swift
-//  FitLink
-//
-//  Created by Дмитрий Гришечко on 28.05.2025.
-//
+import Foundation
+import SwiftUI
 
+@MainActor
+final class WorkoutsViewModel: ObservableObject {
+    @Published var workouts: [WorkoutSession] = []
+    private let dataStore: AppDataStore
+
+    init(dataStore: AppDataStore) {
+        self.dataStore = dataStore
+
+        dataStore.$sessions
+            .assign(to: &$workouts)
+    }
+}

@@ -1,5 +1,5 @@
 /* WorkoutSession header with client name */
-"WorkoutSession.Header" = "Тренировка для %@";
+"WorkoutSession.Header" = "%@";
 "WorkoutSession.ClientPlaceholder" = "Клиента";
 "WorkoutSession.Title" = "Тренировка";
 
@@ -112,8 +112,9 @@
 "UnitType.Minute" = "мин";
 "UnitType.Meter" = "м";
 "UnitType.Kilometer" = "км";
-"UnitType.Repetition" = "повт.";
+"UnitType.Repetition" = "x";
 "UnitType.Calorie" = "ккал";
+"CustomNumberPad.RepsLabel" = "";
 
 /* Muscle groups */
 "MuscleGroup.Chest" = "Грудные";
@@ -137,7 +138,41 @@
 "WorkoutSection.CoolDown" = "Заминка";
 /* Workout actions */
 "WorkoutSession.AddExercise" = "Добавить упражнение";
+"WorkoutDetail.AddExercise" = "Добавить упражнение";
 "WorkoutSession.AddGroupedExercise" = "Добавить групповое упражнение";
 "WorkoutSession.AddBlock" = "Добавить блок";
 "WorkoutSession.ClonePrevious" = "Клонировать прошлую";
 "WorkoutSession.Save" = "Сохранить тренировку";
+
+/* WorkoutExerciseEdit */
+"WorkoutExerciseEdit.EditTitle" = "Редактировать упражнение";
+"WorkoutExerciseEdit.AddTitle" = "Добавить упражнение";
+"WorkoutExerciseEdit.Change" = "Заменить";
+"WorkoutExerciseEdit.SelectExercise" = "Выберите упражнение";
+"WorkoutExerciseEdit.Sets" = "Подходы";
+"WorkoutExerciseEdit.AddSet" = "Добавить сет";
+"WorkoutExerciseEdit.AddMetric" = "Добавить метрику";
+"WorkoutExerciseEdit.Phase" = "Фаза %d";
+"WorkoutExerciseEdit.AddPhase" = "Добавить фазу";
+"WorkoutExerciseEdit.DuplicateSet" = "Дублировать";
+"WorkoutExerciseEdit.DeleteSet" = "Удалить";
+"WorkoutExerciseEdit.SelectMetric" = "Выберите метрику";
+"WorkoutExerciseEdit.AddAnotherExercise" = "Добавить ещё одно упражнение";
+
+/* Metric Editor */
+"MetricEditor.Title" = "Сеты";
+"MetricEditor.AddSet" = "Добавить сет";
+
+/* Drop editor */
+"DropEditor.Title" = "Дропы";
+"DropEditor.AddDrop" = "Добавить дроп";
+
+/* Common */
+"Common.Cancel" = "Отмена";
+"Common.Done" = "Готово";
+"Common.Delete" = "Удалить";
+"Common.Edit" = "Изменить";
+
+/* Developer settings */
+"DeveloperSettings.SectionTitle" = "Настройки разработчика";
+"DeveloperSettings.CompactMode" = "Компактный интерфейс";

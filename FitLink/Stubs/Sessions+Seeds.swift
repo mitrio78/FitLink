@@ -12,7 +12,7 @@ let mockSessions: [WorkoutSession] = [
         id: UUID(),
         clientId: clientsMock[0].id,
         title: "Грудь и трицепс",
-        date: ISO8601DateFormatter().date(from: "2025-05-20T10:00:00+03:00"),
+        date: ISO8601DateFormatter().date(from: "2025-06-20T10:00:00+03:00"),
         exerciseInstances: [
             makeInstance(exercise: exercisesCatalog[0], approachesCount: 3), // Жим лёжа
             makeInstance(exercise: exercisesCatalog[4], approachesCount: 3), // Отжимания на брусьях
@@ -26,7 +26,7 @@ let mockSessions: [WorkoutSession] = [
         id: UUID(),
         clientId: clientsMock[0].id,
         title: "Кардио + пресс",
-        date: ISO8601DateFormatter().date(from: "2025-05-22T08:30:00+03:00"),
+        date: ISO8601DateFormatter().date(from: "2025-06-22T08:30:00+03:00"),
         exerciseInstances: [
             makeInstance(exercise: exercisesCatalog[18], approachesCount: 1), // Кардио: бег на дорожке
             makeInstance(exercise: exercisesCatalog[9], approachesCount: 3)   // Скручивания на пресс
@@ -39,7 +39,7 @@ let mockSessions: [WorkoutSession] = [
         id: UUID(),
         clientId: clientsMock[0].id,
         title: "Спина и бицепс",
-        date: ISO8601DateFormatter().date(from: "2025-05-28T19:00:00+03:00"),
+        date: ISO8601DateFormatter().date(from: "2025-06-28T19:00:00+03:00"),
         exerciseInstances: [
             makeInstance(exercise: exercisesCatalog[1], approachesCount: 3), // Становая тяга
             makeInstance(exercise: exercisesCatalog[3], approachesCount: 2), // Подтягивания
@@ -53,7 +53,7 @@ let mockSessions: [WorkoutSession] = [
         id: UUID(),
         clientId: clientsMock[1].id,
         title: "Кардио",
-        date: ISO8601DateFormatter().date(from: "2025-05-21T09:15:00+03:00"),
+        date: ISO8601DateFormatter().date(from: "2025-06-21T09:15:00+03:00"),
         exerciseInstances: [
             makeInstance(exercise: exercisesCatalog[18], approachesCount: 1), // Кардио: бег на дорожке
             makeInstance(exercise: exercisesCatalog[19], approachesCount: 2)  // Скакалка
@@ -66,7 +66,7 @@ let mockSessions: [WorkoutSession] = [
         id: UUID(),
         clientId: clientsMock[1].id,
         title: "Ноги и ягодицы",
-        date: ISO8601DateFormatter().date(from: "2025-05-25T18:00:00+03:00"),
+        date: ISO8601DateFormatter().date(from: "2025-06-25T18:00:00+03:00"),
         exerciseInstances: [
             makeInstance(exercise: exercisesCatalog[2], approachesCount: 3), // Приседания
             makeInstance(exercise: exercisesCatalog[10], approachesCount: 2), // Выпады
@@ -80,19 +80,19 @@ let mockSessions: [WorkoutSession] = [
         id: UUID(),
         clientId: clientsMock[1].id,
         title: "Йога и растяжка",
-        date: ISO8601DateFormatter().date(from: "2025-06-03T17:00:00+03:00"),
+        date: ISO8601DateFormatter().date(from: "2025-06-13T17:00:00+03:00"),
         exerciseInstances: [
             makeInstance(exercise: exercisesCatalog[14], approachesCount: 1), // Растяжка стоя
         ],
         setGroups: nil,
         notes: "Релакс",
-        status: .planned
+        status: .completed
     ),
     WorkoutSession(
         id: UUID(),
         clientId: clientsMock[2].id,
         title: "Грудные + плечи",
-        date: ISO8601DateFormatter().date(from: "2025-05-23T10:00:00+03:00"),
+        date: ISO8601DateFormatter().date(from: "2025-06-23T10:00:00+03:00"),
         exerciseInstances: [
             makeInstance(exercise: exercisesCatalog[0], approachesCount: 3), // Жим лёжа
             makeInstance(exercise: exercisesCatalog[5], approachesCount: 2), // Жим гантелей стоя
@@ -100,13 +100,13 @@ let mockSessions: [WorkoutSession] = [
         ],
         setGroups: nil,
         notes: nil,
-        status: .completed
+        status: .planned
     ),
     WorkoutSession(
         id: UUID(),
         clientId: clientsMock[2].id,
         title: "Силовая тренировка",
-        date: ISO8601DateFormatter().date(from: "2025-05-29T18:30:00+03:00"),
+        date: ISO8601DateFormatter().date(from: "2025-06-29T18:30:00+03:00"),
         exerciseInstances: [
             makeInstance(exercise: exercisesCatalog[1], approachesCount: 3), // Становая тяга
             makeInstance(exercise: exercisesCatalog[2], approachesCount: 2) // Приседания со штангой
@@ -119,7 +119,7 @@ let mockSessions: [WorkoutSession] = [
         id: UUID(),
         clientId: clientsMock[2].id,
         title: "Фулбади",
-        date: ISO8601DateFormatter().date(from: "2025-06-02T11:00:00+03:00"),
+        date: ISO8601DateFormatter().date(from: "2025-06-12T11:00:00+03:00"),
         exerciseInstances: [
             makeInstance(exercise: exercisesCatalog[6], approachesCount: 2), // Сгибания рук с гантелями
             makeInstance(exercise: exercisesCatalog[8], approachesCount: 2), // Планка
@@ -133,7 +133,7 @@ let mockSessions: [WorkoutSession] = [
         id: UUID(),
         clientId: clientsMock[3].id,
         title: "Йога",
-        date: ISO8601DateFormatter().date(from: "2025-05-24T09:00:00+03:00"),
+        date: ISO8601DateFormatter().date(from: "2025-06-24T09:00:00+03:00"),
         exerciseInstances: [
             makeInstance(exercise: exercisesCatalog[14], approachesCount: 1), // Растяжка стоя
             makeInstance(exercise: exercisesCatalog[8], approachesCount: 3)   // Планка
@@ -146,7 +146,7 @@ let mockSessions: [WorkoutSession] = [
         id: UUID(),
         clientId: clientsMock[3].id,
         title: "Кардио + пресс",
-        date: ISO8601DateFormatter().date(from: "2025-05-31T08:00:00+03:00"),
+        date: ISO8601DateFormatter().date(from: "2025-06-31T08:00:00+03:00"),
         exerciseInstances: [
             makeInstance(exercise: exercisesCatalog[18], approachesCount: 1), // Кардио: бег на дорожке
             makeInstance(exercise: exercisesCatalog[9], approachesCount: 2)   // Скручивания на пресс
@@ -159,14 +159,14 @@ let mockSessions: [WorkoutSession] = [
         id: UUID(),
         clientId: clientsMock[4].id,
         title: "Трицепс и грудь",
-        date: ISO8601DateFormatter().date(from: "2025-05-26T19:30:00+03:00"),
+        date: ISO8601DateFormatter().date(from: "2025-06-26T19:30:00+03:00"),
         exerciseInstances: [
             makeInstance(exercise: exercisesCatalog[4], approachesCount: 3), // Отжимания на брусьях
             makeInstance(exercise: exercisesCatalog[7], approachesCount: 2) // Разгибания рук на блоке
         ],
         setGroups: nil,
         notes: nil,
-        status: .completed
+        status: .planned
     ),
     WorkoutSession(
         id: UUID(),
@@ -191,7 +191,7 @@ let mockSessions: [WorkoutSession] = [
         ],
         setGroups: nil,
         notes: "Присед, становая",
-        status: .planned
+        status: .completed
     ),
     WorkoutSession(
         id: UUID(),
@@ -203,6 +203,6 @@ let mockSessions: [WorkoutSession] = [
         ],
         setGroups: nil,
         notes: nil,
-        status: .planned
+        status: .cancelled
     )
 ]

@@ -1,5 +1,5 @@
 /* WorkoutSession header with client name */
-"WorkoutSession.Header" = "Training for %@";
+"WorkoutSession.Header" = "%@";
 "WorkoutSession.ClientPlaceholder" = "Client";
 "WorkoutSession.Title" = "Training";
 
@@ -112,8 +112,9 @@
 "UnitType.Minute" = "min";
 "UnitType.Meter" = "m";
 "UnitType.Kilometer" = "km";
-"UnitType.Repetition" = "Pot.";
+"UnitType.Repetition" = "x";
 "UnitType.Calorie" = "kcal";
+"CustomNumberPad.RepsLabel" = "reps";
 
 /* Muscle groups */
 "MuscleGroup.Chest" = "Thoracic";
@@ -137,7 +138,41 @@
 "WorkoutSection.CoolDown" = "Cool-down";
 /* Workout actions */
 "WorkoutSession.AddExercise" = "Add Exercise";
+"WorkoutDetail.AddExercise" = "Add Exercise";
 "WorkoutSession.AddGroupedExercise" = "Add Grouped Exercise";
 "WorkoutSession.AddBlock" = "Add Block";
 "WorkoutSession.ClonePrevious" = "Clone Previous Session";
 "WorkoutSession.Save" = "Save Workout";
+
+/* WorkoutExerciseEdit */
+"WorkoutExerciseEdit.EditTitle" = "Edit Exercise";
+"WorkoutExerciseEdit.AddTitle" = "Add Exercise";
+"WorkoutExerciseEdit.Change" = "Replace";
+"WorkoutExerciseEdit.SelectExercise" = "Select Exercise";
+"WorkoutExerciseEdit.Sets" = "Sets";
+"WorkoutExerciseEdit.AddSet" = "Add Set";
+"WorkoutExerciseEdit.AddMetric" = "Add Metric";
+"WorkoutExerciseEdit.Phase" = "Phase %d";
+"WorkoutExerciseEdit.AddPhase" = "Add Phase";
+"WorkoutExerciseEdit.DuplicateSet" = "Duplicate";
+"WorkoutExerciseEdit.DeleteSet" = "Delete";
+"WorkoutExerciseEdit.SelectMetric" = "Select metric";
+"WorkoutExerciseEdit.AddAnotherExercise" = "Add Another Exercise";
+
+/* Metric Editor */
+"MetricEditor.Title" = "Sets";
+"MetricEditor.AddSet" = "Add Set";
+
+/* Drop editor */
+"DropEditor.Title" = "Drops";
+"DropEditor.AddDrop" = "Add Drop";
+
+/* Common */
+"Common.Cancel" = "Cancel";
+"Common.Done" = "Done";
+"Common.Delete" = "Delete";
+"Common.Edit" = "Edit";
+
+/* Developer settings */
+"DeveloperSettings.SectionTitle" = "Developer Settings";
+"DeveloperSettings.CompactMode" = "Compact UI Mode";

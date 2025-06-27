@@ -13,41 +13,47 @@ import Foundation
 let dropSetExercise = exercisesCatalog[0] // Жим лёжа
 
 let dropSetApproach1 = Approach(
-    set: ExerciseSet(
-        id: UUID(),
-        metricValues: [.reps: 8, .weight: 50],
-        notes: "Основной вес"
-    ),
-    drops: [
+    sets: [
         ExerciseSet(
             id: UUID(),
-            metricValues: [.reps: 8, .weight: 40],
-            notes: "Дроп 1"
+            metricValues: [.reps: .int(8), .weight: .double(50)],
+            notes: "Основной вес",
+            drops: nil
         ),
         ExerciseSet(
             id: UUID(),
-            metricValues: [.reps: 8, .weight: 30],
-            notes: "Дроп 2"
+            metricValues: [.reps: .int(8), .weight: .double(40)],
+            notes: "Дроп 1",
+            drops: nil
+        ),
+        ExerciseSet(
+            id: UUID(),
+            metricValues: [.reps: .int(8), .weight: .double(30)],
+            notes: "Дроп 2",
+            drops: nil
         )
     ]
 )
 
 let dropSetApproach2 = Approach(
-    set: ExerciseSet(
-        id: UUID(),
-        metricValues: [.reps: 7, .weight: 45],
-        notes: "Основной вес"
-    ),
-    drops: [
+    sets: [
         ExerciseSet(
             id: UUID(),
-            metricValues: [.reps: 7, .weight: 35],
-            notes: "Дроп 1"
+            metricValues: [.reps: .int(7), .weight: .double(45)],
+            notes: "Основной вес",
+            drops: nil
         ),
         ExerciseSet(
             id: UUID(),
-            metricValues: [.reps: 7, .weight: 25],
-            notes: "Дроп 2"
+            metricValues: [.reps: .int(7), .weight: .double(35)],
+            notes: "Дроп 1",
+            drops: nil
+        ),
+        ExerciseSet(
+            id: UUID(),
+            metricValues: [.reps: .int(7), .weight: .double(25)],
+            notes: "Дроп 2",
+            drops: nil
         )
     ]
 )
@@ -63,23 +69,23 @@ let dropSetInstance = ExerciseInstance(
 // Генератор подходов-дропсетов из ExerciseInstance (если их несколько — каждый Approach.dropset отдельно)
 func makeDropSetApproaches(for ex: ExerciseInstance) -> [DropSetApproach] {
     ex.approaches.map { approach in
-        DropSetApproach(steps: [approach.set] + approach.drops)
+        DropSetApproach(steps: approach.sets)
     }
 }
-
-
 
 // Суперсет из двух упражнений: сгибания рук и тяга штанги
 // Для суперсета нам нужно, чтобы в каждом подходе был Approach.regular для каждого упражнения
 func generateRegularApproaches(for exercise: Exercise, reps: [Int], weights: [Double]) -> [Approach] {
     zip(reps, weights).map { (rep, weight) in
         Approach(
-            set: ExerciseSet(
-                id: UUID(),
-                metricValues: [.reps: Double(rep), .weight: weight],
-                notes: nil
-            ),
-            drops: []
+            sets: [
+                ExerciseSet(
+                    id: UUID(),
+                    metricValues: [.reps: .int(rep), .weight: .double(weight)],
+                    notes: nil,
+                    drops: nil
+                )
+            ]
         )
     }
 }
@@ -99,59 +105,19 @@ let superSetInstance2 = ExerciseInstance(
     notes: nil
 )
 
-
-/// Генерирует массив подходов для суперсета
-func makeSupersetApproaches(
-    group: SetGroup,
-    allExercises: [ExerciseInstance]
-) -> [SupersetApproach] {
-    let instances = group.exerciseInstanceIds.compactMap { id in
-        allExercises.first(where: { $0.id == id })
-    }
-    guard !instances.isEmpty else { return [] }
-
-    let approachesList: [[Approach]] = instances.map { $0.approaches }
-    let approachesCount = approachesList.map { $0.count }.min() ?? 0
-    guard approachesCount > 0 else { return [] }
-
-    var result: [SupersetApproach] = []
-    for i in 0..<approachesCount {
-        let exerciseResults: [ExerciseResult] = zip(instances, approachesList).map { (instance, approaches) in
-            let set = approaches[i].set
-            let metrics = instance.exercise.metrics
-
-            let metricValues: [MetricValue] = metrics.compactMap { metric in
-                guard let rawValue = set.metricValues[metric.type] else { return nil }
-                let valueString = ExerciseMetric.formattedMetric(rawValue, metric: metric)
-                return MetricValue(
-                    type: metric.type,
-                    displayName: metric.displayName,
-                    value: valueString,
-                    iconName: metric.iconName
-                )
-            }
-
-            return ExerciseResult(
-                exerciseName: instance.exercise.name,
-                metricValues: metricValues
-            )
-        }
-        result.append(SupersetApproach(exercises: exerciseResults))
-    }
-    return result
-}
-
 // --- ДОБАВЛЯЕМ ОДИНОЧНЫЕ УПРАЖНЕНИЯ ДЛЯ ПРИМЕРА ---
 func makeRegularInstance(exIndex: Int, reps: [Int], weights: [Double], section: WorkoutSection = .main) -> ExerciseInstance {
     let ex = exercisesCatalog[exIndex]
     let approaches = zip(reps, weights).map { (rep, weight) in
         Approach(
-            set: ExerciseSet(
-                id: UUID(),
-                metricValues: [.reps: Double(rep), .weight: weight],
-                notes: nil
-            ),
-            drops: []
+            sets: [
+                ExerciseSet(
+                    id: UUID(),
+                    metricValues: [.reps: .int(rep), .weight: .double(weight)],
+                    notes: nil,
+                    drops: nil
+                )
+            ]
         )
     }
     return ExerciseInstance(
@@ -190,7 +156,7 @@ struct MockData {
                 id: UUID(),
                 clientId: clientsMock[0].id,
                 title: "Дропсет + Суперсет (пример)",
-                date: ISO8601DateFormatter().date(from: "2025-05-30T18:00:00+03:00"),
+                date: ISO8601DateFormatter().date(from: "2025-06-18T18:00:00+03:00"),
                 exerciseInstances: [
                     makeRegularInstance(exIndex: 3, reps: [12,10,9], weights: [0,0,0]), // Подтягивания (без веса)
                     dropSetInstance,
@@ -211,7 +177,7 @@ struct MockData {
                 id: UUID(),
                 clientId: clientsMock[3].id,
                 title: "Fullbody: суперсет и дропсет",
-                date: ISO8601DateFormatter().date(from: "2025-06-02T19:00:00+03:00"),
+                date: ISO8601DateFormatter().date(from: "2025-06-20T19:00:00+03:00"),
                 exerciseInstances: [
                     dropSetInstance,
                     superSetInstance1,

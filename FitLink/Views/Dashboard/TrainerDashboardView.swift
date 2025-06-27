@@ -1,9 +1,7 @@
 import SwiftUI
 
-import SwiftUI
-
 struct TrainerDashboardView: View {
-    @StateObject private var viewModel = TrainerDashboardViewModel()
+    @StateObject private var viewModel = TrainerDashboardViewModel(dataStore: .shared)
     @State private var showFilterDialog = false
     @State private var selectedFilter: FilterType = .none
 
@@ -60,7 +58,7 @@ struct TrainerDashboardView: View {
                 
                 // Clients list
                 ScrollView {
-                    LazyVStack(spacing: 8) {
+                    LazyVStack(spacing: 12) {
                         ForEach(viewModel.filteredClients) { client in
                             ClientRow(
                                 client: client,

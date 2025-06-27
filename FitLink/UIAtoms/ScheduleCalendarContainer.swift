@@ -63,7 +63,7 @@ struct ScheduleCalendarContainer: View {
 struct ScheduleCalendarContainer_Previews: PreviewProvider {
     static var previews: some View {
         ScheduleCalendarContainer(
-            viewModel: ScheduleViewModel(),
+            viewModel: ScheduleViewModel(dataStore: .shared),
             selectedSession: .constant(nil),
             clients: [:]
         )

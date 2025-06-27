@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct ScheduleView: View {
-    @StateObject private var viewModel = ScheduleViewModel()
+    @StateObject private var viewModel = ScheduleViewModel(dataStore: .shared)
     @State private var selectedSession: WorkoutSession?
 
     var body: some View {
@@ -96,4 +96,5 @@ struct ScheduleView: View {
 
 #Preview {
     ScheduleView()
+        .environmentObject(WorkoutStore())
 }
