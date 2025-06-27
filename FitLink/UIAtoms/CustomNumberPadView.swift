@@ -126,6 +126,7 @@ struct CustomNumberPadView: View {
                 .padding(Theme.spacing.medium)
                 .background(Theme.color.backgroundSecondary)
                 .cornerRadius(Theme.radius.card)
+                .onTapGesture { clearInput() }
         } //: VStack
     }
 
@@ -186,6 +187,19 @@ struct CustomNumberPadView: View {
                 metricValues[target] = .double(val)
             }
         }
+    }
+
+    private func clearInput() {
+        let metric = viewModel.currentMetric
+        withAnimation(.easeInOut(duration: 0.1)) {
+            viewModel.input = ""
+        }
+        if metric.type.requiresInteger {
+            metricValues[metric.id] = .int(0)
+        } else {
+            metricValues[metric.id] = .double(0)
+        }
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 }
 
