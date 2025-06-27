@@ -27,18 +27,18 @@ struct ApproachCardView: View {
                 let drop = drops[idx]
                 VStack(spacing: lineSpacing) {
                     if let repsMetric {
-                        let val = drop.metricValues[.reps] ?? 0
+                        let val = drop.metricValues[.reps] ?? .int(0)
                         Text(ExerciseMetric.formattedMetric(val, metric: repsMetric))
                             .font(Theme.current.layoutMode == .compact ? Theme.font.compactMetricValue.bold() : Theme.font.metrics1.bold())
                             .foregroundColor(.primary)
                     }
                     if let weightMetric {
-                        let val = drop.metricValues[.weight] ?? 0
+                        let val = drop.metricValues[.weight] ?? .double(0)
                         Text(ExerciseMetric.formattedMetric(val, metric: weightMetric))
                             .font(Theme.current.layoutMode == .compact ? Theme.font.compactMetricValue : Theme.font.metrics2)
                             .foregroundColor(.primary)
                     } else if let timeMetric {
-                        let val = drop.metricValues[.time] ?? 0
+                        let val = drop.metricValues[.time] ?? .double(0)
                         Text(ExerciseMetric.formattedMetric(val, metric: timeMetric))
                             .font(Theme.current.layoutMode == .compact ? Theme.font.compactMetricValue : Theme.font.metrics2)
                             .foregroundColor(.primary)
@@ -62,7 +62,7 @@ struct ApproachCardView: View {
 #Preview {
     let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
                    ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
-    let set1 = ExerciseSet(id: UUID(), metricValues: [.weight: 50, .reps: 8], notes: nil, drops: [ExerciseSet(id: UUID(), metricValues: [.weight: 40, .reps: 8], notes: nil, drops: nil)])
+    let set1 = ExerciseSet(id: UUID(), metricValues: [.weight: .double(50), .reps: .int(8)], notes: nil, drops: [ExerciseSet(id: UUID(), metricValues: [.weight: .double(40), .reps: .int(8)], notes: nil, drops: nil)])
     return ApproachCardView(set: set1, metrics: metrics)
         .padding()
 }
