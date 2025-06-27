@@ -68,9 +68,8 @@ struct CustomNumberPadView: View {
             } //: VStack
             .padding(.horizontal, Theme.spacing.small)
             .padding(.top, Theme.spacing.small)
-            .padding(.bottom, Theme.spacing.sheetBottomPadding + proxy.safeAreaInsets.bottom)
             .cornerRadius(Theme.radius.card)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         }
     }
 
@@ -112,9 +111,9 @@ struct CustomNumberPadView: View {
     }
 
     private var numberPad: some View {
-        VStack(spacing: Theme.spacing.small) {
+        VStack(spacing: Theme.spacing.extraSmall) {
             ForEach(keys, id: \.self) { row in
-                HStack(spacing: Theme.spacing.small) {
+                HStack(spacing: Theme.spacing.extraSmall) {
                     ForEach(row, id: \.self) { key in
                         Button(action: { handleKey(key) }) {
                             Text(key)
@@ -130,6 +129,7 @@ struct CustomNumberPadView: View {
                 } //: HStack
             }
         } //: VStack
+        .padding(.bottom, Theme.spacing.extraSmall)
     }
 
     private var keys: [[String]] {
