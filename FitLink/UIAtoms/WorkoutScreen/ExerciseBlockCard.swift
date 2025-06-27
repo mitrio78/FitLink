@@ -31,9 +31,8 @@ struct ExerciseBlockCard: View {
                 Spacer(minLength: Theme.spacing.small)
                 Button(action: onMenuTap) {
                     Image(systemName: "line.3.horizontal")
-                        .padding(8)
+                        .padding(.bottom, Theme.spacing.small)
                         .background(Theme.color.backgroundSecondary.opacity(0.5))
-                        .clipShape(RoundedRectangle(cornerRadius: Theme.radius.button))
                 }
                 .foregroundColor(Theme.color.textSecondary)
                 .buttonStyle(.plain)
