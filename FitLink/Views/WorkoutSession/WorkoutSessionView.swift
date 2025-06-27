@@ -137,14 +137,13 @@ struct WorkoutSessionView: View {
                             ))
                             .padding(.top, first ? Theme.current.spacing.compactSetRowSpacing : 0)
                             .padding(.bottom, last ? Theme.spacing.compactSetRowSpacing : 0)
-
-                            if !last {
-                                Divider()
-                                    .frame(height: 1)
-                                    .background(Theme.color.border)
-                                    .padding(.horizontal, 8)
-                                    .listRowInsets(EdgeInsets())
-                                    .listRowSeparator(.hidden)
+                            .overlay(alignment: .bottom) {
+                                if !last {
+                                    Divider()
+                                        .frame(height: 1)
+                                        .background(Theme.color.border)
+                                        .padding(.horizontal, 8)
+                                }
                             }
                         } else if viewModel.isFirstExerciseInGroup(ex) {
                             let groupExercises = viewModel.groupExercises(for: group)
