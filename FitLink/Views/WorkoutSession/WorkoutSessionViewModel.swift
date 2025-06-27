@@ -366,6 +366,25 @@ final class WorkoutSessionViewModel: ObservableObject {
         save()
     }
 
+    /// Deletes a specific exercise from a superset. If the superset becomes
+    /// empty after the deletion, the superset itself is removed.
+    func deleteExercise(_ exerciseId: UUID, fromSuperset supersetId: UUID) {
+        guard let groupIndex = setGroups.firstIndex(where: { $0.id == supersetId }) else {
+            return
+        }
+
+        withAnimation {
+            exercises.removeAll { $0.id == exerciseId }
+            setGroups[groupIndex].exerciseInstanceIds.removeAll { $0 == exerciseId }
+
+            if setGroups[groupIndex].exerciseInstanceIds.isEmpty {
+                setGroups.remove(at: groupIndex)
+            }
+
+            save()
+        }
+    }
+
     private func save() {
         session.exerciseInstances = exercises
         session.setGroups = setGroups
