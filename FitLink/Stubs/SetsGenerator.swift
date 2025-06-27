@@ -9,17 +9,17 @@ import Foundation
 
 func generateRegularApproaches(for exercise: Exercise, count: Int) -> [Approach] {
     (0..<count).map { index in
-        var metricValues: [ExerciseMetricType: Double] = [:]
+        var metricValues: [ExerciseMetricType: ExerciseMetricValue] = [:]
         for metric in exercise.metrics {
             switch metric.type {
             case .reps:
-                metricValues[.reps] = Double(8 + Int.random(in: 0...4))
+                metricValues[.reps] = .int(8 + Int.random(in: 0...4))
             case .weight:
-                metricValues[.weight] = Double(30 + 10 * index)
+                metricValues[.weight] = .double(Double(30 + 10 * index))
             case .time:
-                metricValues[.time] = Double(30 + 10 * index)
+                metricValues[.time] = .double(Double(30 + 10 * index))
             case .distance:
-                metricValues[.distance] = Double(1 + index)
+                metricValues[.distance] = .double(Double(1 + index))
             default:
                 break
             }

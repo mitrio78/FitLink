@@ -61,6 +61,7 @@ VStack {
   **TODO:** existing code rarely uses these comments. New code should adopt them for consistency.
 
 - Keep layout minimalistic and readable. Use built‑in modifiers rather than custom ones when possible.
+- **Bottom Sheets**: Keep vertical spacing minimal and match native system sheets. Avoid stacking multiple padding modifiers and prefer safe‑area‑aware layout.
 
 ## View Structure Conventions
 
@@ -119,3 +120,5 @@ VStack {
 8. Provide a `#Preview` section for every View/Atom.
 
 Following this guide will keep the FitLink codebase consistent and easy to maintain.
+
+❗ Do not place formatting or business logic inside SwiftUI Views. Keep views declarative. Use extensions or ViewModels.

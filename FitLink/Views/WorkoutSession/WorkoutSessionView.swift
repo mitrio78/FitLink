@@ -21,23 +21,25 @@ struct WorkoutSessionView: View {
     var body: some View {
         List {
             headerSection
+                .listRowInsets(.init(top: 8, leading: 16, bottom: 8, trailing: 16))
 
             workoutSection(.warmUp, exercises: viewModel.warmUpExercises)
             workoutSection(.main, exercises: viewModel.mainExercises)
             workoutSection(.coolDown, exercises: viewModel.coolDownExercises)
         }
         .listStyle(.plain)
+        .padding(.horizontal, Theme.spacing.horizontal)
         .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: viewModel.addExerciseTapped) {
                     Image(systemName: "plus")
-                        .padding(6)
-                        .background(Color.accentColor.opacity(0.15))
+                        .padding(8)
+                        .background(Theme.color.backgroundSecondary .opacity(0.5))
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 .controlSize(.large)
-                .foregroundColor(Color.accentColor)
+                .foregroundColor(Theme.color.accent)
                 .accessibilityLabel(NSLocalizedString("WorkoutDetail.AddExercise", comment: ""))
                 .accessibilityIdentifier("WorkoutDetail.AddExerciseButton")
             }
@@ -48,16 +50,28 @@ struct WorkoutSessionView: View {
                 viewModel.completeEdit(result)
             }
         }
-        .sheet(item: $viewModel.activeMetricEditorExercise) { instance in
-            MetricEditorView(exercise: instance, scrollToIndex: viewModel.metricEditorStartIndex) { approaches in
-                viewModel.updateMetrics(for: instance.id, approaches: approaches)
-            }
+        .sheet(item: $viewModel.activeSetEdit) { context in
+            CustomNumberPadView(
+                metrics: context.metrics,
+                values: Binding<[ExerciseMetric.ID: ExerciseMetricValue]>(
+                    get: { viewModel.activeSetEdit?.values ?? [:] },
+                    set: { viewModel.activeSetEdit?.values = $0 }
+                ),
+                onDone: {
+                    viewModel.saveEditedSet()
+                }
+            )
+            // Use a fixed height so the sheet hugs the content like the system
+            // calculator (~394 pt). On very small screens consider
+            // `.fraction(0.52)` instead.
+            .presentationDetents([.height(Theme.size.numberPadSheetHeight)])
+            .presentationDragIndicator(.visible)
         }
     }
 
     private var headerSection: some View {
         Section {
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: .zero) {
                 Text(
                     String(
                         format: NSLocalizedString("WorkoutSession.Header", comment: "Тренировка для %@"),
@@ -65,7 +79,7 @@ struct WorkoutSessionView: View {
                     )
                 )
                 .font(Theme.font.titleMedium).bold()
-                .padding(.vertical)
+                .padding(.vertical, Theme.spacing.compactInnerSpacing)
                 if let date = viewModel.session.date {
                     Text("\(date.formatted(date: .long, time: .shortened))")
                         .foregroundColor(Theme.color.textSecondary)
@@ -74,10 +88,10 @@ struct WorkoutSessionView: View {
                     Text(notes)
                         .font(Theme.font.body)
                         .foregroundColor(Theme.color.accent)
-                        .padding(.vertical, Theme.spacing.small)
+                        .padding(.top, Theme.spacing.small)
                 }
             } //: VStack
-        }
+        } //: Section
     }
 
     @ViewBuilder
@@ -85,32 +99,85 @@ struct WorkoutSessionView: View {
         if !exercises.isEmpty {
             Section {
                 ForEach(exercises, id: \.id) { ex in
-                    if let group = viewModel.group(for: ex), viewModel.isFirstExerciseInGroup(ex) {
-                        let groupExercises = viewModel.groupExercises(for: group)
-                        WorkoutExerciseRowView(
-                            exercise: ex,
-                            group: group,
-                            groupExercises: groupExercises,
-                            onEdit: { viewModel.editItemTapped(withId: group.id) },
-                            onDelete: { viewModel.deleteItem(withId: group.id) },
-                            onSetsEdit: { ex, idx in viewModel.editMetrics(for: ex.id, approachIndex: idx) },
-                            initiallyExpanded: viewModel.expandedGroupId == group.id
-                        )
-                        .onAppear {
-                            if viewModel.expandedGroupId == group.id {
-                                viewModel.expandedGroupId = nil
+                    if let group = viewModel.group(for: ex) {
+                        if group.type == .superset {
+                            let first = viewModel.isFirstExerciseInGroup(ex)
+                            let last = viewModel.isLastExerciseInGroup(ex)
+                            WorkoutExerciseRowView(
+                                exercise: ex,
+                                group: group,
+                                onEdit: { viewModel.editItemTapped(withId: group.id) },
+                                onDelete: { viewModel.deleteItem(withId: group.id) },
+                                onSetEdit: { ex, setId in
+                                    viewModel.editSet(withID: setId, ofExercise: ex.id)
+                                },
+                                onAddSet: { ex in
+                                    viewModel.addSet(toExercise: ex.id)
+                                },
+                                isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled,
+                                initiallyExpanded: false,
+                                isFirstInGroup: first,
+                                isLastInGroup: last,
+                                isGrouped: true
+                            )
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(
+                                top: first ? Theme.current.spacing.compactSetRowSpacing : 0,
+                                leading: 8,
+                                bottom: last ? Theme.spacing.compactSetRowSpacing : 0,
+                                trailing: 8
+                            ))
+                        } else if viewModel.isFirstExerciseInGroup(ex) {
+                            let groupExercises = viewModel.groupExercises(for: group)
+                            WorkoutExerciseRowView(
+                                exercise: ex,
+                                group: group,
+                                groupExercises: groupExercises,
+                                onEdit: { viewModel.editItemTapped(withId: group.id) },
+                                onDelete: { viewModel.deleteItem(withId: group.id) },
+                                onSetEdit: { ex, setId in
+                                    viewModel.editSet(withID: setId, ofExercise: ex.id)
+                                },
+                                onAddSet: { ex in
+                                    viewModel.addSet(toExercise: ex.id)
+                                },
+                                isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled,
+                                initiallyExpanded: viewModel.expandedGroupId == group.id
+                            )
+                            .onAppear {
+                                if viewModel.expandedGroupId == group.id {
+                                    viewModel.expandedGroupId = nil
+                                }
                             }
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(
+                                top: Theme.current.spacing.compactSetRowSpacing,
+                                leading: 8,
+                                bottom: Theme.spacing.compactSetRowSpacing,
+                                trailing: 8
+                            ))
                         }
-                        .listRowSeparator(.hidden)
-                    } else if !viewModel.isExerciseInAnyGroup(ex) {
+                    } else {
                         WorkoutExerciseRowView(
                             exercise: ex,
                             group: nil,
                             onEdit: { viewModel.editItemTapped(withId: ex.id) },
                             onDelete: { viewModel.deleteItem(withId: ex.id) },
-                            onSetsEdit: { ex, _ in viewModel.editMetrics(for: ex.id) }
+                            onSetEdit: { ex, setId in
+                                viewModel.editSet(withID: setId, ofExercise: ex.id)
+                            },
+                            onAddSet: { ex in
+                                viewModel.addSet(toExercise: ex.id)
+                            },
+                            isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled
                         )
                         .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(
+                            top: Theme.current.spacing.compactSetRowSpacing,
+                            leading: 8,
+                            bottom: Theme.spacing.compactSetRowSpacing,
+                            trailing: 8
+                        ))
                     }
                 }
             } header: {
@@ -121,14 +188,23 @@ struct WorkoutSessionView: View {
 }
 
 
-#Preview("Light") {
-    NavigationStack {
+#Preview("Default Light") {
+    Theme.layoutMode = .regular
+    return NavigationStack {
         WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
     }
 }
 
-#Preview("Dark") {
-    NavigationStack {
+#Preview("Compact Light") {
+    Theme.layoutMode = .compact
+    return NavigationStack {
+        WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
+    }
+}
+
+#Preview("Compact Dark") {
+    Theme.layoutMode = .compact
+    return NavigationStack {
         WorkoutSessionView(session: MockData.complexMockSessions[15], client: clientsMock[0], store: WorkoutStore())
     }
     .preferredColorScheme(.dark)

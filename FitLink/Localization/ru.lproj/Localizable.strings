@@ -1,5 +1,5 @@
 /* WorkoutSession header with client name */
-"WorkoutSession.Header" = "Тренировка для %@";
+"WorkoutSession.Header" = "%@";
 "WorkoutSession.ClientPlaceholder" = "Клиента";
 "WorkoutSession.Title" = "Тренировка";
 
@@ -114,6 +114,7 @@
 "UnitType.Kilometer" = "км";
 "UnitType.Repetition" = "x";
 "UnitType.Calorie" = "ккал";
+"CustomNumberPad.RepsLabel" = "";
 
 /* Muscle groups */
 "MuscleGroup.Chest" = "Грудные";
@@ -171,3 +172,7 @@
 "Common.Done" = "Готово";
 "Common.Delete" = "Удалить";
 "Common.Edit" = "Изменить";
+
+/* Developer settings */
+"DeveloperSettings.SectionTitle" = "Настройки разработчика";
+"DeveloperSettings.CompactMode" = "Компактный интерфейс";

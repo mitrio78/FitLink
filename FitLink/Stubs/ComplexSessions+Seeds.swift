@@ -16,19 +16,19 @@ let dropSetApproach1 = Approach(
     sets: [
         ExerciseSet(
             id: UUID(),
-            metricValues: [.reps: 8, .weight: 50],
+            metricValues: [.reps: .int(8), .weight: .double(50)],
             notes: "Основной вес",
             drops: nil
         ),
         ExerciseSet(
             id: UUID(),
-            metricValues: [.reps: 8, .weight: 40],
+            metricValues: [.reps: .int(8), .weight: .double(40)],
             notes: "Дроп 1",
             drops: nil
         ),
         ExerciseSet(
             id: UUID(),
-            metricValues: [.reps: 8, .weight: 30],
+            metricValues: [.reps: .int(8), .weight: .double(30)],
             notes: "Дроп 2",
             drops: nil
         )
@@ -39,19 +39,19 @@ let dropSetApproach2 = Approach(
     sets: [
         ExerciseSet(
             id: UUID(),
-            metricValues: [.reps: 7, .weight: 45],
+            metricValues: [.reps: .int(7), .weight: .double(45)],
             notes: "Основной вес",
             drops: nil
         ),
         ExerciseSet(
             id: UUID(),
-            metricValues: [.reps: 7, .weight: 35],
+            metricValues: [.reps: .int(7), .weight: .double(35)],
             notes: "Дроп 1",
             drops: nil
         ),
         ExerciseSet(
             id: UUID(),
-            metricValues: [.reps: 7, .weight: 25],
+            metricValues: [.reps: .int(7), .weight: .double(25)],
             notes: "Дроп 2",
             drops: nil
         )
@@ -81,7 +81,7 @@ func generateRegularApproaches(for exercise: Exercise, reps: [Int], weights: [Do
             sets: [
                 ExerciseSet(
                     id: UUID(),
-                    metricValues: [.reps: Double(rep), .weight: weight],
+                    metricValues: [.reps: .int(rep), .weight: .double(weight)],
                     notes: nil,
                     drops: nil
                 )
@@ -113,7 +113,7 @@ func makeRegularInstance(exIndex: Int, reps: [Int], weights: [Double], section: 
             sets: [
                 ExerciseSet(
                     id: UUID(),
-                    metricValues: [.reps: Double(rep), .weight: weight],
+                    metricValues: [.reps: .int(rep), .weight: .double(weight)],
                     notes: nil,
                     drops: nil
                 )

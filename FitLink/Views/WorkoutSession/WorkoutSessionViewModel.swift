@@ -10,12 +10,20 @@ struct EditingContext: Identifiable {
     var exercises: [Exercise] { instances.map { $0.exercise } }
 }
 
+struct SetEditContext: Identifiable {
+    let exerciseID: UUID
+    let setID: UUID
+    let metrics: [ExerciseMetric]
+    var values: [ExerciseMetric.ID: ExerciseMetricValue]
+
+    var id: String { "\(exerciseID)-\(setID)" }
+}
+
 @MainActor
 final class WorkoutSessionViewModel: ObservableObject {
     @Published var showExerciseEdit: Bool = false
     @Published var editingContext: EditingContext? = nil
-    @Published var activeMetricEditorExercise: ExerciseInstance? = nil
-    var metricEditorStartIndex: Int? = nil
+    @Published var activeSetEdit: SetEditContext? = nil
     @Published var expandedGroupId: UUID? = nil
     @Published var session: WorkoutSession
     let client: Client?
@@ -49,20 +57,58 @@ final class WorkoutSessionViewModel: ObservableObject {
         showExerciseEdit = true
     }
 
-    func editMetrics(for exerciseId: UUID, approachIndex: Int? = nil) {
-        if let instance = exercises.first(where: { $0.id == exerciseId }) {
-            activeMetricEditorExercise = instance
-            metricEditorStartIndex = approachIndex
+    func editSet(withID setId: UUID, ofExercise exerciseId: UUID) {
+        guard let exerciseIndex = exercises.firstIndex(where: { $0.id == exerciseId }) else { return }
+        let exercise = exercises[exerciseIndex]
+        let metrics = exercise.exercise.metrics.sorted { metricOrder($0.type) < metricOrder($1.type) }
+        for approach in exercise.approaches {
+            if let set = approach.sets.first(where: { $0.id == setId }) {
+                var values: [ExerciseMetric.ID: ExerciseMetricValue] = [:]
+                for metric in metrics {
+                    values[metric.id] = set.metricValues[metric.type] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
+                }
+                activeSetEdit = SetEditContext(exerciseID: exerciseId, setID: setId, metrics: metrics, values: values)
+                break
+            }
         }
     }
 
-    func updateMetrics(for exerciseId: UUID, approaches: [Approach]) {
-        if let idx = exercises.firstIndex(where: { $0.id == exerciseId }) {
-            exercises[idx].approaches = approaches
-            save()
+    func addSet(toExercise exerciseId: UUID) {
+        guard let exercise = exercises.first(where: { $0.id == exerciseId }) else { return }
+        let metrics = exercise.exercise.metrics.sorted { metricOrder($0.type) < metricOrder($1.type) }
+        var values: [ExerciseMetric.ID: ExerciseMetricValue] = [:]
+        for metric in metrics {
+            values[metric.id] = metric.type.requiresInteger ? .int(0) : .double(0)
         }
-        activeMetricEditorExercise = nil
-        metricEditorStartIndex = nil
+        activeSetEdit = SetEditContext(exerciseID: exerciseId, setID: UUID(), metrics: metrics, values: values)
+    }
+
+    func saveEditedSet() {
+        guard let context = activeSetEdit else { return }
+        guard let exIndex = exercises.firstIndex(where: { $0.id == context.exerciseID }) else { activeSetEdit = nil; return }
+        var updated = false
+        for aIndex in exercises[exIndex].approaches.indices {
+            if let setIndex = exercises[exIndex].approaches[aIndex].sets.firstIndex(where: { $0.id == context.setID }) {
+                for metric in context.metrics {
+                    let val = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
+                    exercises[exIndex].approaches[aIndex].sets[setIndex].metricValues[metric.type] = val
+                }
+                updated = true
+                break
+            }
+        }
+
+        if !updated {
+            var metricValues: [ExerciseMetricType: ExerciseMetricValue] = [:]
+            for metric in context.metrics {
+                metricValues[metric.type] = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
+            }
+            let newSet = ExerciseSet(id: context.setID, metricValues: metricValues, notes: nil, drops: nil)
+            exercises[exIndex].approaches.append(Approach(sets: [newSet]))
+        }
+
+        save()
+        activeSetEdit = nil
     }
 
     func editItemTapped(withId id: UUID) {
@@ -93,6 +139,11 @@ final class WorkoutSessionViewModel: ObservableObject {
     func isFirstExerciseInGroup(_ exercise: ExerciseInstance) -> Bool {
         guard let group = group(for: exercise) else { return false }
         return group.exerciseInstanceIds.first == exercise.id
+    }
+
+    func isLastExerciseInGroup(_ exercise: ExerciseInstance) -> Bool {
+        guard let group = group(for: exercise) else { return false }
+        return group.exerciseInstanceIds.last == exercise.id
     }
 
     func groupExercises(for group: SetGroup) -> [ExerciseInstance] {
@@ -200,5 +251,13 @@ final class WorkoutSessionViewModel: ObservableObject {
         session.exerciseInstances = exercises
         session.setGroups = setGroups
         dataStore.updateSession(session)
+    }
+
+    private func metricOrder(_ type: ExerciseMetricType) -> Int {
+        switch type {
+        case .reps: return 0
+        case .weight: return 1
+        default: return 2
+        }
     }
 }
