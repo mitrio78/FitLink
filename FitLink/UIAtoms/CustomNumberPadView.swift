@@ -48,14 +48,7 @@ struct CustomNumberPadView: View {
         .padding(.horizontal, Theme.spacing.small)
         .padding(.top, Theme.spacing.small)
         .padding(.bottom, Theme.spacing.sheetBottomPadding)
-        .background(Theme.color.background)
         .cornerRadius(Theme.radius.card)
-//        .safeAreaInset(edge: .top) {
-//            Spacer().frame(height: Theme.spacing.small)
-//        }
-//        .safeAreaInset(edge: .bottom) {
-//            Spacer().frame(height: Theme.spacing.small)
-//        }
     }
 
     private var topSection: some View {
@@ -144,9 +137,8 @@ struct CustomNumberPadView: View {
             CustomNumberPadView(metrics: metrics, values: $values, onDone: {})
         }
     }
-    // Preview uses the fixed height detent (~394 pt) to mimic the real sheet.
-    // Switch to `.fraction(0.52)` if testing on extremely small devices.
     return PreviewWrapper()
+        .background(Color.gray)
         .presentationDetents([.height(Theme.size.numberPadSheetHeight)])
 }
 

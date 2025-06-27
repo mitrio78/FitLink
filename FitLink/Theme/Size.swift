@@ -12,7 +12,7 @@ enum AppSize {
     ///  - ~52 pt Done button plus padding
     ///  - Remaining paddings between blocks
     ///  = ~394 pt total
-    static let numberPadSheetHeight: CGFloat = 394
+    static let numberPadSheetHeight: CGFloat = 412
 
     /// Default height for an approach card in the workout session.
     static let approachCardHeight: CGFloat = 64
