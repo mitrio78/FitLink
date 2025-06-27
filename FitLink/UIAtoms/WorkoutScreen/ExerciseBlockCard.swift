@@ -16,7 +16,7 @@ struct ExerciseBlockCard: View {
         let innerSpacing = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactInnerSpacing : Theme.spacing.small
         let outerPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactBlockPadding : Theme.spacing.medium
         VStack(alignment: .leading, spacing: innerSpacing) {
-            if let group {
+            if let group, shouldShowGroupTitle {
                 Text(group.type.displayName)
                     .font(Theme.font.caption)
                     .foregroundColor(Theme.color.textSecondary)
@@ -53,6 +53,16 @@ struct ExerciseBlockCard: View {
             radius: Theme.radius.card,
             corners: cornersToRound
         ))
+    }
+
+    private var shouldShowGroupTitle: Bool {
+        guard let group = group else { return false }
+        switch group.type {
+        case .superset:
+            return isFirstInGroup
+        default:
+            return true
+        }
     }
 
     private var cornersToRound: UIRectCorner {
