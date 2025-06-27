@@ -106,27 +106,34 @@ struct WorkoutSessionView: View {
                         if group.type == .superset {
                             let first = viewModel.isFirstExerciseInGroup(ex)
                             let last = viewModel.isLastExerciseInGroup(ex)
-                            WorkoutExerciseRowView(
-                                exercise: ex,
-                                group: group,
-                                onEdit: { viewModel.editItemTapped(withId: group.id) },
-                                onDelete: {
-                                    withAnimation {
-                                        viewModel.deleteExercise(ex.id, fromSuperset: group.id)
-                                    }
-                                },
-                                onSetEdit: { ex, setId in
-                                    viewModel.editSet(withID: setId, ofExercise: ex.id)
-                                },
-                                onAddSet: { ex in
-                                    viewModel.addSet(toExercise: ex.id)
-                                },
-                                isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled,
-                                initiallyExpanded: false,
-                                isFirstInGroup: first,
-                                isLastInGroup: last,
-                                isGrouped: true
-                            )
+                            VStack(spacing: 0) {
+                                WorkoutExerciseRowView(
+                                    exercise: ex,
+                                    group: group,
+                                    onEdit: { viewModel.editItemTapped(withId: group.id) },
+                                    onDelete: {
+                                        withAnimation {
+                                            viewModel.deleteExercise(ex.id, fromSuperset: group.id)
+                                        }
+                                    },
+                                    onSetEdit: { ex, setId in
+                                        viewModel.editSet(withID: setId, ofExercise: ex.id)
+                                    },
+                                    onAddSet: { ex in
+                                        viewModel.addSet(toExercise: ex.id)
+                                    },
+                                    isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled,
+                                    initiallyExpanded: false,
+                                    isFirstInGroup: first,
+                                    isLastInGroup: last,
+                                    isGrouped: true
+                                )
+                                if !last {
+                                    Divider()
+                                        .frame(height: 1)
+                                        .background(Theme.color.border)
+                                }
+                            } //: VStack
                             .id(viewModel.rowKey(for: ex))
                             .listRowSeparator(.hidden)
                             .listRowInsets(EdgeInsets(
