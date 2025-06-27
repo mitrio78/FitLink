@@ -374,10 +374,14 @@ final class WorkoutSessionViewModel: ObservableObject {
         }
 
         exercises.removeAll { $0.id == exerciseId }
-        setGroups[groupIndex].exerciseInstanceIds.removeAll { $0 == exerciseId }
 
-        if setGroups[groupIndex].exerciseInstanceIds.isEmpty {
+        var updatedGroup = setGroups[groupIndex]
+        updatedGroup.exerciseInstanceIds.removeAll { $0 == exerciseId }
+
+        if updatedGroup.exerciseInstanceIds.isEmpty {
             setGroups.remove(at: groupIndex)
+        } else {
+            setGroups[groupIndex] = updatedGroup
         }
 
         save()
