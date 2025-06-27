@@ -23,9 +23,9 @@ struct WorkoutSessionView: View {
             headerSection
                 .listRowInsets(.init(top: 8, leading: 16, bottom: 8, trailing: 16))
 
-            workoutSection(.warmUp, exercises: viewModel.warmUpExercises)
-            workoutSection(.main, exercises: viewModel.mainExercises)
-            workoutSection(.coolDown, exercises: viewModel.coolDownExercises)
+            workoutSection(.warmUp)
+            workoutSection(.main)
+            workoutSection(.coolDown)
         }
         .listStyle(.plain)
         .padding(.horizontal, Theme.spacing.horizontal)
@@ -106,112 +106,91 @@ struct WorkoutSessionView: View {
     }
 
     @ViewBuilder
-    private func workoutSection(_ section: WorkoutSection, exercises: [ExerciseInstance]) -> some View {
-        if !exercises.isEmpty {
+    private func workoutSection(_ section: WorkoutSection) -> some View {
+        let rows = viewModel.rows(for: section)
+        if !rows.isEmpty {
             Section {
-                ForEach(exercises, id: \.id) { ex in
-                    if let group = viewModel.group(for: ex) {
-                        if group.type == .superset {
-                            let first = viewModel.isFirstExerciseInGroup(ex)
-                            let last = viewModel.isLastExerciseInGroup(ex)
-                            WorkoutExerciseRowView(
-                                exercise: ex,
-                                group: group,
-                                onHistory: { viewModel.showHistory(for: ex.id) },
-                                onEdit: { viewModel.editItemTapped(withId: group.id) },
-                                onDuplicate: { viewModel.duplicateItem(withId: ex.id) },
-                                onDetails: { viewModel.showDetails(for: ex.id) },
-                                onDelete: {
-                                    withAnimation {
-                                        viewModel.deleteExercise(ex.id, fromSuperset: group.id)
-                                    }
-                                },
-                                onSetEdit: { ex, setId in
-                                    viewModel.editSet(withID: setId, ofExercise: ex.id)
-                                },
-                                onAddSet: { ex in
-                                    viewModel.addSet(toExercise: ex.id)
-                                },
-                                isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled,
-                                initiallyExpanded: false,
-                                isFirstInGroup: first,
-                                isLastInGroup: last,
-                                isGrouped: true
-                            )
-                            .id(viewModel.rowKey(for: ex))
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(
-                                top: 0,
-                                leading: 8,
-                                bottom: 0,
-                                trailing: 8
-                            ))
-                            .padding(.top, first ? Theme.current.spacing.compactSetRowSpacing : 0)
-                            .padding(.bottom, last ? Theme.spacing.compactSetRowSpacing : 0)
-                        } else if viewModel.isFirstExerciseInGroup(ex) {
-                            let groupExercises = viewModel.groupExercises(for: group)
-                            WorkoutExerciseRowView(
-                                exercise: ex,
-                                group: group,
-                                groupExercises: groupExercises,
-                                onHistory: { viewModel.showHistory(for: group.id) },
-                                onEdit: { viewModel.editItemTapped(withId: group.id) },
-                                onDuplicate: { viewModel.duplicateItem(withId: group.id) },
-                                onDetails: { viewModel.showDetails(for: group.id) },
-                                onDelete: { viewModel.deleteItem(withId: group.id) },
-                                onSetEdit: { ex, setId in
-                                    viewModel.editSet(withID: setId, ofExercise: ex.id)
-                                },
-                                onAddSet: { ex in
-                                    viewModel.addSet(toExercise: ex.id)
-                                },
-                                isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled,
-                                initiallyExpanded: viewModel.expandedGroupId == group.id
-                            )
-                            .onAppear {
-                                if viewModel.expandedGroupId == group.id {
-                                    viewModel.expandedGroupId = nil
-                                }
-                            }
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(
-                                top: 0,
-                                leading: 8,
-                                bottom: 0,
-                                trailing: 8
-                            ))
-                            .padding(.vertical, Theme.spacing.compactSetRowSpacing)
-                        }
-                    } else {
-                        WorkoutExerciseRowView(
-                            exercise: ex,
-                            group: nil,
-                            onHistory: { viewModel.showHistory(for: ex.id) },
-                            onEdit: { viewModel.editItemTapped(withId: ex.id) },
-                            onDuplicate: { viewModel.duplicateItem(withId: ex.id) },
-                            onDetails: { viewModel.showDetails(for: ex.id) },
-                            onDelete: { viewModel.deleteItem(withId: ex.id) },
-                            onSetEdit: { ex, setId in
-                                viewModel.editSet(withID: setId, ofExercise: ex.id)
-                            },
-                            onAddSet: { ex in
-                                viewModel.addSet(toExercise: ex.id)
-                            },
-                            isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled
-                        )
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets(
-                            top: 0,
-                            leading: 8,
-                            bottom: 0,
-                            trailing: 8
-                        ))
-                        .padding(.vertical, Theme.spacing.compactSetRowSpacing)
-                    }
+                ForEach(rows) { row in
+                    rowView(for: row)
+                }
+                .onMove { indexes, newOffset in
+                    viewModel.moveRow(fromOffsets: indexes, toOffset: newOffset, in: section)
                 }
             } header: {
                 WorkoutSectionHeaderView(title: section.displayTitle)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func rowView(for row: WorkoutSessionViewModel.RowInfo) -> some View {
+        if let group = row.group {
+            if group.type == .superset {
+                WorkoutExerciseRowView(
+                    exercise: row.exercise,
+                    group: group,
+                    onHistory: { viewModel.showHistory(for: row.exercise.id) },
+                    onEdit: { viewModel.editItemTapped(withId: group.id) },
+                    onDuplicate: { viewModel.duplicateItem(withId: row.exercise.id) },
+                    onDetails: { viewModel.showDetails(for: row.exercise.id) },
+                    onDelete: {
+                        withAnimation { viewModel.deleteExercise(row.exercise.id, fromSuperset: group.id) }
+                    },
+                    onSetEdit: { ex, setId in viewModel.editSet(withID: setId, ofExercise: ex.id) },
+                    onAddSet: { ex in viewModel.addSet(toExercise: ex.id) },
+                    isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled,
+                    initiallyExpanded: false,
+                    isFirstInGroup: row.isFirstInGroup,
+                    isLastInGroup: row.isLastInGroup,
+                    isGrouped: true
+                )
+                .id(row.id)
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+                .padding(.top, row.isFirstInGroup ? Theme.current.spacing.compactSetRowSpacing : 0)
+                .padding(.bottom, row.isLastInGroup ? Theme.spacing.compactSetRowSpacing : 0)
+            } else {
+                WorkoutExerciseRowView(
+                    exercise: row.exercise,
+                    group: group,
+                    groupExercises: row.groupExercises,
+                    onHistory: { viewModel.showHistory(for: group.id) },
+                    onEdit: { viewModel.editItemTapped(withId: group.id) },
+                    onDuplicate: { viewModel.duplicateItem(withId: group.id) },
+                    onDetails: { viewModel.showDetails(for: group.id) },
+                    onDelete: { viewModel.deleteItem(withId: group.id) },
+                    onSetEdit: { ex, setId in viewModel.editSet(withID: setId, ofExercise: ex.id) },
+                    onAddSet: { ex in viewModel.addSet(toExercise: ex.id) },
+                    isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled,
+                    initiallyExpanded: viewModel.expandedGroupId == group.id
+                )
+                .onAppear {
+                    if viewModel.expandedGroupId == group.id {
+                        viewModel.expandedGroupId = nil
+                    }
+                }
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+                .padding(.vertical, Theme.spacing.compactSetRowSpacing)
+                .id(row.id)
+            }
+        } else {
+            WorkoutExerciseRowView(
+                exercise: row.exercise,
+                group: nil,
+                onHistory: { viewModel.showHistory(for: row.exercise.id) },
+                onEdit: { viewModel.editItemTapped(withId: row.exercise.id) },
+                onDuplicate: { viewModel.duplicateItem(withId: row.exercise.id) },
+                onDetails: { viewModel.showDetails(for: row.exercise.id) },
+                onDelete: { viewModel.deleteItem(withId: row.exercise.id) },
+                onSetEdit: { ex, setId in viewModel.editSet(withID: setId, ofExercise: ex.id) },
+                onAddSet: { ex in viewModel.addSet(toExercise: ex.id) },
+                isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled
+            )
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+            .padding(.vertical, Theme.spacing.compactSetRowSpacing)
+            .id(row.id)
         }
     }
 }

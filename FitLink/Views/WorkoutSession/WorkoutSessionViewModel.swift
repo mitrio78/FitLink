@@ -19,6 +19,21 @@ struct SetEditContext: Identifiable {
     var id: String { "\(exerciseID)-\(setID)" }
 }
 
+extension WorkoutSessionViewModel {
+    /// Row representation used for displaying and reordering exercises.
+    struct RowInfo: Identifiable {
+        let id: String
+        let exercise: ExerciseInstance
+        let group: SetGroup?
+        var groupExercises: [ExerciseInstance]
+        /// Indicates if this row should be used when rebuilding the session.
+        /// For supersets only the first row acts as the representative block.
+        let isRepresentative: Bool
+        let isFirstInGroup: Bool
+        let isLastInGroup: Bool
+    }
+}
+
 @MainActor
 final class WorkoutSessionViewModel: ObservableObject {
     @Published var showExerciseEdit: Bool = false
@@ -52,6 +67,102 @@ final class WorkoutSessionViewModel: ObservableObject {
 
     var coolDownExercises: [ExerciseInstance] {
         exercises.filter { $0.section == .coolDown }
+    }
+
+    /// Returns visible rows for a particular workout section.
+    func rows(for section: WorkoutSection) -> [RowInfo] {
+        var result: [RowInfo] = []
+        var seenGroups: Set<UUID> = []
+
+        for ex in exercises where ex.section == section {
+            if let group = group(for: ex) {
+                if group.type == .superset {
+                    let first = isFirstExerciseInGroup(ex)
+                    let last = isLastExerciseInGroup(ex)
+                    result.append(
+                        RowInfo(id: rowKey(for: ex),
+                                exercise: ex,
+                                group: group,
+                                groupExercises: groupExercises(for: group),
+                                isRepresentative: first,
+                                isFirstInGroup: first,
+                                isLastInGroup: last)
+                    )
+                } else if !seenGroups.contains(group.id) {
+                    seenGroups.insert(group.id)
+                    result.append(
+                        RowInfo(id: group.id.uuidString,
+                                exercise: ex,
+                                group: group,
+                                groupExercises: groupExercises(for: group),
+                                isRepresentative: true,
+                                isFirstInGroup: true,
+                                isLastInGroup: true)
+                    )
+                }
+            } else {
+                result.append(
+                    RowInfo(id: ex.id.uuidString,
+                            exercise: ex,
+                            group: nil,
+                            groupExercises: [ex],
+                            isRepresentative: true,
+                            isFirstInGroup: true,
+                            isLastInGroup: true)
+                )
+            }
+        }
+
+        return result
+    }
+
+    /// Handles moving rows via drag & drop while keeping groups intact.
+    func moveRow(fromOffsets offsets: IndexSet, toOffset destination: Int, in section: WorkoutSection) {
+        var warmRows = rows(for: .warmUp)
+        var mainRows = rows(for: .main)
+        var coolRows = rows(for: .coolDown)
+
+        func reorder(_ rows: inout [RowInfo]) {
+            guard let start = offsets.first else { return }
+            let groupId = rows[start].group?.id
+            var moveIndexes = [start]
+            if let gid = groupId {
+                moveIndexes = rows.enumerated().compactMap { $0.element.group?.id == gid ? $0.offset : nil }
+            }
+
+            var adjustedDestination = destination
+            if destination > moveIndexes.first! { adjustedDestination -= moveIndexes.count }
+            rows.move(fromOffsets: IndexSet(moveIndexes), toOffset: adjustedDestination)
+        }
+
+        switch section {
+        case .warmUp: reorder(&warmRows)
+        case .main: reorder(&mainRows)
+        case .coolDown: reorder(&coolRows)
+        }
+
+        rebuildRows(warm: warmRows, main: mainRows, cool: coolRows)
+    }
+
+    /// Persists the current order based on rows.
+    private func rebuildRows(warm: [RowInfo], main: [RowInfo], cool: [RowInfo]) {
+        var newExercises: [ExerciseInstance] = []
+        var newGroups: [SetGroup] = []
+        var added: Set<UUID> = []
+
+        for row in warm + main + cool {
+            if row.isRepresentative {
+                newExercises.append(contentsOf: row.groupExercises)
+                if let group = row.group, !added.contains(group.id) {
+                    newGroups.append(group)
+                    added.insert(group.id)
+                }
+            }
+        }
+
+        exercises = newExercises
+        setGroups = newGroups
+        save()
     }
 
     func addExerciseTapped() {
