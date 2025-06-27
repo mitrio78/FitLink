@@ -111,6 +111,125 @@ final class WorkoutSessionViewModel: ObservableObject {
         activeSetEdit = nil
     }
 
+    // MARK: - Set Handling
+
+    var headerTitle: String {
+        guard let context = activeSetEdit else { return "" }
+        let existing = label(for: context.setID, in: context.exerciseID)
+        if !existing.isEmpty { return existing }
+
+        if let exercise = exercises.first(where: { $0.id == context.exerciseID }) {
+            return String(
+                format: NSLocalizedString("CustomNumberPad.SetHeader", comment: "Set header"),
+                exercise.approaches.count + 1
+            )
+        }
+        return ""
+    }
+
+    /// Saves the current editing values and immediately inserts a new drop after the current one.
+    func addNextSet() {
+        guard let context = activeSetEdit else { return }
+        guard let exIndex = exercises.firstIndex(where: { $0.id == context.exerciseID }) else { return }
+
+        var approachIndex: Int? = nil
+        var setIndex: Int? = nil
+
+        // Save current set or create if not existing
+        for aIndex in exercises[exIndex].approaches.indices {
+            if let sIndex = exercises[exIndex].approaches[aIndex].sets.firstIndex(where: { $0.id == context.setID }) {
+                for metric in context.metrics {
+                    let val = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
+                    exercises[exIndex].approaches[aIndex].sets[sIndex].metricValues[metric.type] = val
+                }
+                approachIndex = aIndex
+                setIndex = sIndex
+                break
+            }
+        }
+
+        if approachIndex == nil || setIndex == nil {
+            // Create a new approach with the current set if it was not found
+            var metricValues: [ExerciseMetricType: ExerciseMetricValue] = [:]
+            for metric in context.metrics {
+                metricValues[metric.type] = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
+            }
+            let newSet = ExerciseSet(id: context.setID, metricValues: metricValues, notes: nil, drops: nil)
+            exercises[exIndex].approaches.append(Approach(sets: [newSet]))
+            approachIndex = exercises[exIndex].approaches.count - 1
+            setIndex = 0
+        }
+
+        // Prepare new set values cloned from current
+        var nextValues: [ExerciseMetricType: ExerciseMetricValue] = [:]
+        for metric in context.metrics {
+            nextValues[metric.type] = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
+        }
+        let newID = UUID()
+        let newSet = ExerciseSet(id: newID, metricValues: nextValues, notes: nil, drops: nil)
+
+        if let aIdx = approachIndex, let sIdx = setIndex {
+            exercises[exIndex].approaches[aIdx].sets.insert(newSet, at: sIdx + 1)
+        }
+        save()
+
+        var bindingValues: [ExerciseMetric.ID: ExerciseMetricValue] = [:]
+        for metric in context.metrics {
+            bindingValues[metric.id] = nextValues[metric.type]
+        }
+        activeSetEdit = SetEditContext(exerciseID: context.exerciseID, setID: newID, metrics: context.metrics, values: bindingValues)
+    }
+
+    /// Returns `true` if the current editing context corresponds to an existing set in the session.
+    var canDeleteActiveSet: Bool {
+        guard let context = activeSetEdit else { return false }
+        return setExists(id: context.setID, inExercise: context.exerciseID)
+    }
+
+    /// Deletes the set currently being edited and dismisses the editor.
+    func deleteActiveSet() {
+        guard let context = activeSetEdit else { return }
+        deleteSet(id: context.setID, fromExercise: context.exerciseID)
+        activeSetEdit = nil
+        save()
+    }
+
+    // MARK: - Private helpers
+
+    private func setExists(id: UUID, inExercise exerciseID: UUID) -> Bool {
+        guard let exercise = exercises.first(where: { $0.id == exerciseID }) else { return false }
+        return exercise.approaches.contains { approach in
+            approach.sets.contains(where: { $0.id == id })
+        }
+    }
+
+    private func deleteSet(id setID: UUID, fromExercise exerciseID: UUID) {
+        guard let exIndex = exercises.firstIndex(where: { $0.id == exerciseID }) else { return }
+        for aIndex in exercises[exIndex].approaches.indices {
+            if let sIndex = exercises[exIndex].approaches[aIndex].sets.firstIndex(where: { $0.id == setID }) {
+                exercises[exIndex].approaches[aIndex].sets.remove(at: sIndex)
+                if exercises[exIndex].approaches[aIndex].sets.isEmpty {
+                    exercises[exIndex].approaches.remove(at: aIndex)
+                }
+                break
+            }
+        }
+    }
+
+    private func label(for setID: UUID, in exerciseID: UUID) -> String {
+        guard let exercise = exercises.first(where: { $0.id == exerciseID }) else { return "" }
+        for (approachIndex, approach) in exercise.approaches.enumerated() {
+            if let dropIndex = approach.sets.firstIndex(where: { $0.id == setID }) {
+                if dropIndex == 0 {
+                    return String(format: NSLocalizedString("CustomNumberPad.SetHeader", comment: "Set header"), approachIndex + 1)
+                } else {
+                    return String(format: NSLocalizedString("CustomNumberPad.DropHeader", comment: "Drop header"), dropIndex)
+                }
+            }
+        }
+        return ""
+    }
+
     func editItemTapped(withId id: UUID) {
         if let group = setGroups.first(where: { $0.id == id }) {
             let exercisesInGroup = groupExercises(for: group)

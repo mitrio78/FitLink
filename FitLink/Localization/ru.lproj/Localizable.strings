@@ -115,6 +115,8 @@
 "UnitType.Repetition" = "x";
 "UnitType.Calorie" = "ккал";
 "CustomNumberPad.RepsLabel" = "";
+"CustomNumberPad.SetHeader" = "Сет %d";
+"CustomNumberPad.DropHeader" = "Дроп %d";
 
 /* Muscle groups */
 "MuscleGroup.Chest" = "Грудные";

@@ -16,9 +16,11 @@ struct ApproachListView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHGrid(rows: rows, spacing: innerSpacing) {
                 ForEach(sets) { set in
-                    ApproachCardView(set: set, metrics: metrics) { id in
+                    ApproachCardView(set: set, metrics: metrics, onTap: { id in
                         onSetTap(id)
-                    }
+                    }, onDropTap: { dropID, _ in
+                        onSetTap(dropID)
+                    })
                 }
                 if !isLocked {
                     AddSetButton(action: onAddTap)
