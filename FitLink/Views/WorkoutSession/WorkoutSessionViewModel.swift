@@ -373,16 +373,14 @@ final class WorkoutSessionViewModel: ObservableObject {
             return
         }
 
-        withAnimation {
-            exercises.removeAll { $0.id == exerciseId }
-            setGroups[groupIndex].exerciseInstanceIds.removeAll { $0 == exerciseId }
+        exercises.removeAll { $0.id == exerciseId }
+        setGroups[groupIndex].exerciseInstanceIds.removeAll { $0 == exerciseId }
 
-            if setGroups[groupIndex].exerciseInstanceIds.isEmpty {
-                setGroups.remove(at: groupIndex)
-            }
-
-            save()
+        if setGroups[groupIndex].exerciseInstanceIds.isEmpty {
+            setGroups.remove(at: groupIndex)
         }
+
+        save()
     }
 
     private func save() {

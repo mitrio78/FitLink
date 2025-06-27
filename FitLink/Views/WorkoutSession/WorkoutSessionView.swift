@@ -111,7 +111,9 @@ struct WorkoutSessionView: View {
                                 group: group,
                                 onEdit: { viewModel.editItemTapped(withId: group.id) },
                                 onDelete: {
-                                    viewModel.deleteExercise(ex.id, fromSuperset: group.id)
+                                    withAnimation {
+                                        viewModel.deleteExercise(ex.id, fromSuperset: group.id)
+                                    }
                                 },
                                 onSetEdit: { ex, setId in
                                     viewModel.editSet(withID: setId, ofExercise: ex.id)
