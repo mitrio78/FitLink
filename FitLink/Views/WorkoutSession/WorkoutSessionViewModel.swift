@@ -438,7 +438,9 @@ final class WorkoutSessionViewModel: ObservableObject {
                 instance.approaches = old.approaches
                 instance.notes = old.notes
             }
-            instance.section = context.instances.first?.section ?? .main
+            // Preserve the section chosen in the editor. Previously we always
+            // restored the old section which prevented moving an exercise
+            // between warm-up, main and cool-down when editing.
             exercises.insert(instance, at: insertionIndex)
             expandedGroupId = nil
         case .superset(var group, var instances):
@@ -451,8 +453,10 @@ final class WorkoutSessionViewModel: ObservableObject {
                         item.approaches = old.approaches
                         item.notes = old.notes
                     }
-                    item.section = old.section
                 }
+                // `item.section` already reflects the value chosen on the edit
+                // screen. Do not overwrite it with the old section so the entire
+                // superset can be moved between sections.
                 instances[i] = item
             }
             setGroups.append(group)
