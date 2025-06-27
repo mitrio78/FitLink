@@ -148,7 +148,6 @@ struct WorkoutSessionView: View {
                                 .bottom,
                                 last ? Theme.spacing.compactSetRowSpacing : Theme.spacing.extraSmall
                             )
-                            .background(!last ? Theme.color.backgroundSecondary : Color.clear)
                         } else if viewModel.isFirstExerciseInGroup(ex) {
                             let groupExercises = viewModel.groupExercises(for: group)
                             WorkoutExerciseRowView(
