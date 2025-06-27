@@ -115,7 +115,16 @@ final class WorkoutSessionViewModel: ObservableObject {
 
     var headerTitle: String {
         guard let context = activeSetEdit else { return "" }
-        return label(for: context.setID, in: context.exerciseID)
+        let existing = label(for: context.setID, in: context.exerciseID)
+        if !existing.isEmpty { return existing }
+
+        if let exercise = exercises.first(where: { $0.id == context.exerciseID }) {
+            return String(
+                format: NSLocalizedString("CustomNumberPad.SetHeader", comment: "Set header"),
+                exercise.approaches.count + 1
+            )
+        }
+        return ""
     }
 
     /// Saves the current editing values and immediately inserts a new drop after the current one.
