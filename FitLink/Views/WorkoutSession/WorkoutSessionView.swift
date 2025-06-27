@@ -135,8 +135,6 @@ struct WorkoutSessionView: View {
                                 bottom: 0,
                                 trailing: 8
                             ))
-                            .padding(.top, first ? Theme.current.spacing.compactSetRowSpacing : 0)
-                            .padding(.bottom, last ? Theme.spacing.compactSetRowSpacing : 0)
                             .overlay(alignment: .bottom) {
                                 if !last {
                                     Divider()
@@ -145,6 +143,11 @@ struct WorkoutSessionView: View {
                                         .padding(.horizontal, 8)
                                 }
                             }
+                            .padding(.top, first ? Theme.current.spacing.compactSetRowSpacing : 0)
+                            .padding(
+                                .bottom,
+                                last ? Theme.spacing.compactSetRowSpacing : Theme.spacing.extraSmall
+                            )
                         } else if viewModel.isFirstExerciseInGroup(ex) {
                             let groupExercises = viewModel.groupExercises(for: group)
                             WorkoutExerciseRowView(
