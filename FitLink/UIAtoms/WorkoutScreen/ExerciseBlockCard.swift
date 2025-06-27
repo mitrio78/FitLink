@@ -26,8 +26,6 @@ struct ExerciseBlockCard: View {
                 .font(Theme.current.layoutMode == .compact ? Theme.font.compactExerciseTitle : Theme.font.subheading)
                 .lineLimit(2)
                 .truncationMode(.tail)
-            
-            Divider()
 
             if let main = exerciseInstances.first {
                 ApproachListView(
@@ -47,10 +45,10 @@ struct ExerciseBlockCard: View {
                 )
             }
         }
-        .padding(.horizontal , outerPadding)
+        .padding(.horizontal, outerPadding)
         .padding(.top, isGrouped && !isFirstInGroup ? 0 : outerPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(isGrouped ? Theme.color.supersetSubcardBackground : Theme.color.backgroundSecondary)
+        .background(Theme.color.backgroundSecondary)
         .clipShape(RoundedCornerShape(
             radius: Theme.radius.card,
             corners: cornersToRound
@@ -90,7 +88,7 @@ struct ExerciseBlockCard: View {
     ExerciseBlockCard(
         group: .some(
             .init(id: UUID(),
-            type: .pyramid,
+            type: .superset,
             exerciseInstanceIds: []
                  )
         ),

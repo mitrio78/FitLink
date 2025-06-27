@@ -27,7 +27,8 @@ struct ApproachListView: View {
                 }
             }
         } //: ScrollView
-        .padding(.vertical, verticalPadding)
+        .padding(.top, Theme.spacing.extraSmall)
+        .padding(.bottom, verticalPadding)
         .fixedSize(horizontal: false, vertical: true)
     }
 }
