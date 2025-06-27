@@ -403,8 +403,30 @@ final class WorkoutSessionViewModel: ObservableObject {
             setGroups.append(newGroup)
         } else if let index = exercises.firstIndex(where: { $0.id == id }) {
             let instance = exercises[index]
-            let copy = duplicatedInstance(instance, newGroupId: instance.groupId)
-            exercises.insert(copy, at: index + 1)
+            if let groupId = instance.groupId,
+               let groupIndex = setGroups.firstIndex(where: { $0.id == groupId }) {
+                var group = setGroups[groupIndex]
+                if group.type == .superset {
+                    // Duplicate as a standalone exercise placed after the entire superset
+                    let copy = duplicatedInstance(instance, newGroupId: nil)
+                    if let lastIndex = group.exerciseInstanceIds.compactMap({ exId in exercises.firstIndex(where: { $0.id == exId }) }).max() {
+                        exercises.insert(copy, at: lastIndex + 1)
+                    } else {
+                        exercises.append(copy)
+                    }
+                } else {
+                    // Duplicate inside the same group maintaining order
+                    let copy = duplicatedInstance(instance, newGroupId: groupId)
+                    exercises.insert(copy, at: index + 1)
+                    if let pos = group.exerciseInstanceIds.firstIndex(of: id) {
+                        group.exerciseInstanceIds.insert(copy.id, at: pos + 1)
+                        setGroups[groupIndex] = group
+                    }
+                }
+            } else {
+                let copy = duplicatedInstance(instance, newGroupId: nil)
+                exercises.insert(copy, at: index + 1)
+            }
         }
         save()
     }
