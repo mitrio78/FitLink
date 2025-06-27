@@ -7,6 +7,8 @@ struct CustomNumberPadView: View {
     var onAddDrop: () -> Void
     var onDone: () -> Void
 
+    @Environment(\.safeAreaInsets) private var safeAreaInsets
+
     @StateObject private var viewModel: CustomNumberPadViewModel
     
     init(
@@ -53,20 +55,25 @@ struct CustomNumberPadView: View {
         } //: VStack
         .padding(.horizontal, Theme.spacing.small)
         .padding(.top, Theme.spacing.small)
-        .padding(.bottom, Theme.spacing.sheetBottomPadding)
+        .padding(.bottom, Theme.spacing.sheetBottomPadding + safeAreaInsets.bottom)
         .cornerRadius(Theme.radius.card)
     }
 
     private var topSection: some View {
         VStack(spacing: Theme.spacing.small) {
             HStack {
+                Text(headerTitle)
+                    .font(Theme.font.titleSmall)
+                Spacer()
                 Button(action: onAddDrop) {
                     Image(systemName: "plus")
                         .font(Theme.font.titleSmall)
+                        .foregroundColor(Theme.color.accent)
+                        .padding(Theme.spacing.small / 2)
+                        .background(Theme.color.backgroundSecondary)
+                        .cornerRadius(Theme.radius.button)
                 }
-                Spacer()
-                Text(headerTitle)
-                    .font(Theme.font.titleSmall)
+                .buttonStyle(.plain)
             } //: HStack
 
             Picker("", selection: metricSelection) {
