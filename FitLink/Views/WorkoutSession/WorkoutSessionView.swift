@@ -46,7 +46,10 @@ struct WorkoutSessionView: View {
         }
         .presentationDetents([.medium, .large])
         .sheet(isPresented: $viewModel.showExerciseEdit) {
-            WorkoutExerciseEditView(initialExercises: viewModel.editingContext?.exercises ?? []) { result in
+            WorkoutExerciseEditView(
+                initialExercises: viewModel.editingContext?.exercises ?? [],
+                initialSection: viewModel.editingContext?.instances.first?.section ?? .main
+            ) { result in
                 viewModel.completeEdit(result)
             }
         }
