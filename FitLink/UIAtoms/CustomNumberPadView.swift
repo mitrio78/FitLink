@@ -4,7 +4,7 @@ import SwiftUI
 struct CustomNumberPadView: View {
     @Binding var metricValues: [ExerciseMetric.ID: ExerciseMetricValue]
     var headerTitle: String
-    var onAddDrop: () -> Void
+    var onAddSet: () -> Void
     var onDone: () -> Void
 
 
@@ -14,12 +14,12 @@ struct CustomNumberPadView: View {
         metrics: [ExerciseMetric],
         values: Binding<[ExerciseMetric.ID: ExerciseMetricValue]>,
         headerTitle: String,
-        onAddDrop: @escaping () -> Void,
+        onAddSet: @escaping () -> Void,
         onDone: @escaping () -> Void
     ) {
         self._metricValues = values
         self.headerTitle = headerTitle
-        self.onAddDrop = onAddDrop
+        self.onAddSet = onAddSet
         self.onDone = onDone
         _viewModel = StateObject(wrappedValue: CustomNumberPadViewModel(metrics: metrics, values: values.wrappedValue))
     }
@@ -32,6 +32,19 @@ struct CustomNumberPadView: View {
                 viewModel.updateSelection(to: newID, values: metricValues)
             }
         )
+    }
+
+    private var canAddSet: Bool {
+        var combined = metricValues
+        if let val = Double(viewModel.input) {
+            let metric = viewModel.metric(for: viewModel.selectedMetricId)
+            combined[metric.id] = metric.type.requiresInteger ? .int(Int(val)) : .double(val)
+        }
+        for metric in viewModel.metrics where metric.isRequired {
+            let value = combined[metric.id]?.doubleValue ?? 0
+            if value == 0 { return false }
+        }
+        return true
     }
 
     var body: some View {
@@ -67,7 +80,10 @@ struct CustomNumberPadView: View {
                 Text(headerTitle)
                     .font(Theme.font.titleSmall)
                 Spacer()
-                Button(action: onAddDrop) {
+                Button(action: {
+                    commit()
+                    onAddSet()
+                }) {
                     Image(systemName: "plus")
                         .font(Theme.font.titleSmall)
                         .foregroundColor(Theme.color.accent)
@@ -76,6 +92,7 @@ struct CustomNumberPadView: View {
                         .cornerRadius(Theme.radius.button)
                 }
                 .buttonStyle(.plain)
+                .disabled(!canAddSet)
             } //: HStack
 
             Picker("", selection: metricSelection) {
@@ -162,8 +179,8 @@ struct CustomNumberPadView: View {
             CustomNumberPadView(
                 metrics: metrics,
                 values: $values,
-                headerTitle: "Main set",
-                onAddDrop: {},
+                headerTitle: "Main 1",
+                onAddSet: {},
                 onDone: {}
             )
         }

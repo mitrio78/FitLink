@@ -111,45 +111,67 @@ final class WorkoutSessionViewModel: ObservableObject {
         activeSetEdit = nil
     }
 
-    // MARK: - Drop Handling
+    // MARK: - Set Handling
 
     var headerTitle: String {
         guard let context = activeSetEdit else { return "" }
         return label(for: context.setID, in: context.exerciseID)
     }
 
-    func addDropStep() {
+    /// Saves the current editing values and immediately inserts a new set after the current one.
+    func addNextSet() {
         guard let context = activeSetEdit else { return }
         guard let exIndex = exercises.firstIndex(where: { $0.id == context.exerciseID }) else { return }
 
+        var insertionIndex: Int? = nil
+        // Save current set or create if not existing
         for aIndex in exercises[exIndex].approaches.indices {
             if let setIndex = exercises[exIndex].approaches[aIndex].sets.firstIndex(where: { $0.id == context.setID }) {
-                var metricValues: [ExerciseMetricType: ExerciseMetricValue] = [:]
                 for metric in context.metrics {
-                    metricValues[metric.type] = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
+                    let val = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
+                    exercises[exIndex].approaches[aIndex].sets[setIndex].metricValues[metric.type] = val
                 }
-                let newSet = ExerciseSet(id: UUID(), metricValues: metricValues, notes: nil, drops: nil)
-                exercises[exIndex].approaches[aIndex].sets.insert(newSet, at: setIndex + 1)
-                save()
-                var newValues: [ExerciseMetric.ID: ExerciseMetricValue] = [:]
-                for metric in context.metrics {
-                    newValues[metric.id] = metricValues[metric.type]
-                }
-                activeSetEdit = SetEditContext(exerciseID: context.exerciseID, setID: newSet.id, metrics: context.metrics, values: newValues)
+                insertionIndex = aIndex + 1
                 break
             }
         }
+
+        if insertionIndex == nil {
+            var metricValues: [ExerciseMetricType: ExerciseMetricValue] = [:]
+            for metric in context.metrics {
+                metricValues[metric.type] = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
+            }
+            let newSet = ExerciseSet(id: context.setID, metricValues: metricValues, notes: nil, drops: nil)
+            exercises[exIndex].approaches.append(Approach(sets: [newSet]))
+            insertionIndex = exercises[exIndex].approaches.count
+        }
+
+        // Prepare new set values cloned from current
+        var nextValues: [ExerciseMetricType: ExerciseMetricValue] = [:]
+        for metric in context.metrics {
+            nextValues[metric.type] = context.values[metric.id] ?? (metric.type.requiresInteger ? .int(0) : .double(0))
+        }
+        let newID = UUID()
+        let newApproach = Approach(sets: [ExerciseSet(id: newID, metricValues: nextValues, notes: nil, drops: nil)])
+        if let idx = insertionIndex {
+            exercises[exIndex].approaches.insert(newApproach, at: idx)
+        } else {
+            exercises[exIndex].approaches.append(newApproach)
+        }
+        save()
+
+        var bindingValues: [ExerciseMetric.ID: ExerciseMetricValue] = [:]
+        for metric in context.metrics {
+            bindingValues[metric.id] = nextValues[metric.type]
+        }
+        activeSetEdit = SetEditContext(exerciseID: context.exerciseID, setID: newID, metrics: context.metrics, values: bindingValues)
     }
 
     private func label(for setID: UUID, in exerciseID: UUID) -> String {
         guard let exercise = exercises.first(where: { $0.id == exerciseID }) else { return "" }
-        for approach in exercise.approaches {
-            if let index = approach.sets.firstIndex(where: { $0.id == setID }) {
-                if index == 0 {
-                    return NSLocalizedString("CustomNumberPad.MainHeader", comment: "Main set")
-                } else {
-                    return String(format: NSLocalizedString("CustomNumberPad.DropHeader", comment: "Drop header"), index)
-                }
+        for (index, approach) in exercise.approaches.enumerated() {
+            if approach.sets.contains(where: { $0.id == setID }) {
+                return String(format: NSLocalizedString("CustomNumberPad.SetHeader", comment: "Set header"), index + 1)
             }
         }
         return ""

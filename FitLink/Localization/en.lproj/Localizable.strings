@@ -115,7 +115,7 @@
 "UnitType.Repetition" = "x";
 "UnitType.Calorie" = "kcal";
 "CustomNumberPad.RepsLabel" = "reps";
-"CustomNumberPad.MainHeader" = "Main set";
+"CustomNumberPad.SetHeader" = "Main %d";
 "CustomNumberPad.DropHeader" = "Drop #%d";
 
 /* Muscle groups */
