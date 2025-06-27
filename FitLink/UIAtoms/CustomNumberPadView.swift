@@ -6,6 +6,7 @@ struct CustomNumberPadView: View {
     var headerTitle: String
     var onAddSet: () -> Void
     var onDone: () -> Void
+    var onDelete: (() -> Void)? = nil
 
 
     @StateObject private var viewModel: CustomNumberPadViewModel
@@ -15,12 +16,14 @@ struct CustomNumberPadView: View {
         values: Binding<[ExerciseMetric.ID: ExerciseMetricValue]>,
         headerTitle: String,
         onAddSet: @escaping () -> Void,
-        onDone: @escaping () -> Void
+        onDone: @escaping () -> Void,
+        onDelete: (() -> Void)? = nil
     ) {
         self._metricValues = values
         self.headerTitle = headerTitle
         self.onAddSet = onAddSet
         self.onDone = onDone
+        self.onDelete = onDelete
         _viewModel = StateObject(wrappedValue: CustomNumberPadViewModel(metrics: metrics, values: values.wrappedValue))
     }
 
@@ -52,19 +55,35 @@ struct CustomNumberPadView: View {
             VStack(spacing: Theme.spacing.small / 2) {
                 topSection
                 numberPad
-                Button(action: {
-                    commit()
-                    onDone()
-                }) {
-                    Text(NSLocalizedString("Common.Done", comment: "Done"))
-                        .font(Theme.font.titleSmall)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(viewModel.isValid ? Theme.color.accent : Theme.color.accent.opacity(0.3))
-                        .foregroundColor(.white)
-                        .cornerRadius(Theme.radius.button)
-                }
-                .disabled(!viewModel.isValid)
+                HStack(spacing: Theme.spacing.small) {
+                    if let onDelete {
+                        Button(action: {
+                            commit()
+                            onDelete()
+                        }) {
+                            Text(NSLocalizedString("Common.Delete", comment: "Delete"))
+                                .font(Theme.font.titleSmall)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .foregroundColor(.red)
+                                .background(Theme.color.backgroundSecondary)
+                                .cornerRadius(Theme.radius.button)
+                        }
+                    }
+                    Button(action: {
+                        commit()
+                        onDone()
+                    }) {
+                        Text(NSLocalizedString("Common.Done", comment: "Done"))
+                            .font(Theme.font.titleSmall)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(viewModel.isValid ? Theme.color.accent : Theme.color.accent.opacity(0.3))
+                            .foregroundColor(.white)
+                            .cornerRadius(Theme.radius.button)
+                    }
+                    .disabled(!viewModel.isValid)
+                } //: HStack
             } //: VStack
             .padding(.horizontal, Theme.spacing.small)
             .padding(.top, Theme.spacing.small)
@@ -181,7 +200,8 @@ struct CustomNumberPadView: View {
                 values: $values,
                 headerTitle: "Main 1",
                 onAddSet: {},
-                onDone: {}
+                onDone: {},
+                onDelete: nil
             )
         }
     }

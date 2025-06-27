@@ -180,6 +180,42 @@ final class WorkoutSessionViewModel: ObservableObject {
         activeSetEdit = SetEditContext(exerciseID: context.exerciseID, setID: newID, metrics: context.metrics, values: bindingValues)
     }
 
+    /// Returns `true` if the current editing context corresponds to an existing set in the session.
+    var canDeleteActiveSet: Bool {
+        guard let context = activeSetEdit else { return false }
+        return setExists(id: context.setID, inExercise: context.exerciseID)
+    }
+
+    /// Deletes the set currently being edited and dismisses the editor.
+    func deleteActiveSet() {
+        guard let context = activeSetEdit else { return }
+        deleteSet(id: context.setID, fromExercise: context.exerciseID)
+        activeSetEdit = nil
+        save()
+    }
+
+    // MARK: - Private helpers
+
+    private func setExists(id: UUID, inExercise exerciseID: UUID) -> Bool {
+        guard let exercise = exercises.first(where: { $0.id == exerciseID }) else { return false }
+        return exercise.approaches.contains { approach in
+            approach.sets.contains(where: { $0.id == id })
+        }
+    }
+
+    private func deleteSet(id setID: UUID, fromExercise exerciseID: UUID) {
+        guard let exIndex = exercises.firstIndex(where: { $0.id == exerciseID }) else { return }
+        for aIndex in exercises[exIndex].approaches.indices {
+            if let sIndex = exercises[exIndex].approaches[aIndex].sets.firstIndex(where: { $0.id == setID }) {
+                exercises[exIndex].approaches[aIndex].sets.remove(at: sIndex)
+                if exercises[exIndex].approaches[aIndex].sets.isEmpty {
+                    exercises[exIndex].approaches.remove(at: aIndex)
+                }
+                break
+            }
+        }
+    }
+
     private func label(for setID: UUID, in exerciseID: UUID) -> String {
         guard let exercise = exercises.first(where: { $0.id == exerciseID }) else { return "" }
         for (approachIndex, approach) in exercise.approaches.enumerated() {
