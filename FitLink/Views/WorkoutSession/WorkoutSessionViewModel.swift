@@ -24,6 +24,8 @@ final class WorkoutSessionViewModel: ObservableObject {
     @Published var showExerciseEdit: Bool = false
     @Published var editingContext: EditingContext? = nil
     @Published var activeSetEdit: SetEditContext? = nil
+    @Published var historyExercise: ExerciseInstance? = nil
+    @Published var detailExercise: ExerciseInstance? = nil
     @Published var expandedGroupId: UUID? = nil
     @Published var session: WorkoutSession
     let client: Client?
@@ -371,6 +373,63 @@ final class WorkoutSessionViewModel: ObservableObject {
             exercises.removeAll { group.exerciseInstanceIds.contains($0.id) }
         } else {
             exercises.removeAll { $0.id == id }
+        }
+        save()
+    }
+
+    func showHistory(for id: UUID) {
+        historyExercise = exercises.first(where: { $0.id == id })
+    }
+
+    func showDetails(for id: UUID) {
+        detailExercise = exercises.first(where: { $0.id == id })
+    }
+
+    func duplicateItem(withId id: UUID) {
+        if let group = setGroups.first(where: { $0.id == id }) {
+            var newIds: [UUID] = []
+            var newInstances: [ExerciseInstance] = []
+            for exId in group.exerciseInstanceIds {
+                if let exIndex = exercises.firstIndex(where: { $0.id == exId }) {
+                    var copy = exercises[exIndex]
+                    copy.id = UUID()
+                    copy.approaches = copy.approaches.map { approach in
+                        let sets = approach.sets.map { set -> ExerciseSet in
+                            var newSet = set
+                            newSet.id = UUID()
+                            if let drops = newSet.drops {
+                                newSet.drops = drops.map { var d = $0; d.id = UUID(); return d }
+                            }
+                            return newSet
+                        }
+                        return Approach(sets: sets)
+                    }
+                    newIds.append(copy.id)
+                    newInstances.append(copy)
+                }
+            }
+            let newGroup = SetGroup(id: UUID(), type: group.type, exerciseInstanceIds: newIds, repeatCount: group.repeatCount, notes: group.notes)
+            if let lastIndex = group.exerciseInstanceIds.compactMap({ exId in exercises.firstIndex(where: { $0.id == exId }) }).max() {
+                exercises.insert(contentsOf: newInstances, at: lastIndex + 1)
+            } else {
+                exercises.append(contentsOf: newInstances)
+            }
+            setGroups.append(newGroup)
+        } else if let index = exercises.firstIndex(where: { $0.id == id }) {
+            var copy = exercises[index]
+            copy.id = UUID()
+            copy.approaches = copy.approaches.map { approach in
+                let sets = approach.sets.map { set -> ExerciseSet in
+                    var newSet = set
+                    newSet.id = UUID()
+                    if let drops = newSet.drops {
+                        newSet.drops = drops.map { var d = $0; d.id = UUID(); return d }
+                    }
+                    return newSet
+                }
+                return Approach(sets: sets)
+            }
+            exercises.insert(copy, at: index + 1)
         }
         save()
     }

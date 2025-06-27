@@ -175,6 +175,12 @@
 "Common.Delete" = "Удалить";
 "Common.Edit" = "Изменить";
 
+/* Workout exercise actions */
+"WorkoutExercise.Actions.History" = "История выполнения";
+"WorkoutExercise.Actions.Edit" = "Редактировать";
+"WorkoutExercise.Actions.Duplicate" = "Дублировать";
+"WorkoutExercise.Actions.Details" = "Подробнее";
+
 /* Developer settings */
 "DeveloperSettings.SectionTitle" = "Настройки разработчика";
 "DeveloperSettings.CompactMode" = "Компактный интерфейс";
