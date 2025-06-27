@@ -269,6 +269,15 @@ final class WorkoutSessionViewModel: ObservableObject {
         exercises.filter { group.exerciseInstanceIds.contains($0.id) }
     }
 
+    /// Returns a stable identifier for a row that also reflects
+    /// whether the exercise sits at the top or bottom of its group.
+    /// This helps List recreate cells when those positions change.
+    func rowKey(for exercise: ExerciseInstance) -> String {
+        let first = isFirstExerciseInGroup(exercise)
+        let last = isLastExerciseInGroup(exercise)
+        return "\(exercise.id.uuidString)-\(first)-\(last)"
+    }
+
     func isExerciseInAnyGroup(_ exercise: ExerciseInstance) -> Bool {
         setGroups.contains(where: { $0.exerciseInstanceIds.contains(exercise.id) })
     }
@@ -363,6 +372,27 @@ final class WorkoutSessionViewModel: ObservableObject {
         } else {
             exercises.removeAll { $0.id == id }
         }
+        save()
+    }
+
+    /// Deletes a specific exercise from a superset. If the superset becomes
+    /// empty after the deletion, the superset itself is removed.
+    func deleteExercise(_ exerciseId: UUID, fromSuperset supersetId: UUID) {
+        guard let groupIndex = setGroups.firstIndex(where: { $0.id == supersetId }) else {
+            return
+        }
+
+        exercises.removeAll { $0.id == exerciseId }
+
+        var updatedGroup = setGroups[groupIndex]
+        updatedGroup.exerciseInstanceIds.removeAll { $0 == exerciseId }
+
+        if updatedGroup.exerciseInstanceIds.isEmpty {
+            setGroups.remove(at: groupIndex)
+        } else {
+            setGroups[groupIndex] = updatedGroup
+        }
+
         save()
     }
 
