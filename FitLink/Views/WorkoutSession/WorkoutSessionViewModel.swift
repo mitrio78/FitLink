@@ -269,6 +269,15 @@ final class WorkoutSessionViewModel: ObservableObject {
         exercises.filter { group.exerciseInstanceIds.contains($0.id) }
     }
 
+    /// Returns a stable identifier for a row that also reflects
+    /// whether the exercise sits at the top or bottom of its group.
+    /// This helps List recreate cells when those positions change.
+    func rowKey(for exercise: ExerciseInstance) -> String {
+        let first = isFirstExerciseInGroup(exercise)
+        let last = isLastExerciseInGroup(exercise)
+        return "\(exercise.id.uuidString)-\(first)-\(last)"
+    }
+
     func isExerciseInAnyGroup(_ exercise: ExerciseInstance) -> Bool {
         setGroups.contains(where: { $0.exerciseInstanceIds.contains(exercise.id) })
     }

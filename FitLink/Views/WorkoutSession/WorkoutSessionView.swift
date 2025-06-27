@@ -127,6 +127,7 @@ struct WorkoutSessionView: View {
                                 isLastInGroup: last,
                                 isGrouped: true
                             )
+                            .id(viewModel.rowKey(for: ex))
                             .listRowSeparator(.hidden)
                             .listRowInsets(EdgeInsets(
                                 top: 0,
