@@ -387,28 +387,14 @@ final class WorkoutSessionViewModel: ObservableObject {
 
     func duplicateItem(withId id: UUID) {
         if let group = setGroups.first(where: { $0.id == id }) {
-            var newIds: [UUID] = []
-            var newInstances: [ExerciseInstance] = []
-            for exId in group.exerciseInstanceIds {
-                if let exIndex = exercises.firstIndex(where: { $0.id == exId }) {
-                    var copy = exercises[exIndex]
-                    copy.id = UUID()
-                    copy.approaches = copy.approaches.map { approach in
-                        let sets = approach.sets.map { set -> ExerciseSet in
-                            var newSet = set
-                            newSet.id = UUID()
-                            if let drops = newSet.drops {
-                                newSet.drops = drops.map { var d = $0; d.id = UUID(); return d }
-                            }
-                            return newSet
-                        }
-                        return Approach(sets: sets)
-                    }
-                    newIds.append(copy.id)
-                    newInstances.append(copy)
-                }
+            let newGroupId = UUID()
+            let newInstances: [ExerciseInstance] = group.exerciseInstanceIds.compactMap { exId in
+                guard let instance = exercises.first(where: { $0.id == exId }) else { return nil }
+                return duplicatedInstance(instance, newGroupId: newGroupId)
             }
-            let newGroup = SetGroup(id: UUID(), type: group.type, exerciseInstanceIds: newIds, repeatCount: group.repeatCount, notes: group.notes)
+            let newIds = newInstances.map(\.id)
+            let newGroup = SetGroup(id: newGroupId, type: group.type, exerciseInstanceIds: newIds, repeatCount: group.repeatCount, notes: group.notes)
+
             if let lastIndex = group.exerciseInstanceIds.compactMap({ exId in exercises.firstIndex(where: { $0.id == exId }) }).max() {
                 exercises.insert(contentsOf: newInstances, at: lastIndex + 1)
             } else {
@@ -416,19 +402,8 @@ final class WorkoutSessionViewModel: ObservableObject {
             }
             setGroups.append(newGroup)
         } else if let index = exercises.firstIndex(where: { $0.id == id }) {
-            var copy = exercises[index]
-            copy.id = UUID()
-            copy.approaches = copy.approaches.map { approach in
-                let sets = approach.sets.map { set -> ExerciseSet in
-                    var newSet = set
-                    newSet.id = UUID()
-                    if let drops = newSet.drops {
-                        newSet.drops = drops.map { var d = $0; d.id = UUID(); return d }
-                    }
-                    return newSet
-                }
-                return Approach(sets: sets)
-            }
+            let instance = exercises[index]
+            let copy = duplicatedInstance(instance, newGroupId: instance.groupId)
             exercises.insert(copy, at: index + 1)
         }
         save()
@@ -459,6 +434,22 @@ final class WorkoutSessionViewModel: ObservableObject {
         session.exerciseInstances = exercises
         session.setGroups = setGroups
         dataStore.updateSession(session)
+    }
+
+    /// Creates a deep copy of the provided `ExerciseInstance` using fresh IDs
+    /// for the instance itself and all of its nested sets. The group ID can be
+    /// overridden when duplicating items that belong to a new group.
+    private func duplicatedInstance(_ instance: ExerciseInstance, newGroupId: UUID?) -> ExerciseInstance {
+        let approaches = instance.approaches.map { approach -> Approach in
+            let sets = approach.sets.map { set -> ExerciseSet in
+                let drops = set.drops?.map { drop in
+                    ExerciseSet(id: UUID(), metricValues: drop.metricValues, notes: drop.notes, drops: drop.drops)
+                }
+                return ExerciseSet(id: UUID(), metricValues: set.metricValues, notes: set.notes, drops: drops)
+            }
+            return Approach(id: UUID(), sets: sets)
+        }
+        return ExerciseInstance(id: UUID(), exercise: instance.exercise, approaches: approaches, groupId: newGroupId, notes: instance.notes, section: instance.section)
     }
 
     private func metricOrder(_ type: ExerciseMetricType) -> Int {
