@@ -136,7 +136,7 @@
 "MuscleGroup.FullBody" = "Всё тело";
 /* Workout sections */
 "WorkoutSection.WarmUp" = "Разминка";
-"WorkoutSection.Main" = "Основная часть";
+"WorkoutSection.Main" = "Тренировка";
 "WorkoutSection.CoolDown" = "Заминка";
 /* Workout actions */
 "WorkoutSession.AddExercise" = "Добавить упражнение";
