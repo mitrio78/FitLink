@@ -4,7 +4,8 @@ import SwiftUI
 struct ApproachCardView: View {
     let set: ExerciseSet
     let metrics: [ExerciseMetric]
-    var onTap: (ExerciseSet.ID) -> Void = { _ in }
+    var onTap: (_ setID: ExerciseSet.ID) -> Void = { _ in }
+    var onDropTap: (_ dropID: ExerciseSet.ID, _ index: Int) -> Void = { _, _ in }
 
     private var weightMetric: ExerciseMetric? {
         metrics.first { $0.type == .weight }
@@ -44,6 +45,8 @@ struct ApproachCardView: View {
                             .foregroundColor(.primary)
                     }
                 } //: VStack
+                .contentShape(Rectangle())
+                .onTapGesture { onDropTap(drop.id, idx) }
                 if idx < drops.count - 1 {
                     Image(systemName: "chevron.right")
                         .font(.caption)
@@ -63,6 +66,6 @@ struct ApproachCardView: View {
     let metrics = [ExerciseMetric(type: .reps, unit: .repetition, isRequired: true),
                    ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false)]
     let set1 = ExerciseSet(id: UUID(), metricValues: [.weight: .double(50), .reps: .int(8)], notes: nil, drops: [ExerciseSet(id: UUID(), metricValues: [.weight: .double(40), .reps: .int(8)], notes: nil, drops: nil)])
-    return ApproachCardView(set: set1, metrics: metrics)
+    return ApproachCardView(set: set1, metrics: metrics, onTap: { _ in }, onDropTap: { _, _ in })
         .padding()
 }
