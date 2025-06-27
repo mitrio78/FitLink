@@ -120,7 +120,7 @@ struct WorkoutSessionView: View {
                             viewModel.startDrag(for: row, in: section)
                             return NSItemProvider(object: NSString(string: row.id))
                         }
-                        .onDrop(of: [UTType.text]) { _ in
+                        .onDrop(of: [UTType.text], isTargeted: nil) { _ in
                             viewModel.dropItem(before: row.id, in: section)
                             return true
                         }
@@ -131,7 +131,7 @@ struct WorkoutSessionView: View {
             } header: {
                 WorkoutSectionHeaderView(title: section.displayTitle)
             }
-            .onDrop(of: [UTType.text]) { _ in
+            .onDrop(of: [UTType.text], isTargeted: nil) { _ in
                 viewModel.dropItem(before: nil, in: section)
                 return true
             }
@@ -139,7 +139,7 @@ struct WorkoutSessionView: View {
     }
 
     @ViewBuilder
-    private func rowView(for row: WorkoutSessionViewModel.RowInfo, in _ section: WorkoutSection) -> some View {
+    private func rowView(for row: WorkoutSessionViewModel.RowInfo, in section: WorkoutSection) -> some View {
         if let group = row.group {
             if group.type == .superset {
                 WorkoutExerciseRowView(
