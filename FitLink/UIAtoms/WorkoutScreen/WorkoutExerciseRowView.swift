@@ -45,7 +45,7 @@ struct WorkoutExerciseRowView: View {
                               },
                               isLocked: isLocked)
         } else {
-            ExerciseBlockCard(group: nil,
+            ExerciseBlockCard(group: group?.type == .superset ? group : nil,
                               exerciseInstances: [exercise],
                               onEdit: onEdit,
                               onSetTap: { _, setId in
