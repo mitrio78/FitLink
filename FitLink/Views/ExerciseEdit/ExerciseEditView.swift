@@ -91,9 +91,9 @@ struct ExerciseEditView: View {
                 if let url = viewModel.mediaURL {
                     mediaPreview(url)
                     HStack {
-                        PhotosPicker(selection: $pickerItem, matching: [.images, .videos]) {
-                            Text(NSLocalizedString("ExerciseEdit.ReplaceMedia", comment: ""))
-                        }
+                    PhotosPicker(selection: $pickerItem, matching: .any(of: [.images, .videos])) {
+                        Text(NSLocalizedString("ExerciseEdit.ReplaceMedia", comment: ""))
+                    }
                         Spacer()
                         Button(role: .destructive) {
                             viewModel.removeMedia()
@@ -102,7 +102,7 @@ struct ExerciseEditView: View {
                         }
                     }
                 } else {
-                    PhotosPicker(selection: $pickerItem, matching: [.images, .videos]) {
+                    PhotosPicker(selection: $pickerItem, matching: .any(of: [.images, .videos])) {
                         Text(NSLocalizedString("ExerciseEdit.MediaPlaceholder", comment: ""))
                     }
                 }
