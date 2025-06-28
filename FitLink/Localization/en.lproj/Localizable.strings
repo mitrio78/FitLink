@@ -184,3 +184,29 @@
 /* Developer settings */
 "DeveloperSettings.SectionTitle" = "Developer Settings";
 "DeveloperSettings.CompactMode" = "Compact UI Mode";
+
+/* Exercise detail */
+"ExerciseDetail.Variations" = "Variations";
+"ExerciseDetail.Metrics" = "Metrics";
+"ExerciseDetail.MuscleGroups" = "Muscle Groups";
+"ExerciseDetail.Edit" = "Edit";
+
+/* Exercise edit */
+"ExerciseEdit.NewTitle" = "New Exercise";
+"ExerciseEdit.EditTitle" = "Edit Exercise";
+"ExerciseEdit.Name" = "Name";
+"ExerciseEdit.Description" = "Description";
+"ExerciseEdit.Media" = "Media";
+"ExerciseEdit.MediaPlaceholder" = "Select Media";
+"ExerciseEdit.Variations" = "Variations";
+"ExerciseEdit.VariationPlaceholder" = "Variation";
+"ExerciseEdit.MuscleGroups" = "Muscle Groups";
+"ExerciseEdit.MainMuscle" = "Main Muscle";
+"ExerciseEdit.Metrics" = "Metrics";
+"ExerciseEdit.MetricType" = "Type";
+"ExerciseEdit.Unit" = "Unit";
+"ExerciseEdit.Required" = "Required";
+"ExerciseEdit.AddMetric" = "Add Metric";
+
+/* Common additional */
+"Common.Save" = "Save";
