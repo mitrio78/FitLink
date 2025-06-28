@@ -175,6 +175,12 @@
 "Common.Delete" = "Delete";
 "Common.Edit" = "Edit";
 
+/* Workout exercise actions */
+"WorkoutExercise.Actions.History" = "History";
+"WorkoutExercise.Actions.Edit" = "Edit";
+"WorkoutExercise.Actions.Duplicate" = "Duplicate";
+"WorkoutExercise.Actions.Details" = "Details";
+
 /* Developer settings */
 "DeveloperSettings.SectionTitle" = "Developer Settings";
 "DeveloperSettings.CompactMode" = "Compact UI Mode";

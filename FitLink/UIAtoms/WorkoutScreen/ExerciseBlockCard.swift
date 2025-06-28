@@ -7,6 +7,7 @@ struct ExerciseBlockCard: View {
     var onEdit: () -> Void = {}
     var onSetTap: (ExerciseInstance, ExerciseSet.ID) -> Void = { _,_ in }
     var onAddSet: (ExerciseInstance) -> Void = { _ in }
+    var onMenuTap: () -> Void = {}
     var isLocked: Bool = false
     var isFirstInGroup: Bool = true
     var isLastInGroup: Bool = true
@@ -16,18 +17,28 @@ struct ExerciseBlockCard: View {
         let innerSpacing = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactInnerSpacing : Theme.spacing.small
         let outerPadding = Theme.current.layoutMode == .compact ? Theme.current.spacing.compactBlockPadding : Theme.spacing.medium
         VStack(alignment: .leading, spacing: innerSpacing) {
-            if let group, group.type != .superset {
+            if let group, shouldShowGroupTitle {
                 Text(group.type.displayName)
                     .font(Theme.font.caption)
                     .foregroundColor(Theme.color.textSecondary)
             }
 
-            Text(title)
-                .font(Theme.current.layoutMode == .compact ? Theme.font.compactExerciseTitle : Theme.font.subheading)
-                .lineLimit(2)
-                .truncationMode(.tail)
-            
-            Divider()
+            HStack(alignment: .top) {
+                Text(title)
+                    .font(Theme.current.layoutMode == .compact ? Theme.font.compactExerciseTitle : Theme.font.subheading)
+                    .lineLimit(2)
+                    .truncationMode(.tail)
+                Spacer(minLength: Theme.spacing.small)
+                Button(action: onMenuTap) {
+                    Image(systemName: "line.3.horizontal")
+                        .padding(.bottom, Theme.spacing.small)
+                        .background(Theme.color.backgroundSecondary.opacity(0.5))
+                }
+                .foregroundColor(Theme.color.textSecondary)
+                .buttonStyle(.plain)
+            } //: HStack
+            .contentShape(Rectangle())
+            .onTapGesture { onMenuTap() }
 
             if let main = exerciseInstances.first {
                 ApproachListView(
@@ -47,14 +58,24 @@ struct ExerciseBlockCard: View {
                 )
             }
         }
-        .padding(.horizontal , outerPadding)
+        .padding(.horizontal, outerPadding)
         .padding(.top, isGrouped && !isFirstInGroup ? 0 : outerPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(isGrouped ? Theme.color.supersetSubcardBackground : Theme.color.backgroundSecondary)
+        .background(Theme.color.backgroundSecondary)
         .clipShape(RoundedCornerShape(
             radius: Theme.radius.card,
             corners: cornersToRound
         ))
+    }
+
+    private var shouldShowGroupTitle: Bool {
+        guard let group = group else { return false }
+        switch group.type {
+        case .superset:
+            return isFirstInGroup
+        default:
+            return true
+        }
     }
 
     private var cornersToRound: UIRectCorner {
@@ -80,7 +101,7 @@ struct ExerciseBlockCard: View {
     ExerciseBlockCard(
         group: .some(
             .init(id: UUID(),
-            type: .pyramid,
+            type: .superset,
             exerciseInstanceIds: []
                  )
         ),
@@ -117,5 +138,5 @@ struct ExerciseBlockCard: View {
                 ]
             )
         ]
-        , onAddSet: { _ in }, isLocked: false)
+        , onAddSet: { _ in }, onMenuTap: {}, isLocked: false)
 }

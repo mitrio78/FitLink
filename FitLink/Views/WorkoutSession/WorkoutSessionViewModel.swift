@@ -19,11 +19,28 @@ struct SetEditContext: Identifiable {
     var id: String { "\(exerciseID)-\(setID)" }
 }
 
+extension WorkoutSessionViewModel {
+    /// Row representation used for displaying and reordering exercises.
+    struct RowInfo: Identifiable {
+        let id: String
+        let exercise: ExerciseInstance
+        let group: SetGroup?
+        var groupExercises: [ExerciseInstance]
+        /// Indicates if this row should be used when rebuilding the session.
+        /// For supersets only the first row acts as the representative block.
+        let isRepresentative: Bool
+        let isFirstInGroup: Bool
+        let isLastInGroup: Bool
+    }
+}
+
 @MainActor
 final class WorkoutSessionViewModel: ObservableObject {
     @Published var showExerciseEdit: Bool = false
     @Published var editingContext: EditingContext? = nil
     @Published var activeSetEdit: SetEditContext? = nil
+    @Published var historyExercise: ExerciseInstance? = nil
+    @Published var detailExercise: ExerciseInstance? = nil
     @Published var expandedGroupId: UUID? = nil
     @Published var session: WorkoutSession
     let client: Client?
@@ -50,6 +67,106 @@ final class WorkoutSessionViewModel: ObservableObject {
 
     var coolDownExercises: [ExerciseInstance] {
         exercises.filter { $0.section == .coolDown }
+    }
+
+    /// Returns visible rows for a particular workout section.
+    func rows(for section: WorkoutSection) -> [RowInfo] {
+        var result: [RowInfo] = []
+        var seenGroups: Set<UUID> = []
+
+        for ex in exercises where ex.section == section {
+            if let group = group(for: ex) {
+                if group.type == .superset {
+                    let first = isFirstExerciseInGroup(ex)
+                    let last = isLastExerciseInGroup(ex)
+                    result.append(
+                        RowInfo(id: rowKey(for: ex),
+                                exercise: ex,
+                                group: group,
+                                groupExercises: groupExercises(for: group),
+                                isRepresentative: first,
+                                isFirstInGroup: first,
+                                isLastInGroup: last)
+                    )
+                } else if !seenGroups.contains(group.id) {
+                    seenGroups.insert(group.id)
+                    result.append(
+                        RowInfo(id: group.id.uuidString,
+                                exercise: ex,
+                                group: group,
+                                groupExercises: groupExercises(for: group),
+                                isRepresentative: true,
+                                isFirstInGroup: true,
+                                isLastInGroup: true)
+                    )
+                }
+            } else {
+                result.append(
+                    RowInfo(id: ex.id.uuidString,
+                            exercise: ex,
+                            group: nil,
+                            groupExercises: [ex],
+                            isRepresentative: true,
+                            isFirstInGroup: true,
+                            isLastInGroup: true)
+                )
+            }
+        }
+
+        return result
+    }
+
+    /// Handles moving rows via drag & drop while keeping groups intact.
+    /// The `offsets` provided by the List always reference the tapped row. If
+    /// that row belongs to a group the method collects all rows for that group
+    /// and moves them together so the user can never split a group.
+    func moveRow(fromOffsets offsets: IndexSet, toOffset destination: Int, in section: WorkoutSection) {
+        var warmRows = rows(for: .warmUp)
+        var mainRows = rows(for: .main)
+        var coolRows = rows(for: .coolDown)
+
+        func reorder(_ rows: inout [RowInfo]) {
+            guard let start = offsets.first else { return }
+            // Determine all rows that belong to the same group as the dragged row.
+            let groupId = rows[start].group?.id
+            var moveIndexes = [start]
+            if let gid = groupId {
+                moveIndexes = rows.enumerated().compactMap { $0.element.group?.id == gid ? $0.offset : nil }
+            }
+
+            // Using Swift's `move` ensures the destination offset is adjusted
+            // for the removed rows so the group is inserted at the correct position.
+            rows.move(fromOffsets: IndexSet(moveIndexes), toOffset: destination)
+        }
+
+        switch section {
+        case .warmUp: reorder(&warmRows)
+        case .main: reorder(&mainRows)
+        case .coolDown: reorder(&coolRows)
+        }
+
+        rebuildRows(warm: warmRows, main: mainRows, cool: coolRows)
+    }
+
+    /// Persists the current order based on rows.
+    private func rebuildRows(warm: [RowInfo], main: [RowInfo], cool: [RowInfo]) {
+        var newExercises: [ExerciseInstance] = []
+        var newGroups: [SetGroup] = []
+        var added: Set<UUID> = []
+
+        for row in warm + main + cool {
+            if row.isRepresentative {
+                newExercises.append(contentsOf: row.groupExercises)
+                if let group = row.group, !added.contains(group.id) {
+                    newGroups.append(group)
+                    added.insert(group.id)
+                }
+            }
+        }
+
+        exercises = newExercises
+        setGroups = newGroups
+        save()
     }
 
     func addExerciseTapped() {
@@ -269,6 +386,15 @@ final class WorkoutSessionViewModel: ObservableObject {
         exercises.filter { group.exerciseInstanceIds.contains($0.id) }
     }
 
+    /// Returns a stable identifier for a row that also reflects
+    /// whether the exercise sits at the top or bottom of its group.
+    /// This helps List recreate cells when those positions change.
+    func rowKey(for exercise: ExerciseInstance) -> String {
+        let first = isFirstExerciseInGroup(exercise)
+        let last = isLastExerciseInGroup(exercise)
+        return "\(exercise.id.uuidString)-\(first)-\(last)"
+    }
+
     func isExerciseInAnyGroup(_ exercise: ExerciseInstance) -> Bool {
         setGroups.contains(where: { $0.exerciseInstanceIds.contains(exercise.id) })
     }
@@ -312,7 +438,9 @@ final class WorkoutSessionViewModel: ObservableObject {
                 instance.approaches = old.approaches
                 instance.notes = old.notes
             }
-            instance.section = context.instances.first?.section ?? .main
+            // Preserve the section chosen in the editor. Previously we always
+            // restored the old section which prevented moving an exercise
+            // between warm-up, main and cool-down when editing.
             exercises.insert(instance, at: insertionIndex)
             expandedGroupId = nil
         case .superset(var group, var instances):
@@ -325,8 +453,10 @@ final class WorkoutSessionViewModel: ObservableObject {
                         item.approaches = old.approaches
                         item.notes = old.notes
                     }
-                    item.section = old.section
                 }
+                // `item.section` already reflects the value chosen on the edit
+                // screen. Do not overwrite it with the old section so the entire
+                // superset can be moved between sections.
                 instances[i] = item
             }
             setGroups.append(group)
@@ -366,10 +496,101 @@ final class WorkoutSessionViewModel: ObservableObject {
         save()
     }
 
+    func showHistory(for id: UUID) {
+        historyExercise = exercises.first(where: { $0.id == id })
+    }
+
+    func showDetails(for id: UUID) {
+        detailExercise = exercises.first(where: { $0.id == id })
+    }
+
+    func duplicateItem(withId id: UUID) {
+        if let group = setGroups.first(where: { $0.id == id }) {
+            let newGroupId = UUID()
+            let newInstances: [ExerciseInstance] = group.exerciseInstanceIds.compactMap { exId in
+                guard let instance = exercises.first(where: { $0.id == exId }) else { return nil }
+                return duplicatedInstance(instance, newGroupId: newGroupId)
+            }
+            let newIds = newInstances.map(\.id)
+            let newGroup = SetGroup(id: newGroupId, type: group.type, exerciseInstanceIds: newIds, repeatCount: group.repeatCount, notes: group.notes)
+
+            if let lastIndex = group.exerciseInstanceIds.compactMap({ exId in exercises.firstIndex(where: { $0.id == exId }) }).max() {
+                exercises.insert(contentsOf: newInstances, at: lastIndex + 1)
+            } else {
+                exercises.append(contentsOf: newInstances)
+            }
+            setGroups.append(newGroup)
+        } else if let index = exercises.firstIndex(where: { $0.id == id }) {
+            let instance = exercises[index]
+            if let groupId = instance.groupId,
+               let groupIndex = setGroups.firstIndex(where: { $0.id == groupId }) {
+                var group = setGroups[groupIndex]
+                if group.type == .superset {
+                    // Duplicate as a standalone exercise placed after the entire superset
+                    let copy = duplicatedInstance(instance, newGroupId: nil)
+                    if let lastIndex = group.exerciseInstanceIds.compactMap({ exId in exercises.firstIndex(where: { $0.id == exId }) }).max() {
+                        exercises.insert(copy, at: lastIndex + 1)
+                    } else {
+                        exercises.append(copy)
+                    }
+                } else {
+                    // Duplicate inside the same group maintaining order
+                    let copy = duplicatedInstance(instance, newGroupId: groupId)
+                    exercises.insert(copy, at: index + 1)
+                    if let pos = group.exerciseInstanceIds.firstIndex(of: id) {
+                        group.exerciseInstanceIds.insert(copy.id, at: pos + 1)
+                        setGroups[groupIndex] = group
+                    }
+                }
+            } else {
+                let copy = duplicatedInstance(instance, newGroupId: nil)
+                exercises.insert(copy, at: index + 1)
+            }
+        }
+        save()
+    }
+
+    /// Deletes a specific exercise from a superset. If the superset becomes
+    /// empty after the deletion, the superset itself is removed.
+    func deleteExercise(_ exerciseId: UUID, fromSuperset supersetId: UUID) {
+        guard let groupIndex = setGroups.firstIndex(where: { $0.id == supersetId }) else {
+            return
+        }
+
+        exercises.removeAll { $0.id == exerciseId }
+
+        var updatedGroup = setGroups[groupIndex]
+        updatedGroup.exerciseInstanceIds.removeAll { $0 == exerciseId }
+
+        if updatedGroup.exerciseInstanceIds.isEmpty {
+            setGroups.remove(at: groupIndex)
+        } else {
+            setGroups[groupIndex] = updatedGroup
+        }
+
+        save()
+    }
+
     private func save() {
         session.exerciseInstances = exercises
         session.setGroups = setGroups
         dataStore.updateSession(session)
+    }
+
+    /// Creates a deep copy of the provided `ExerciseInstance` using fresh IDs
+    /// for the instance itself and all of its nested sets. The group ID can be
+    /// overridden when duplicating items that belong to a new group.
+    private func duplicatedInstance(_ instance: ExerciseInstance, newGroupId: UUID?) -> ExerciseInstance {
+        let approaches = instance.approaches.map { approach -> Approach in
+            let sets = approach.sets.map { set -> ExerciseSet in
+                let drops = set.drops?.map { drop in
+                    ExerciseSet(id: UUID(), metricValues: drop.metricValues, notes: drop.notes, drops: drop.drops)
+                }
+                return ExerciseSet(id: UUID(), metricValues: set.metricValues, notes: set.notes, drops: drops)
+            }
+            return Approach(id: UUID(), sets: sets)
+        }
+        return ExerciseInstance(id: UUID(), exercise: instance.exercise, approaches: approaches, groupId: newGroupId, notes: instance.notes, section: instance.section)
     }
 
     private func metricOrder(_ type: ExerciseMetricType) -> Int {

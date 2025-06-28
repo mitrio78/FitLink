@@ -3,9 +3,12 @@ import Foundation
 @MainActor
 final class WorkoutExerciseEditViewModel: ObservableObject {
     @Published var selectedExercises: [Exercise]
+    /// Currently chosen workout section. Defaults to `.main`.
+    @Published var selectedSection: WorkoutSection
 
-    init(initialExercises: [Exercise] = []) {
+    init(initialExercises: [Exercise] = [], section: WorkoutSection = .main) {
         self.selectedExercises = initialExercises
+        self.selectedSection = section
     }
 
     var isSuperset: Bool { selectedExercises.count > 1 }
@@ -35,7 +38,7 @@ final class WorkoutExerciseEditViewModel: ObservableObject {
                 approaches: [],
                 groupId: nil,
                 notes: nil,
-                section: .main
+                section: selectedSection
             )
             return .single(instance)
         } else {
@@ -47,7 +50,7 @@ final class WorkoutExerciseEditViewModel: ObservableObject {
                     approaches: [],
                     groupId: groupId,
                     notes: nil,
-                    section: .main
+                    section: selectedSection
                 )
             }
             let group = SetGroup(

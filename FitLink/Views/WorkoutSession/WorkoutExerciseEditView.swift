@@ -10,15 +10,20 @@ struct WorkoutExerciseEditView: View {
     @State private var libraryIndex: Int = 0
     @State private var showLibrary = false
 
-    init(initialExercises: [Exercise] = [], onComplete: @escaping (WorkoutExerciseEditResult) -> Void) {
+    init(initialExercises: [Exercise] = [], initialSection: WorkoutSection = .main, onComplete: @escaping (WorkoutExerciseEditResult) -> Void) {
         self.onComplete = onComplete
-        _viewModel = StateObject(wrappedValue: WorkoutExerciseEditViewModel(initialExercises: initialExercises))
+        _viewModel = StateObject(wrappedValue: WorkoutExerciseEditViewModel(initialExercises: initialExercises, section: initialSection))
         self.isEditing = !initialExercises.isEmpty
     }
 
     var body: some View {
         NavigationStack {
             List {
+                WorkoutSectionPicker(selection: $viewModel.selectedSection)
+                    .listRowInsets(EdgeInsets())
+                    .listRowSeparator(.hidden)
+                    .padding(.bottom, Theme.spacing.medium)
+
                 exercisesList
             }
             .listStyle(.plain)
@@ -120,5 +125,5 @@ struct WorkoutExerciseEditView: View {
 }
 
 #Preview {
-    WorkoutExerciseEditView { _ in }
+    WorkoutExerciseEditView(initialExercises: [], initialSection: .main) { _ in }
 }
