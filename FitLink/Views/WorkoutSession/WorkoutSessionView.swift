@@ -19,15 +19,17 @@ struct WorkoutSessionView: View {
     }
     
     var body: some View {
-        List {
-            headerSection
-                .listRowInsets(.init(top: 8, leading: 16, bottom: 8, trailing: 16))
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                headerSection
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, Theme.spacing.horizontal)
 
-            workoutSection(.warmUp)
-            workoutSection(.main)
-            workoutSection(.coolDown)
+                workoutSection(.warmUp)
+                workoutSection(.main)
+                workoutSection(.coolDown)
+            }
         }
-        .listStyle(.plain)
         .padding(.horizontal, Theme.spacing.horizontal)
         .navigationTitle(NSLocalizedString("WorkoutSession.Title", comment: "Тренировка"))
         .toolbar {
@@ -84,52 +86,51 @@ struct WorkoutSessionView: View {
     }
 
     private var headerSection: some View {
-        Section {
-            VStack(alignment: .leading, spacing: .zero) {
-                Text(
-                    String(
-                        format: NSLocalizedString("WorkoutSession.Header", comment: "Тренировка для %@"),
-                        viewModel.client?.name ?? NSLocalizedString("WorkoutSession.ClientPlaceholder", comment: "Клиента")
-                    )
+        VStack(alignment: .leading, spacing: .zero) {
+            Text(
+                String(
+                    format: NSLocalizedString("WorkoutSession.Header", comment: "Тренировка для %@"),
+                    viewModel.client?.name ?? NSLocalizedString("WorkoutSession.ClientPlaceholder", comment: "Клиента")
                 )
-                .font(Theme.font.titleMedium).bold()
-                .padding(.vertical, Theme.spacing.compactInnerSpacing)
-                if let date = viewModel.session.date {
-                    Text("\(date.formatted(date: .long, time: .shortened))")
-                        .foregroundColor(Theme.color.textSecondary)
-                }
-                if let notes = viewModel.session.notes, !notes.isEmpty {
-                    Text(notes)
-                        .font(Theme.font.body)
-                        .foregroundColor(Theme.color.accent)
-                        .padding(.top, Theme.spacing.small)
-                }
-            } //: VStack
-        } //: Section
+            )
+            .font(Theme.font.titleMedium).bold()
+            .padding(.vertical, Theme.spacing.compactInnerSpacing)
+            if let date = viewModel.session.date {
+                Text("\(date.formatted(date: .long, time: .shortened))")
+                    .foregroundColor(Theme.color.textSecondary)
+            }
+            if let notes = viewModel.session.notes, !notes.isEmpty {
+                Text(notes)
+                    .font(Theme.font.body)
+                    .foregroundColor(Theme.color.accent)
+                    .padding(.top, Theme.spacing.small)
+            }
+        } //: VStack
+    }
     }
 
     @ViewBuilder
     private func workoutSection(_ section: WorkoutSection) -> some View {
         let rows = viewModel.rows(for: section)
         if !rows.isEmpty {
-            Section {
-                ForEach(rows) { row in
-                    rowView(for: row)
-                        // Disable the drag handle for non-representative rows
-                        .moveDisabled(!row.isRepresentative)
-                        // Provide a custom drag preview that displays the whole
-                        // superset when the first cell is dragged. For regular
-                        // exercises the preview matches the cell itself.
-                        .rowDragPreview {
-                            dragPreview(for: row)
-                        }
-                }
-                .onMove { indexes, newOffset in
-                    viewModel.moveRow(fromOffsets: indexes, toOffset: newOffset, in: section)
-                }
-            } header: {
+            VStack(alignment: .leading, spacing: 0) {
                 WorkoutSectionHeaderView(title: section.displayTitle)
+                    .padding(.vertical, Theme.spacing.compactInnerSpacing)
+                ReorderableSectionView(
+                    rows: rows,
+                    canDrag: { $0.isRepresentative },
+                    onMove: { indexes, newOffset in
+                        viewModel.moveRow(fromOffsets: indexes, toOffset: newOffset, in: section)
+                    },
+                    rowView: { row in
+                        rowView(for: row)
+                    },
+                    preview: { row in
+                        dragPreview(for: row)
+                    }
+                )
             }
+            .padding(.vertical, Theme.spacing.compactSetRowSpacing)
         }
     }
 
@@ -156,8 +157,6 @@ private func rowView(for row: WorkoutSessionViewModel.RowInfo) -> some View {
                     isGrouped: true
                 )
                 .id(row.id)
-                .listRowSeparator(.hidden)
-                .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
                 .padding(.top, row.isFirstInGroup ? Theme.current.spacing.compactSetRowSpacing : 0)
                 .padding(.bottom, row.isLastInGroup ? Theme.spacing.compactSetRowSpacing : 0)
             } else {
@@ -180,8 +179,6 @@ private func rowView(for row: WorkoutSessionViewModel.RowInfo) -> some View {
                         viewModel.expandedGroupId = nil
                     }
                 }
-                .listRowSeparator(.hidden)
-                .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
                 .padding(.vertical, Theme.spacing.compactSetRowSpacing)
                 .id(row.id)
             }
@@ -198,8 +195,6 @@ private func rowView(for row: WorkoutSessionViewModel.RowInfo) -> some View {
                 onAddSet: { ex in viewModel.addSet(toExercise: ex.id) },
                 isLocked: viewModel.session.status == .completed || viewModel.session.status == .cancelled
             )
-            .listRowSeparator(.hidden)
-            .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
             .padding(.vertical, Theme.spacing.compactSetRowSpacing)
             .id(row.id)
         }
@@ -238,8 +233,6 @@ private func rowView(for row: WorkoutSessionViewModel.RowInfo) -> some View {
             isLastInGroup: viewModel.isLastExerciseInGroup(exercise),
             isGrouped: group != nil
         )
-        .listRowSeparator(.hidden)
-        .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
     }
 }
 
