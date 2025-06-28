@@ -41,6 +41,50 @@ final class ExerciseEditViewModel: ObservableObject {
         }
     }
 
+    /// Attach a media file selected by the user.
+    func onMediaSelected(tempURL: URL) {
+        Task {
+            do {
+                let exercise = currentExercise
+                let url = try await dataStore.updateMedia(for: exercise, with: tempURL)
+                mediaURL = url
+            } catch {
+                // In real UI this would trigger a user-facing alert.
+                print("Failed to save media: \(error)")
+            }
+        }
+    }
+
+    /// Remove currently attached media from disk and model.
+    func removeMedia() {
+        Task {
+            do {
+                let exercise = currentExercise
+                try await dataStore.removeMedia(for: exercise)
+                mediaURL = nil
+            } catch {
+                print("Failed to remove media: \(error)")
+            }
+        }
+    }
+
+    /// Returns the current exercise representation based on editor state.
+    private var currentExercise: Exercise {
+        var groups: [MuscleGroup] = []
+        if let mainGroup { groups.append(mainGroup) }
+        groups.append(contentsOf: selectedGroups.filter { $0 != mainGroup })
+        let sortedMetrics = metrics.sorted { $0.type.sortOrder < $1.type.sortOrder }
+        return Exercise(
+            id: exerciseId,
+            name: name,
+            description: description.isEmpty ? nil : description,
+            mediaURL: mediaURL,
+            variations: variations,
+            muscleGroups: groups,
+            metrics: sortedMetrics
+        )
+    }
+
     var canSave: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty && !selectedGroups.isEmpty
     }
@@ -76,19 +120,7 @@ final class ExerciseEditViewModel: ObservableObject {
 
     func save() {
         guard canSave else { return }
-        var groups: [MuscleGroup] = []
-        if let mainGroup { groups.append(mainGroup) }
-        groups.append(contentsOf: selectedGroups.filter { $0 != mainGroup })
-        let sortedMetrics = metrics.sorted { $0.type.sortOrder < $1.type.sortOrder }
-        let exercise = Exercise(
-            id: exerciseId,
-            name: name,
-            description: description.isEmpty ? nil : description,
-            mediaURL: mediaURL,
-            variations: variations,
-            muscleGroups: groups,
-            metrics: sortedMetrics
-        )
+        let exercise = currentExercise
         dataStore.saveExercise(exercise)
     }
 }
