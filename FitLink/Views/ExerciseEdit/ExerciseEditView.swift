@@ -105,6 +105,7 @@ struct ExerciseEditView: View {
             } //: List
             .listStyle(.insetGrouped)
             .navigationTitle(viewModel.isNew ? NSLocalizedString("ExerciseEdit.NewTitle", comment: "") : NSLocalizedString("ExerciseEdit.EditTitle", comment: ""))
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(NSLocalizedString("Common.Cancel", comment: "")) { dismiss() }
