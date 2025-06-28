@@ -5,6 +5,7 @@ import Combine
 final class ExerciseDetailViewModel: ObservableObject {
     @Published var exercise: Exercise
     @Published var showEdit: Bool = false
+    @Published var showMediaFullScreen: Bool = false
 
     private let dataStore: AppDataStore
     private let exerciseId: UUID
@@ -22,6 +23,10 @@ final class ExerciseDetailViewModel: ObservableObject {
 
     func editTapped() {
         showEdit = true
+    }
+
+    func mediaTapped() {
+        showMediaFullScreen = true
     }
 }
 

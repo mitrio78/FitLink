@@ -75,29 +75,36 @@ struct ExerciseDetailView: View {
         .sheet(isPresented: $viewModel.showEdit) {
             ExerciseEditView(exercise: viewModel.exercise)
         }
+        .fullScreenCover(isPresented: $viewModel.showMediaFullScreen) {
+            if let url = viewModel.exercise.mediaURL {
+                FullScreenMediaView(url: url, isVideo: mediaIsVideo(url))
+            }
+        }
     }
 
     @ViewBuilder
     private var mediaView: some View {
         if let url = viewModel.exercise.mediaURL {
-            if mediaIsVideo(url) {
-                VideoPlayer(player: AVPlayer(url: url))
-                    .frame(height: 220)
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
-            } else {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image.resizable()
-                            .aspectRatio(contentMode: .fit)
-                    default:
-                        Rectangle().fill(Theme.color.backgroundSecondary)
+            Group {
+                if mediaIsVideo(url) {
+                    LoopingVideoPlayer(url: url, autoplay: false, loop: false)
+                } else {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image.resizable()
+                                .aspectRatio(contentMode: .fill)
+                        default:
+                            Rectangle().fill(Theme.color.backgroundSecondary)
+                        }
                     }
                 }
-                .frame(height: 220)
-                .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
             }
+            .frame(height: 220)
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
+            .contentShape(Rectangle())
+            .onTapGesture { viewModel.mediaTapped() }
         }
     }
 
