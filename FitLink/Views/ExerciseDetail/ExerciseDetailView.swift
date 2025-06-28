@@ -1,5 +1,4 @@
 import SwiftUI
-import AVKit
 import UniformTypeIdentifiers
 
 struct ExerciseDetailView: View {
@@ -23,7 +22,6 @@ struct ExerciseDetailView: View {
 
                 if viewModel.exercise.mediaURL != nil {
                     mediaView
-                        .frame(maxWidth: .infinity, maxHeight: 220)
                         .padding(.horizontal)
                 }
 
@@ -81,9 +79,7 @@ struct ExerciseDetailView: View {
     private var mediaView: some View {
         if let url = viewModel.exercise.mediaURL {
             if mediaIsVideo(url) {
-                VideoPlayer(player: AVPlayer(url: url))
-                    .frame(height: 220)
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
+                ExerciseVideoView(url: url)
             } else {
                 AsyncImage(url: url) { phase in
                     switch phase {
