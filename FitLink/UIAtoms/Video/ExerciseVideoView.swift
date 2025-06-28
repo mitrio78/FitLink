@@ -3,14 +3,13 @@ import AVFoundation
 
 /// Holder class keeping a stable ``AVPlayer`` instance and related observers.
 final class VideoPlayerHolder: ObservableObject {
-    enum Orientation { case vertical, horizontal }
-
     let url: URL
     let player: AVPlayer
 
     @Published var isPlaying: Bool = true
     @Published var progress: Double = 0
-    @Published var orientation: Orientation = .horizontal
+    /// Aspect ratio of the video (width/height)
+    @Published var aspectRatio: CGFloat = 16/9
 
     private var timeObserver: Any?
     private var endObserver: NSObjectProtocol?
@@ -39,7 +38,7 @@ final class VideoPlayerHolder: ObservableObject {
         player.play()
         isPlaying = true
         addProgressObserver()
-        detectOrientation(from: item.asset)
+        detectVideoProperties(from: item.asset)
     }
 
     func togglePlayPause() {
@@ -62,7 +61,7 @@ final class VideoPlayerHolder: ObservableObject {
         }
     }
 
-    private func detectOrientation(from asset: AVAsset) {
+    private func detectVideoProperties(from asset: AVAsset) {
         asset.loadValuesAsynchronously(forKeys: ["tracks"]) { [weak self] in
             guard let self else { return }
             var error: NSError?
@@ -70,9 +69,11 @@ final class VideoPlayerHolder: ObservableObject {
             guard status == .loaded,
                   let track = asset.tracks(withMediaType: .video).first else { return }
             let size = track.naturalSize.applying(track.preferredTransform)
-            let vertical = abs(size.height) > abs(size.width)
+            let width = abs(size.width)
+            let height = abs(size.height)
+            let ratio = width / height
             DispatchQueue.main.async {
-                self.orientation = vertical ? .vertical : .horizontal
+                self.aspectRatio = ratio.isFinite && ratio > 0 ? ratio : 16/9
             }
         }
     }
@@ -106,7 +107,7 @@ struct ExerciseVideoView: View {
                 CustomAVPlayerView(player: holder.player)
                     .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
                     .onTapGesture { showFullScreen = true }
-                    .aspectRatio(holder.orientation == .vertical ? 9/16 : 16/9, contentMode: .fill)
+                    .aspectRatio(holder.aspectRatio, contentMode: .fit)
                     .frame(maxWidth: .infinity)
             } //: ZStack
 
@@ -123,7 +124,7 @@ struct ExerciseVideoView: View {
         .onAppear { holder.setup() }
         .onDisappear { holder.cleanup() }
         .fullScreenCover(isPresented: $showFullScreen) {
-            FullScreenVideoView(url: url)
+            FullScreenVideoView(holder: holder)
         }
     }
 

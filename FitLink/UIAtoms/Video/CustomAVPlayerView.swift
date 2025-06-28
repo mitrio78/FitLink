@@ -11,7 +11,8 @@ struct CustomAVPlayerView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> PlayerView {
         let view = PlayerView()
-        view.playerLayer.videoGravity = .resizeAspectFill
+        // Use resizeAspect so the entire frame is visible without cropping
+        view.playerLayer.videoGravity = .resizeAspect
         view.player = player
         return view
     }
