@@ -69,20 +69,24 @@ struct ExerciseEditView: View {
     }
 
     @ViewBuilder private var nameSection: some View {
-        Section(header: Text(NSLocalizedString("ExerciseEdit.Name", comment: ""))) {
+        Section {
             TextField("", text: $viewModel.name)
+        } header: {
+            Text(NSLocalizedString("ExerciseEdit.Name", comment: ""))
         }
     }
 
     @ViewBuilder private var descriptionSection: some View {
-        Section(header: Text(NSLocalizedString("ExerciseEdit.Description", comment: ""))) {
+        Section {
             TextEditor(text: $viewModel.description)
                 .frame(minHeight: 100)
+        } header: {
+            Text(NSLocalizedString("ExerciseEdit.Description", comment: ""))
         }
     }
 
     @ViewBuilder private var mediaSection: some View {
-        Section(header: Text(NSLocalizedString("ExerciseEdit.Media", comment: ""))) {
+        Section {
             if let url = viewModel.mediaURL {
                 mediaPreview(url)
                 HStack {
@@ -101,11 +105,13 @@ struct ExerciseEditView: View {
                     Text(NSLocalizedString("ExerciseEdit.MediaPlaceholder", comment: ""))
                 }
             }
+        } header: {
+            Text(NSLocalizedString("ExerciseEdit.Media", comment: ""))
         }
     }
 
     @ViewBuilder private var variationsSection: some View {
-        Section(header: Text(NSLocalizedString("ExerciseEdit.Variations", comment: ""))) {
+        Section {
             ForEach(viewModel.variations, id: \.self) { variation in
                 Text(variation)
             }
@@ -117,11 +123,13 @@ struct ExerciseEditView: View {
                     Image(systemName: "plus.circle.fill")
                 }
             }
+        } header: {
+            Text(NSLocalizedString("ExerciseEdit.Variations", comment: ""))
         }
     }
 
     @ViewBuilder private var groupsSection: some View {
-        Section(header: Text(NSLocalizedString("ExerciseEdit.MuscleGroups", comment: ""))) {
+        Section {
             ForEach(MuscleGroup.allStandardCases, id: \.self) { group in
                 HStack {
                     Text(group.displayName)
@@ -133,6 +141,8 @@ struct ExerciseEditView: View {
                 .contentShape(Rectangle())
                 .onTapGesture { viewModel.toggleGroup(group) }
             }
+        } header: {
+            Text(NSLocalizedString("ExerciseEdit.MuscleGroups", comment: ""))
         }
     }
 
@@ -141,17 +151,19 @@ struct ExerciseEditView: View {
             get: { viewModel.mainGroup ?? viewModel.selectedGroups.first },
             set: { viewModel.mainGroup = $0 }
         )
-        Section(header: Text(NSLocalizedString("ExerciseEdit.MainMuscle", comment: ""))) {
+        Section {
             Picker("", selection: selection) {
                 ForEach(Array(viewModel.selectedGroups), id: \.self) { group in
                     Text(group.displayName).tag(Optional(group))
                 }
             }
+        } header: {
+            Text(NSLocalizedString("ExerciseEdit.MainMuscle", comment: ""))
         }
     }
 
     @ViewBuilder private var metricsSection: some View {
-        Section(header: Text(NSLocalizedString("ExerciseEdit.Metrics", comment: ""))) {
+        Section {
             ForEach(viewModel.metrics.indices, id: \.self) { index in
                 MetricRow(metric: $viewModel.metrics[index])
             }
@@ -159,6 +171,8 @@ struct ExerciseEditView: View {
             Button(NSLocalizedString("ExerciseEdit.AddMetric", comment: "")) {
                 viewModel.addMetric()
             }
+        } header: {
+            Text(NSLocalizedString("ExerciseEdit.Metrics", comment: ""))
         }
     }
 
