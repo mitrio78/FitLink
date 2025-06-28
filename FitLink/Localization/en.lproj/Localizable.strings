@@ -207,6 +207,11 @@
 "ExerciseEdit.Unit" = "Unit";
 "ExerciseEdit.Required" = "Required";
 "ExerciseEdit.AddMetric" = "Add Metric";
+"ExerciseEdit.ReplaceMedia" = "Replace Media";
+"ExerciseEdit.RemoveMedia" = "Remove Media";
+"Media.Error.TooLarge" = "File is too large";
+"Media.Error.Unsupported" = "Unsupported format";
+"ExerciseEdit.MediaLoadError" = "Could not load selected media";
 
 /* Common additional */
 "Common.Save" = "Save";

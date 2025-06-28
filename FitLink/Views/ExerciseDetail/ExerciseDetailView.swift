@@ -1,4 +1,6 @@
 import SwiftUI
+import AVKit
+import UniformTypeIdentifiers
 
 struct ExerciseDetailView: View {
     @StateObject private var viewModel: ExerciseDetailViewModel
@@ -78,16 +80,32 @@ struct ExerciseDetailView: View {
     @ViewBuilder
     private var mediaView: some View {
         if let url = viewModel.exercise.mediaURL {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable().scaledToFill().clipped()
-                default:
-                    Rectangle().fill(Theme.color.backgroundSecondary)
+            if mediaIsVideo(url) {
+                VideoPlayer(player: AVPlayer(url: url))
+                    .frame(height: 220)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
+            } else {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable()
+                            .aspectRatio(contentMode: .fit)
+                    default:
+                        Rectangle().fill(Theme.color.backgroundSecondary)
+                    }
                 }
+                .frame(height: 220)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
             }
-            .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
         }
+    }
+
+    private func mediaIsVideo(_ url: URL) -> Bool {
+        if let type = UTType(filenameExtension: url.pathExtension) {
+            return type.conforms(to: .movie)
+        }
+        return false
     }
 }
 
