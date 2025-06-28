@@ -3,10 +3,18 @@ import AVFoundation
 
 struct FullScreenVideoView: View {
     let url: URL
-    @State private var player = AVPlayer()
+    /// Player used for full screen playback. Created once so the layer doesn't
+    /// lose its connection during presentation changes.
+    let player: AVPlayer
     @Environment(\.dismiss) private var dismiss
     @State private var isPlaying = true
     @State private var timeObserver: Any?
+    @State private var endObserver: NSObjectProtocol?
+
+    init(url: URL) {
+        self.url = url
+        self.player = AVPlayer(url: url)
+    }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -25,8 +33,9 @@ struct FullScreenVideoView: View {
     }
 
     private func setup() {
+        guard player.currentItem == nil else { return }
         let item = AVPlayerItem(url: url)
-        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main) { _ in
+        endObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main) { _ in
             player.seek(to: .zero)
             player.play()
         }
@@ -55,6 +64,10 @@ struct FullScreenVideoView: View {
         if let token = timeObserver {
             player.removeTimeObserver(token)
             timeObserver = nil
+        }
+        if let obs = endObserver {
+            NotificationCenter.default.removeObserver(obs)
+            endObserver = nil
         }
     }
 }

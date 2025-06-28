@@ -3,11 +3,20 @@ import AVFoundation
 
 struct ExerciseVideoView: View {
     let url: URL
+    /// Stable ``AVPlayer`` instance. Created once in ``init`` so the backing
+    /// ``AVPlayerLayer`` can render frames reliably.
+    let player: AVPlayer
+
     @State private var isPlaying = true
     @State private var showFullScreen = false
-    @State private var player = AVPlayer()
     @State private var progress: Double = 0
     @State private var timeObserver: Any?
+    @State private var endObserver: NSObjectProtocol?
+
+    init(url: URL) {
+        self.url = url
+        self.player = AVPlayer(url: url)
+    }
 
     var body: some View {
         VStack(spacing: Theme.spacing.small) {
@@ -35,6 +44,10 @@ struct ExerciseVideoView: View {
                 player.removeTimeObserver(token)
                 timeObserver = nil
             }
+            if let obs = endObserver {
+                NotificationCenter.default.removeObserver(obs)
+                endObserver = nil
+            }
         }
         .fullScreenCover(isPresented: $showFullScreen) {
             FullScreenVideoView(url: url)
@@ -42,8 +55,9 @@ struct ExerciseVideoView: View {
     }
 
     private func setupPlayer() {
+        guard player.currentItem == nil else { return }
         let item = AVPlayerItem(url: url)
-        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main) { _ in
+        endObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main) { _ in
             player.seek(to: .zero)
             player.play()
         }
@@ -66,9 +80,13 @@ struct ExerciseVideoView: View {
     private func addProgressObserver() {
         let interval = CMTime(seconds: 0.2, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { time in
-            if let duration = player.currentItem?.duration.seconds, duration > 0 {
-                progress = time.seconds / duration
+            let duration = player.currentItem?.duration.seconds ?? 0
+            guard duration.isFinite, duration > 0 else {
+                progress = 0
+                return
             }
+            let value = time.seconds / duration
+            progress = min(max(value, 0), 1)
         }
     }
 }

@@ -2,8 +2,12 @@ import SwiftUI
 import AVFoundation
 import UIKit
 
+/// SwiftUI wrapper around ``AVPlayerLayer`` that keeps the supplied ``AVPlayer``
+/// instance attached to the layer. The player reference must remain stable for
+/// the video frames to render correctly.
 struct CustomAVPlayerView: UIViewRepresentable {
-    var player: AVPlayer?
+    /// Stable player instance driving the layer.
+    let player: AVPlayer
 
     func makeUIView(context: Context) -> PlayerView {
         let view = PlayerView()
@@ -13,7 +17,10 @@ struct CustomAVPlayerView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: PlayerView, context: Context) {
-        uiView.player = player
+        // Update player only when the instance actually changes.
+        if uiView.player !== player {
+            uiView.player = player
+        }
     }
 }
 
