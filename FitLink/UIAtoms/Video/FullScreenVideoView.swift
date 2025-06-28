@@ -10,6 +10,9 @@ struct FullScreenVideoView: View {
     @State private var isPlaying = true
     @State private var timeObserver: Any?
     @State private var endObserver: NSObjectProtocol?
+    @State private var orientation: Orientation = .horizontal
+
+    private enum Orientation { case vertical, horizontal }
 
     init(url: URL) {
         self.url = url
@@ -23,6 +26,8 @@ struct FullScreenVideoView: View {
                 .onTapGesture { togglePlayPause() }
                 .onAppear { setup() }
                 .onDisappear { cleanup() }
+                .aspectRatio(orientation == .vertical ? 9/16 : 16/9, contentMode: .fill)
+                .frame(maxWidth: .infinity)
             Button(action: { dismiss() }) {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 28))
@@ -33,7 +38,6 @@ struct FullScreenVideoView: View {
     }
 
     private func setup() {
-        guard player.currentItem == nil else { return }
         let item = AVPlayerItem(url: url)
         endObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main) { _ in
             player.seek(to: .zero)
@@ -44,6 +48,7 @@ struct FullScreenVideoView: View {
         player.play()
         isPlaying = true
         addProgressObserver()
+        detectOrientation(from: item.asset)
     }
 
     private func togglePlayPause() {
@@ -58,6 +63,20 @@ struct FullScreenVideoView: View {
     private func addProgressObserver() {
         let interval = CMTime(seconds: 0.2, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { _ in }
+    }
+
+    private func detectOrientation(from asset: AVAsset) {
+        asset.loadValuesAsynchronously(forKeys: ["tracks"]) {
+            var error: NSError?
+            let status = asset.statusOfValue(forKey: "tracks", error: &error)
+            guard status == .loaded,
+                  let track = asset.tracks(withMediaType: .video).first else { return }
+            let size = track.naturalSize.applying(track.preferredTransform)
+            let vertical = abs(size.height) > abs(size.width)
+            DispatchQueue.main.async {
+                orientation = vertical ? .vertical : .horizontal
+            }
+        }
     }
 
     private func cleanup() {

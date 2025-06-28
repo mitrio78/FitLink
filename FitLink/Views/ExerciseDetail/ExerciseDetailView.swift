@@ -85,12 +85,12 @@ struct ExerciseDetailView: View {
                     switch phase {
                     case .success(let image):
                         image.resizable()
-                            .aspectRatio(contentMode: .fit)
+                            .aspectRatio(contentMode: .fill)
                     default:
                         Rectangle().fill(Theme.color.backgroundSecondary)
                     }
                 }
-                .frame(height: 220)
+                .frame(maxWidth: .infinity, maxHeight: 220)
                 .clipped()
                 .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
             }

@@ -12,6 +12,9 @@ struct ExerciseVideoView: View {
     @State private var progress: Double = 0
     @State private var timeObserver: Any?
     @State private var endObserver: NSObjectProtocol?
+    @State private var orientation: Orientation = .horizontal
+
+    private enum Orientation { case vertical, horizontal }
 
     init(url: URL) {
         self.url = url
@@ -24,7 +27,8 @@ struct ExerciseVideoView: View {
                 CustomAVPlayerView(player: player)
                     .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
                     .onTapGesture { showFullScreen = true }
-                    .frame(maxWidth: .infinity, maxHeight: 220)
+                    .aspectRatio(orientation == .vertical ? 9/16 : 16/9, contentMode: .fill)
+                    .frame(maxWidth: .infinity)
             } //: ZStack
 
             HStack(spacing: Theme.spacing.small) {
@@ -55,7 +59,6 @@ struct ExerciseVideoView: View {
     }
 
     private func setupPlayer() {
-        guard player.currentItem == nil else { return }
         let item = AVPlayerItem(url: url)
         endObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main) { _ in
             player.seek(to: .zero)
@@ -66,6 +69,21 @@ struct ExerciseVideoView: View {
         player.play()
         isPlaying = true
         addProgressObserver()
+        detectOrientation(from: item.asset)
+    }
+
+    private func detectOrientation(from asset: AVAsset) {
+        asset.loadValuesAsynchronously(forKeys: ["tracks"]) {
+            var error: NSError?
+            let status = asset.statusOfValue(forKey: "tracks", error: &error)
+            guard status == .loaded,
+                  let track = asset.tracks(withMediaType: .video).first else { return }
+            let size = track.naturalSize.applying(track.preferredTransform)
+            let vertical = abs(size.height) > abs(size.width)
+            DispatchQueue.main.async {
+                orientation = vertical ? .vertical : .horizontal
+            }
+        }
     }
 
     private func togglePlayPause() {
@@ -81,7 +99,7 @@ struct ExerciseVideoView: View {
         let interval = CMTime(seconds: 0.2, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { time in
             let duration = player.currentItem?.duration.seconds ?? 0
-            guard duration.isFinite, duration > 0 else {
+            guard duration.isFinite, duration > 0, time.seconds.isFinite else {
                 progress = 0
                 return
             }
