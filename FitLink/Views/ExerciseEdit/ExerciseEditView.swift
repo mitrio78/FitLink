@@ -1,8 +1,11 @@
 import SwiftUI
+import PhotosUI
+import AVKit
 
 struct ExerciseEditView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: ExerciseEditViewModel
+    @State private var pickerItem: PhotosPickerItem? = nil
 
     init(exercise: Exercise? = nil) {
         _viewModel = StateObject(wrappedValue: ExerciseEditViewModel(exercise: exercise, dataStore: .shared))
@@ -10,10 +13,11 @@ struct ExerciseEditView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Section(header: Text(NSLocalizedString("ExerciseEdit.Name", comment: ""))) {
-                    TextField("", text: $viewModel.name)
-                }
+            ZStack {
+                List {
+                    Section(header: Text(NSLocalizedString("ExerciseEdit.Name", comment: ""))) {
+                        TextField("", text: $viewModel.name)
+                    }
 
                 Section(header: Text(NSLocalizedString("ExerciseEdit.Description", comment: ""))) {
                     TextEditor(text: $viewModel.description)
@@ -21,8 +25,23 @@ struct ExerciseEditView: View {
                 }
 
                 Section(header: Text(NSLocalizedString("ExerciseEdit.Media", comment: ""))) {
-                    Button(NSLocalizedString("ExerciseEdit.MediaPlaceholder", comment: "")) {
-                        // TODO: Implement media picker
+                    if let url = viewModel.mediaURL {
+                        mediaPreview(url)
+                        HStack {
+                            PhotosPicker(selection: $pickerItem, matching: [.images, .videos]) {
+                                Text(NSLocalizedString("ExerciseEdit.ReplaceMedia", comment: ""))
+                            }
+                            Spacer()
+                            Button(role: .destructive) {
+                                viewModel.removeMedia()
+                            } label: {
+                                Text(NSLocalizedString("ExerciseEdit.RemoveMedia", comment: ""))
+                            }
+                        }
+                    } else {
+                        PhotosPicker(selection: $pickerItem, matching: [.images, .videos]) {
+                            Text(NSLocalizedString("ExerciseEdit.MediaPlaceholder", comment: ""))
+                        }
                     }
                 }
 
@@ -102,13 +121,21 @@ struct ExerciseEditView: View {
                         viewModel.addMetric()
                     }
                 }
-            } //: List
-            .listStyle(.insetGrouped)
+                } //: List
+                .listStyle(.insetGrouped)
+
+                if viewModel.isProcessingMedia {
+                    ProgressView()
+                }
+            } //: ZStack
             .navigationTitle(viewModel.isNew ? NSLocalizedString("ExerciseEdit.NewTitle", comment: "") : NSLocalizedString("ExerciseEdit.EditTitle", comment: ""))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(NSLocalizedString("Common.Cancel", comment: "")) { dismiss() }
+                    Button(NSLocalizedString("Common.Cancel", comment: "")) {
+                        viewModel.cancel()
+                        dismiss()
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(NSLocalizedString("Common.Save", comment: "")) {
@@ -118,7 +145,41 @@ struct ExerciseEditView: View {
                     .disabled(!viewModel.canSave)
                 }
             }
+            .onChange(of: pickerItem) { newValue in
+                guard let item = newValue else { return }
+                Task {
+                    if let url = try? await item.loadTransferable(type: URL.self) {
+                        await viewModel.onMediaSelected(tempURL: url)
+                    }
+                    pickerItem = nil
+                }
+            }
+            .alert(viewModel.errorMessage ?? "", isPresented: Binding(
+                get: { viewModel.errorMessage != nil },
+                set: { _ in viewModel.errorMessage = nil }
+            )) {
+                Button("OK", role: .cancel) { }
+            }
         } //: NavigationStack
+    }
+
+    @ViewBuilder
+    private func mediaPreview(_ url: URL) -> some View {
+        if viewModel.mediaIsVideo(url) {
+            VideoPlayer(player: AVPlayer(url: url))
+                .frame(height: 200)
+        } else {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                default:
+                    Rectangle().fill(Theme.color.backgroundSecondary)
+                }
+            }
+            .frame(height: 200)
+            .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
+        }
     }
 }
 
