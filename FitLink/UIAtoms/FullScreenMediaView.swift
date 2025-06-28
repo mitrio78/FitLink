@@ -99,7 +99,6 @@ struct LoopingVideoPlayer: UIViewRepresentable {
             let layer = AVPlayerLayer(player: queue)
             layer.videoGravity = .resizeAspectFill
             layer.frame = bounds
-            layer.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             self.layer.addSublayer(layer)
             playerLayer = layer
             if autoplay {
