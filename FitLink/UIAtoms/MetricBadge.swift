@@ -27,6 +27,5 @@ struct MetricBadge: View {
         MetricBadge(metric: ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false))
     } //: HStack
     .padding()
-    .previewLayout(.sizeThatFits)
 }
 #endif
