@@ -46,6 +46,7 @@ class AppDataStore: ObservableObject {
     func saveExercise(_ exercise: Exercise) {
         if let index = exercises.firstIndex(where: { $0.id == exercise.id }) {
             exercises[index] = exercise
+            exercises = Array(exercises)
         } else {
             exercises.append(exercise)
         }
@@ -84,6 +85,7 @@ class AppDataStore: ObservableObject {
     func deleteExercise(_ exercise: Exercise) async throws {
         try await mediaManager.removeMedia(for: exercise.id)
         exercises.removeAll { $0.id == exercise.id }
+        exercises = Array(exercises)
     }
 
     /// Removes media files that no longer have a corresponding exercise entry.

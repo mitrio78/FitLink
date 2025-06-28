@@ -82,16 +82,20 @@ struct ExerciseDetailView: View {
         if let url = viewModel.exercise.mediaURL {
             if mediaIsVideo(url) {
                 VideoPlayer(player: AVPlayer(url: url))
+                    .frame(height: 220)
                     .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
             } else {
                 AsyncImage(url: url) { phase in
                     switch phase {
                     case .success(let image):
-                        image.resizable().scaledToFill().clipped()
+                        image.resizable()
+                            .aspectRatio(contentMode: .fit)
                     default:
                         Rectangle().fill(Theme.color.backgroundSecondary)
                     }
                 }
+                .frame(height: 220)
+                .clipped()
                 .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
             }
         }

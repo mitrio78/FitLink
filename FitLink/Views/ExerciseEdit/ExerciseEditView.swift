@@ -234,12 +234,14 @@ struct ExerciseEditView: View {
             AsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let image):
-                    image.resizable().scaledToFill()
+                    image.resizable()
+                        .aspectRatio(contentMode: .fit)
                 default:
                     Rectangle().fill(Theme.color.backgroundSecondary)
                 }
             }
             .frame(height: 200)
+            .clipped()
             .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
         }
     }
