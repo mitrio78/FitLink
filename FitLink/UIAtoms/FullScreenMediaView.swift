@@ -8,22 +8,18 @@ struct FullScreenMediaView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
+        ZStack {
             if isVideo {
                 LoopingVideoPlayer(url: url)
                     .ignoresSafeArea()
             } else {
                 ZoomableAsyncImage(url: url)
             }
-            Button(action: { dismiss() }) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 28))
-                    .foregroundColor(.white)
-                    .padding()
-            }
         } //: ZStack
         .background(Color.black)
         .ignoresSafeArea()
+        .contentShape(Rectangle())
+        .onTapGesture { dismiss() }
     }
 }
 
