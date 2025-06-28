@@ -6,6 +6,7 @@ struct FullScreenVideoView: View {
     @State private var player = AVPlayer()
     @Environment(\.dismiss) private var dismiss
     @State private var isPlaying = true
+    @State private var timeObserver: Any?
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -13,6 +14,7 @@ struct FullScreenVideoView: View {
             CustomAVPlayerView(player: player)
                 .onTapGesture { togglePlayPause() }
                 .onAppear { setup() }
+                .onDisappear { cleanup() }
             Button(action: { dismiss() }) {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 28))
@@ -29,8 +31,10 @@ struct FullScreenVideoView: View {
             player.play()
         }
         player.replaceCurrentItem(with: item)
+        player.actionAtItemEnd = .none
         player.play()
         isPlaying = true
+        addProgressObserver()
     }
 
     private func togglePlayPause() {
@@ -40,6 +44,18 @@ struct FullScreenVideoView: View {
             player.play()
         }
         isPlaying.toggle()
+    }
+
+    private func addProgressObserver() {
+        let interval = CMTime(seconds: 0.2, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { _ in }
+    }
+
+    private func cleanup() {
+        if let token = timeObserver {
+            player.removeTimeObserver(token)
+            timeObserver = nil
+        }
     }
 }
 

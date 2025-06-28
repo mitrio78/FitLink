@@ -7,6 +7,7 @@ struct ExerciseVideoView: View {
     @State private var showFullScreen = false
     @State private var player = AVPlayer()
     @State private var progress: Double = 0
+    @State private var timeObserver: Any?
 
     var body: some View {
         VStack(spacing: Theme.spacing.small) {
@@ -28,7 +29,13 @@ struct ExerciseVideoView: View {
             .padding(.horizontal, Theme.spacing.medium)
         } //: VStack
         .onAppear { setupPlayer() }
-        .onDisappear { player.pause() }
+        .onDisappear {
+            player.pause()
+            if let token = timeObserver {
+                player.removeTimeObserver(token)
+                timeObserver = nil
+            }
+        }
         .fullScreenCover(isPresented: $showFullScreen) {
             FullScreenVideoView(url: url)
         }
@@ -41,6 +48,7 @@ struct ExerciseVideoView: View {
             player.play()
         }
         player.replaceCurrentItem(with: item)
+        player.actionAtItemEnd = .none
         player.play()
         isPlaying = true
         addProgressObserver()
@@ -57,7 +65,7 @@ struct ExerciseVideoView: View {
 
     private func addProgressObserver() {
         let interval = CMTime(seconds: 0.2, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-        player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { time in
+        timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { time in
             if let duration = player.currentItem?.duration.seconds, duration > 0 {
                 progress = time.seconds / duration
             }
