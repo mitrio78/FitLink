@@ -1,6 +1,5 @@
 import SwiftUI
 import AVFoundation
-import UniformTypeIdentifiers
 
 struct ExerciseDetailView: View {
     @StateObject private var viewModel: ExerciseDetailViewModel
@@ -83,8 +82,8 @@ struct ExerciseDetailView: View {
     @ViewBuilder
     private var mediaView: some View {
         if let url = viewModel.exercise.mediaURL {
-            if url.isVideo {
-                VideoPlayerView(player: AVPlayer(url: url))
+            if let player = viewModel.previewPlayer {
+                VideoPlayerView(player: player)
                     .frame(height: 220)
                     .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
                     .onTapGesture { viewModel.mediaTapped() }
