@@ -59,7 +59,7 @@ struct ExerciseDetailView: View {
                 }
             } //: VStack
             .padding(.vertical, Theme.spacing.medium)
-        }
+        } //: ScrollView
         .background(Theme.color.background)
         .navigationTitle(viewModel.exercise.name)
         .toolbar {

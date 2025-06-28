@@ -20,7 +20,7 @@ struct MuscleGroupBadge: View {
     VStack(spacing: 8) {
         MuscleGroupBadge(group: .biceps)
         MuscleGroupBadge(group: .chest, isMain: true)
-    }
+    } //: VStack
     .padding()
     .previewLayout(.sizeThatFits)
 }

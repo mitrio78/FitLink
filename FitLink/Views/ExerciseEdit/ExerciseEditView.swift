@@ -64,20 +64,20 @@ struct ExerciseEditView: View {
 
                 Section(header: Text(NSLocalizedString("ExerciseEdit.Metrics", comment: ""))) {
                     ForEach(viewModel.metrics.indices, id: \.self) { index in
-                        let $metric = $viewModel.metrics[index]
+                        let metricBinding = $viewModel.metrics[index]
                         VStack(alignment: .leading) {
-                            Picker(NSLocalizedString("ExerciseEdit.MetricType", comment: ""), selection: $metric.type) {
+                            Picker(NSLocalizedString("ExerciseEdit.MetricType", comment: ""), selection: metricBinding.type) {
                                 ForEach(ExerciseMetricType.allCases, id: \.self) { type in
                                     Text(type.displayName).tag(type)
                                 }
                             }
-                            Picker(NSLocalizedString("ExerciseEdit.Unit", comment: ""), selection: $metric.unit) {
+                            Picker(NSLocalizedString("ExerciseEdit.Unit", comment: ""), selection: metricBinding.unit) {
                                 Text("-").tag(UnitType?.none)
                                 ForEach(UnitType.allCases, id: \.self) { unit in
                                     Text(unit.displayName).tag(Optional(unit))
                                 }
                             }
-                            Toggle(NSLocalizedString("ExerciseEdit.Required", comment: ""), isOn: $metric.isRequired)
+                            Toggle(NSLocalizedString("ExerciseEdit.Required", comment: ""), isOn: metricBinding.isRequired)
                         }
                     }
                     .onDelete(perform: viewModel.removeMetric)
@@ -85,7 +85,7 @@ struct ExerciseEditView: View {
                         viewModel.addMetric()
                     }
                 }
-            }
+            } //: List
             .listStyle(.insetGrouped)
             .navigationTitle(viewModel.isNew ? NSLocalizedString("ExerciseEdit.NewTitle", comment: "") : NSLocalizedString("ExerciseEdit.EditTitle", comment: ""))
             .toolbar {
@@ -100,7 +100,7 @@ struct ExerciseEditView: View {
                     .disabled(!viewModel.canSave)
                 }
             }
-        }
+        } //: NavigationStack
     }
 }
 

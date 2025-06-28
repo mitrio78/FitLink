@@ -9,7 +9,7 @@ struct MetricBadge: View {
                 Image(systemName: icon)
             }
             Text(metric.displayName)
-        }
+        } //: HStack
         .font(Theme.font.caption)
         .padding(.horizontal, Theme.spacing.small)
         .padding(.vertical, Theme.spacing.extraSmall)
@@ -24,7 +24,7 @@ struct MetricBadge: View {
     HStack(spacing: 8) {
         MetricBadge(metric: ExerciseMetric(type: .reps, unit: .repetition, isRequired: true))
         MetricBadge(metric: ExerciseMetric(type: .weight, unit: .kilogram, isRequired: false))
-    }
+    } //: HStack
     .padding()
     .previewLayout(.sizeThatFits)
 }
