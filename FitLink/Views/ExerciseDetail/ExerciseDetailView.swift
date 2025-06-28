@@ -1,0 +1,112 @@
+import SwiftUI
+import AVFoundation
+
+struct ExerciseDetailView: View {
+    @StateObject private var viewModel: ExerciseDetailViewModel
+
+    init(exerciseId: UUID) {
+        _viewModel = StateObject(wrappedValue: ExerciseDetailViewModel(exerciseId: exerciseId, dataStore: .shared))
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: Theme.spacing.medium) {
+                Text(viewModel.exercise.name)
+                    .font(Theme.font.titleMedium.bold())
+                    .padding(.horizontal)
+
+                if let desc = viewModel.exercise.description, !desc.isEmpty {
+                    MarkdownTextView(text: desc)
+                        .padding(.horizontal)
+                }
+
+                if viewModel.exercise.mediaURL != nil {
+                    mediaView
+                        .frame(maxWidth: .infinity, maxHeight: 220)
+                        .padding(.horizontal)
+                }
+
+                if !viewModel.exercise.variations.isEmpty {
+                    Text(NSLocalizedString("ExerciseDetail.Variations", comment: "Variations"))
+                        .font(Theme.font.subheading)
+                        .padding(.horizontal)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: Theme.spacing.small) {
+                            ForEach(viewModel.exercise.variations, id: \.self) { VariationBadge(variation: $0) }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+
+                if !viewModel.exercise.metrics.isEmpty {
+                    Text(NSLocalizedString("ExerciseDetail.Metrics", comment: "Metrics"))
+                        .font(Theme.font.subheading)
+                        .padding(.horizontal)
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: Theme.spacing.small) {
+                        ForEach(viewModel.exercise.metrics.sorted { $0.type.sortOrder < $1.type.sortOrder }, id: \.self) { MetricBadge(metric: $0) }
+                    }
+                    .padding(.horizontal)
+                }
+
+                if !viewModel.exercise.muscleGroups.isEmpty {
+                    Text(NSLocalizedString("ExerciseDetail.MuscleGroups", comment: "Muscles"))
+                        .font(Theme.font.subheading)
+                        .padding(.horizontal)
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: Theme.spacing.small) {
+                        let groups = [viewModel.exercise.mainMuscle] + viewModel.exercise.muscleGroups.filter { $0 != viewModel.exercise.mainMuscle }
+                        ForEach(groups, id: \.self) { group in
+                            MuscleGroupBadge(group: group, isMain: group == viewModel.exercise.mainMuscle)
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+            } //: VStack
+            .padding(.vertical, Theme.spacing.medium)
+        } //: ScrollView
+        .background(Theme.color.background)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(NSLocalizedString("ExerciseDetail.Edit", comment: "Edit")) {
+                    viewModel.editTapped()
+                }
+            }
+        }
+        .sheet(isPresented: $viewModel.showEdit) {
+            ExerciseEditView(exercise: viewModel.exercise)
+        }
+        .fullScreenCover(item: $viewModel.fullScreenMediaURL) { url in
+            FullScreenMediaView(url: url)
+        }
+    }
+
+    @ViewBuilder
+    private var mediaView: some View {
+        if let url = viewModel.exercise.mediaURL {
+            if let player = viewModel.previewPlayer {
+                VideoPlayerView(player: player)
+                    .frame(height: 220)
+                    .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
+                    .onTapGesture { viewModel.mediaTapped() }
+            } else {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable()
+                            .aspectRatio(contentMode: .fit)
+                    default:
+                        Rectangle().fill(Theme.color.backgroundSecondary)
+                    }
+                }
+                .frame(height: 220)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
+                .onTapGesture { viewModel.mediaTapped() }
+            }
+        }
+    }
+}
+
+#Preview {
+    ExerciseDetailView(exerciseId: exercisesCatalog.first!.id)
+}
+

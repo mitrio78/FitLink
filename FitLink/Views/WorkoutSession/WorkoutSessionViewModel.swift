@@ -177,7 +177,7 @@ final class WorkoutSessionViewModel: ObservableObject {
     func editSet(withID setId: UUID, ofExercise exerciseId: UUID) {
         guard let exerciseIndex = exercises.firstIndex(where: { $0.id == exerciseId }) else { return }
         let exercise = exercises[exerciseIndex]
-        let metrics = exercise.exercise.metrics.sorted { metricOrder($0.type) < metricOrder($1.type) }
+        let metrics = exercise.exercise.metrics.sorted { $0.type.sortOrder < $1.type.sortOrder }
         for approach in exercise.approaches {
             if let set = approach.sets.first(where: { $0.id == setId }) {
                 var values: [ExerciseMetric.ID: ExerciseMetricValue] = [:]
@@ -192,7 +192,7 @@ final class WorkoutSessionViewModel: ObservableObject {
 
     func addSet(toExercise exerciseId: UUID) {
         guard let exercise = exercises.first(where: { $0.id == exerciseId }) else { return }
-        let metrics = exercise.exercise.metrics.sorted { metricOrder($0.type) < metricOrder($1.type) }
+        let metrics = exercise.exercise.metrics.sorted { $0.type.sortOrder < $1.type.sortOrder }
         var values: [ExerciseMetric.ID: ExerciseMetricValue] = [:]
         for metric in metrics {
             values[metric.id] = metric.type.requiresInteger ? .int(0) : .double(0)
@@ -593,11 +593,4 @@ final class WorkoutSessionViewModel: ObservableObject {
         return ExerciseInstance(id: UUID(), exercise: instance.exercise, approaches: approaches, groupId: newGroupId, notes: instance.notes, section: instance.section)
     }
 
-    private func metricOrder(_ type: ExerciseMetricType) -> Int {
-        switch type {
-        case .reps: return 0
-        case .weight: return 1
-        default: return 2
-        }
-    }
 }
