@@ -13,6 +13,7 @@ struct ExerciseLibraryView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = ExerciseLibraryViewModel(dataStore: .shared)
     @State private var showFilterDialog = false
+    @State private var showCreate = false
 
     var body: some View {
         NavigationStack {
@@ -21,9 +22,7 @@ struct ExerciseLibraryView: View {
                     Text(NSLocalizedString("ExerciseLibrary.Header", comment: "Упражнения"))
                         .font(.title2.bold())
                     Spacer()
-                    Button(action: {
-                        // Экран добавления упражнения
-                    }) {
+                    Button(action: { showCreate = true }) {
                         Image(systemName: "plus")
                             .font(.title2)
                     }
@@ -49,11 +48,18 @@ struct ExerciseLibraryView: View {
                 ScrollView {
                     LazyVStack(spacing: 12) {
                         ForEach(viewModel.filteredExercises) { exercise in
-                            ExerciseRow(exercise: exercise)
-                                .onTapGesture {
-                                    onSelect?(exercise)
-                                    if onSelect != nil { dismiss() }
+                            if onSelect == nil {
+                                NavigationLink(value: exercise.id) {
+                                    ExerciseRow(exercise: exercise)
                                 }
+                                .buttonStyle(.plain)
+                            } else {
+                                ExerciseRow(exercise: exercise)
+                                    .onTapGesture {
+                                        onSelect?(exercise)
+                                        dismiss()
+                                    }
+                            }
                         }
                     }
                     .padding()
@@ -64,6 +70,12 @@ struct ExerciseLibraryView: View {
             )
             .background(Theme.color.background)
             .navigationBarHidden(true)
+            .sheet(isPresented: $showCreate) {
+                ExerciseEditView()
+            }
+            .navigationDestination(for: UUID.self) { id in
+                ExerciseDetailView(exerciseId: id)
+            }
         }
     }
 }

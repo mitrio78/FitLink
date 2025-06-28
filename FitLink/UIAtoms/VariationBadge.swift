@@ -23,9 +23,11 @@ struct VariationBadge: View {
 #if DEBUG
 struct VariationBadge_Previews: PreviewProvider {
     static var previews: some View {
-        VariationBadge(variation: "Классический")
-            .padding()
-            .previewLayout(.sizeThatFits)
+        VStack {
+            VariationBadge(variation: "Классический")
+        } //: VStack
+        .padding()
+        .previewLayout(.sizeThatFits)
     }
 }
 #endif

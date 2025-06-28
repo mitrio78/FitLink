@@ -184,3 +184,29 @@
 /* Developer settings */
 "DeveloperSettings.SectionTitle" = "Настройки разработчика";
 "DeveloperSettings.CompactMode" = "Компактный интерфейс";
+
+/* Exercise detail */
+"ExerciseDetail.Variations" = "Вариации";
+"ExerciseDetail.Metrics" = "Метрики";
+"ExerciseDetail.MuscleGroups" = "Группы мышц";
+"ExerciseDetail.Edit" = "Редактировать";
+
+/* Exercise edit */
+"ExerciseEdit.NewTitle" = "Новое упражнение";
+"ExerciseEdit.EditTitle" = "Редактировать упражнение";
+"ExerciseEdit.Name" = "Название";
+"ExerciseEdit.Description" = "Описание";
+"ExerciseEdit.Media" = "Медиа";
+"ExerciseEdit.MediaPlaceholder" = "Выбрать медиа";
+"ExerciseEdit.Variations" = "Вариации";
+"ExerciseEdit.VariationPlaceholder" = "Вариация";
+"ExerciseEdit.MuscleGroups" = "Группы мышц";
+"ExerciseEdit.MainMuscle" = "Основная";
+"ExerciseEdit.Metrics" = "Метрики";
+"ExerciseEdit.MetricType" = "Тип";
+"ExerciseEdit.Unit" = "Ед.";
+"ExerciseEdit.Required" = "Обязательная";
+"ExerciseEdit.AddMetric" = "Добавить метрику";
+
+/* Common additional */
+"Common.Save" = "Сохранить";

@@ -78,8 +78,7 @@ struct WorkoutSessionView: View {
                 .padding()
         }
         .sheet(item: $viewModel.detailExercise) { exercise in
-            Text("Details for \(exercise.exercise.name)")
-                .padding()
+            ExerciseDetailView(exerciseId: exercise.exercise.id)
         }
     }
 

@@ -40,4 +40,12 @@ class AppDataStore: ObservableObject {
         guard let index = sessions.firstIndex(where: { $0.id == session.id }) else { return }
         sessions[index] = session
     }
+
+    func saveExercise(_ exercise: Exercise) {
+        if let index = exercises.firstIndex(where: { $0.id == exercise.id }) {
+            exercises[index] = exercise
+        } else {
+            exercises.append(exercise)
+        }
+    }
 }
