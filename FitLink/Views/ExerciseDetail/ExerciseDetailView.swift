@@ -15,8 +15,7 @@ struct ExerciseDetailView: View {
                     .padding(.horizontal)
 
                 if let desc = viewModel.exercise.description, !desc.isEmpty {
-                    Text(desc)
-                        .font(Theme.font.body)
+                    MarkdownTextView(text: desc)
                         .padding(.horizontal)
                 }
 
