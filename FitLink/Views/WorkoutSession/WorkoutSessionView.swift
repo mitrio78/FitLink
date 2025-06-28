@@ -120,7 +120,7 @@ struct WorkoutSessionView: View {
                         // Provide a custom drag preview that displays the whole
                         // superset when the first cell is dragged. For regular
                         // exercises the preview matches the cell itself.
-                        .listRowDragPreview {
+                        .rowDragPreview {
                             dragPreview(for: row)
                         }
                 }
