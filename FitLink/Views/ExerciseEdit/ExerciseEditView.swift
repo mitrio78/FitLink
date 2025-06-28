@@ -91,9 +91,16 @@ struct ExerciseEditView: View {
                 if let url = viewModel.mediaURL {
                     mediaPreview(url)
                     HStack {
-                    PhotosPicker(selection: $pickerItem, matching: .any(of: [.images, .videos])) {
-                        Text(NSLocalizedString("ExerciseEdit.ReplaceMedia", comment: ""))
-                    }
+                        PhotosPicker(selection: $pickerItem, matching: .any(of: [.images, .videos])) {
+                            Text(NSLocalizedString("ExerciseEdit.ReplaceMedia", comment: ""))
+                        }
+                        if viewModel.errorMessage != nil {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.red)
+                        } else {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                        }
                         Spacer()
                         Button(role: .destructive) {
                             viewModel.removeMedia()
@@ -102,8 +109,14 @@ struct ExerciseEditView: View {
                         }
                     }
                 } else {
-                    PhotosPicker(selection: $pickerItem, matching: .any(of: [.images, .videos])) {
-                        Text(NSLocalizedString("ExerciseEdit.MediaPlaceholder", comment: ""))
+                    HStack {
+                        PhotosPicker(selection: $pickerItem, matching: .any(of: [.images, .videos])) {
+                            Text(NSLocalizedString("ExerciseEdit.MediaPlaceholder", comment: ""))
+                        }
+                        if viewModel.errorMessage != nil {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.red)
+                        }
                     }
                 }
             }
