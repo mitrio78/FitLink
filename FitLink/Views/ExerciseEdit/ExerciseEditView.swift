@@ -63,7 +63,8 @@ struct ExerciseEditView: View {
                 }
 
                 Section(header: Text(NSLocalizedString("ExerciseEdit.Metrics", comment: ""))) {
-                    ForEach($viewModel.metrics) { $metric in
+                    ForEach(viewModel.metrics.indices, id: \.self) { index in
+                        let $metric = $viewModel.metrics[index]
                         VStack(alignment: .leading) {
                             Picker(NSLocalizedString("ExerciseEdit.MetricType", comment: ""), selection: $metric.type) {
                                 ForEach(ExerciseMetricType.allCases, id: \.self) { type in
