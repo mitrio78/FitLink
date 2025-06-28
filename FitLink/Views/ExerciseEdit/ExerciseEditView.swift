@@ -41,8 +41,24 @@ struct ExerciseEditView: View {
             .onChange(of: pickerItem) { _, newValue in
                 guard let item = newValue else { return }
                 Task {
+                    // 1. Try to load a movie URL directly
                     if let url = try? await item.loadTransferable(type: URL.self) {
                         viewModel.onMediaSelected(tempURL: url)
+                    }
+                    // 2. Otherwise try loading image data and write a temp file
+                    else if let data = try? await item.loadTransferable(type: Data.self) {
+                        let tempDir = FileManager.default.temporaryDirectory
+                        let fileURL = tempDir.appendingPathComponent(UUID().uuidString + ".jpg")
+                        do {
+                            try data.write(to: fileURL)
+                            viewModel.onMediaSelected(tempURL: fileURL)
+                        } catch {
+                            viewModel.errorMessage = error.localizedDescription
+                        }
+                    }
+                    // 3. Fallback when nothing could be loaded
+                    else {
+                        viewModel.errorMessage = NSLocalizedString("ExerciseEdit.MediaLoadError", comment: "Could not load selected media")
                     }
                     pickerItem = nil
                 }

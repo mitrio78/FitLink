@@ -211,6 +211,7 @@
 "ExerciseEdit.RemoveMedia" = "Удалить медиа";
 "Media.Error.TooLarge" = "Файл слишком большой";
 "Media.Error.Unsupported" = "Неподдерживаемый формат";
+"ExerciseEdit.MediaLoadError" = "Не удалось загрузить медиа";
 
 /* Common additional */
 "Common.Save" = "Сохранить";
