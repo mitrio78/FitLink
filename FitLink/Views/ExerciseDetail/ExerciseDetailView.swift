@@ -1,5 +1,5 @@
 import SwiftUI
-import AVKit
+import AVFoundation
 import UniformTypeIdentifiers
 
 struct ExerciseDetailView: View {
@@ -75,15 +75,19 @@ struct ExerciseDetailView: View {
         .sheet(isPresented: $viewModel.showEdit) {
             ExerciseEditView(exercise: viewModel.exercise)
         }
+        .fullScreenCover(item: $viewModel.fullScreenMediaURL) { url in
+            FullScreenMediaView(url: url)
+        }
     }
 
     @ViewBuilder
     private var mediaView: some View {
         if let url = viewModel.exercise.mediaURL {
-            if mediaIsVideo(url) {
-                VideoPlayer(player: AVPlayer(url: url))
+            if url.isVideo {
+                VideoPlayerView(player: AVPlayer(url: url))
                     .frame(height: 220)
                     .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
+                    .onTapGesture { viewModel.mediaTapped() }
             } else {
                 AsyncImage(url: url) { phase in
                     switch phase {
@@ -97,15 +101,9 @@ struct ExerciseDetailView: View {
                 .frame(height: 220)
                 .clipped()
                 .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
+                .onTapGesture { viewModel.mediaTapped() }
             }
         }
-    }
-
-    private func mediaIsVideo(_ url: URL) -> Bool {
-        if let type = UTType(filenameExtension: url.pathExtension) {
-            return type.conforms(to: .movie)
-        }
-        return false
     }
 }
 
