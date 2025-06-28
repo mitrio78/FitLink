@@ -87,22 +87,24 @@ struct ExerciseEditView: View {
 
     @ViewBuilder private var mediaSection: some View {
         Section {
-            if let url = viewModel.mediaURL {
-                mediaPreview(url)
-                HStack {
+            Group {
+                if let url = viewModel.mediaURL {
+                    mediaPreview(url)
+                    HStack {
+                        PhotosPicker(selection: $pickerItem, matching: [.images, .videos]) {
+                            Text(NSLocalizedString("ExerciseEdit.ReplaceMedia", comment: ""))
+                        }
+                        Spacer()
+                        Button(role: .destructive) {
+                            viewModel.removeMedia()
+                        } label: {
+                            Text(NSLocalizedString("ExerciseEdit.RemoveMedia", comment: ""))
+                        }
+                    }
+                } else {
                     PhotosPicker(selection: $pickerItem, matching: [.images, .videos]) {
-                        Text(NSLocalizedString("ExerciseEdit.ReplaceMedia", comment: ""))
+                        Text(NSLocalizedString("ExerciseEdit.MediaPlaceholder", comment: ""))
                     }
-                    Spacer()
-                    Button(role: .destructive) {
-                        viewModel.removeMedia()
-                    } label: {
-                        Text(NSLocalizedString("ExerciseEdit.RemoveMedia", comment: ""))
-                    }
-                }
-            } else {
-                PhotosPicker(selection: $pickerItem, matching: [.images, .videos]) {
-                    Text(NSLocalizedString("ExerciseEdit.MediaPlaceholder", comment: ""))
                 }
             }
         } header: {
@@ -112,15 +114,17 @@ struct ExerciseEditView: View {
 
     @ViewBuilder private var variationsSection: some View {
         Section {
-            ForEach(viewModel.variations, id: \.self) { variation in
-                Text(variation)
-            }
-            .onDelete(perform: viewModel.removeVariation)
+            Group {
+                ForEach(viewModel.variations, id: \.self) { variation in
+                    Text(variation)
+                }
+                .onDelete(perform: viewModel.removeVariation)
 
-            HStack {
-                TextField(NSLocalizedString("ExerciseEdit.VariationPlaceholder", comment: ""), text: $viewModel.newVariation)
-                Button(action: viewModel.addVariation) {
-                    Image(systemName: "plus.circle.fill")
+                HStack {
+                    TextField(NSLocalizedString("ExerciseEdit.VariationPlaceholder", comment: ""), text: $viewModel.newVariation)
+                    Button(action: viewModel.addVariation) {
+                        Image(systemName: "plus.circle.fill")
+                    }
                 }
             }
         } header: {
@@ -164,12 +168,14 @@ struct ExerciseEditView: View {
 
     @ViewBuilder private var metricsSection: some View {
         Section {
-            ForEach(viewModel.metrics.indices, id: \.self) { index in
-                MetricRow(metric: $viewModel.metrics[index])
-            }
-            .onDelete(perform: viewModel.removeMetric)
-            Button(NSLocalizedString("ExerciseEdit.AddMetric", comment: "")) {
-                viewModel.addMetric()
+            Group {
+                ForEach(viewModel.metrics.indices, id: \.self) { index in
+                    MetricRow(metric: $viewModel.metrics[index])
+                }
+                .onDelete(perform: viewModel.removeMetric)
+                Button(NSLocalizedString("ExerciseEdit.AddMetric", comment: "")) {
+                    viewModel.addMetric()
+                }
             }
         } header: {
             Text(NSLocalizedString("ExerciseEdit.Metrics", comment: ""))
