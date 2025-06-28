@@ -207,6 +207,10 @@
 "ExerciseEdit.Unit" = "Ед.";
 "ExerciseEdit.Required" = "Обязательная";
 "ExerciseEdit.AddMetric" = "Добавить метрику";
+"ExerciseEdit.ReplaceMedia" = "Заменить медиа";
+"ExerciseEdit.RemoveMedia" = "Удалить медиа";
+"Media.Error.TooLarge" = "Файл слишком большой";
+"Media.Error.Unsupported" = "Неподдерживаемый формат";
 
 /* Common additional */
 "Common.Save" = "Сохранить";
