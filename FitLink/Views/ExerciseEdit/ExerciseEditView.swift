@@ -66,16 +66,33 @@ struct ExerciseEditView: View {
                     ForEach(viewModel.metrics.indices, id: \.self) { index in
                         let metricBinding = $viewModel.metrics[index]
                         VStack(alignment: .leading) {
-                            Picker(NSLocalizedString("ExerciseEdit.MetricType", comment: ""), selection: metricBinding.type) {
+                            Picker(NSLocalizedString("ExerciseEdit.MetricType", comment: ""), selection: Binding(
+                                get: { metricBinding.wrappedValue.type },
+                                set: { newType in
+                                    metricBinding.wrappedValue.type = newType
+                                    if !newType.allowedUnits.contains(metricBinding.wrappedValue.unit ?? .repetition) {
+                                        metricBinding.wrappedValue.unit = newType.allowedUnits.first
+                                    }
+                                }
+                            )) {
                                 ForEach(ExerciseMetricType.allCases, id: \.self) { type in
                                     Text(type.displayName).tag(type)
                                 }
                             }
-                            Picker(NSLocalizedString("ExerciseEdit.Unit", comment: ""), selection: metricBinding.unit) {
-                                Text("-").tag(UnitType?.none)
-                                ForEach(UnitType.allCases, id: \.self) { unit in
-                                    Text(unit.displayName).tag(Optional(unit))
+                            if metricBinding.wrappedValue.type != .reps {
+                                Picker(NSLocalizedString("ExerciseEdit.Unit", comment: ""), selection: Binding(
+                                    get: { metricBinding.wrappedValue.unit },
+                                    set: { metricBinding.wrappedValue.unit = $0 }
+                                )) {
+                                    Text("-").tag(UnitType?.none)
+                                    ForEach(metricBinding.wrappedValue.type.allowedUnits, id: \.self) { unit in
+                                        Text(unit.displayName).tag(Optional(unit))
+                                    }
                                 }
+                            } else {
+                                Text(UnitType.repetition.displayName)
+                                    .font(Theme.font.caption)
+                                    .foregroundColor(Theme.color.textSecondary)
                             }
                             Toggle(NSLocalizedString("ExerciseEdit.Required", comment: ""), isOn: metricBinding.isRequired)
                         }

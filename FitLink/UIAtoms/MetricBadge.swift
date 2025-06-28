@@ -9,6 +9,7 @@ struct MetricBadge: View {
                 Image(systemName: icon)
             }
             Text(metric.displayName)
+                .lineLimit(1)
         } //: HStack
         .font(Theme.font.caption)
         .padding(.horizontal, Theme.spacing.small)

@@ -67,7 +67,7 @@ final class ExerciseEditViewModel: ObservableObject {
     }
 
     func addMetric() {
-        metrics.append(ExerciseMetric(type: .reps, unit: nil, isRequired: false))
+        metrics.append(ExerciseMetric(type: .reps, unit: .repetition, isRequired: false))
     }
 
     func removeMetric(at offsets: IndexSet) {
@@ -76,14 +76,18 @@ final class ExerciseEditViewModel: ObservableObject {
 
     func save() {
         guard canSave else { return }
+        var groups: [MuscleGroup] = []
+        if let mainGroup { groups.append(mainGroup) }
+        groups.append(contentsOf: selectedGroups.filter { $0 != mainGroup })
+        let sortedMetrics = metrics.sorted { $0.type.sortOrder < $1.type.sortOrder }
         let exercise = Exercise(
             id: exerciseId,
             name: name,
             description: description.isEmpty ? nil : description,
             mediaURL: mediaURL,
             variations: variations,
-            muscleGroups: Array(selectedGroups),
-            metrics: metrics
+            muscleGroups: groups,
+            metrics: sortedMetrics
         )
         dataStore.saveExercise(exercise)
     }

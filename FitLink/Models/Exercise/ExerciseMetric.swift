@@ -123,4 +123,34 @@ extension ExerciseMetricType {
             return false
         }
     }
+
+    /// Разрешённые единицы измерения для конкретной метрики
+    var allowedUnits: [UnitType] {
+        switch self {
+        case .reps:
+            return [.repetition]
+        case .weight:
+            return [.kilogram, .pound]
+        case .time:
+            return [.second, .minute]
+        case .distance:
+            return [.meter, .kilometer]
+        case .calories:
+            return [.calorie]
+        case .custom:
+            return UnitType.allCases
+        }
+    }
+
+    /// Приоритет для сортировки метрик
+    var sortOrder: Int {
+        switch self {
+        case .reps: return 0
+        case .weight: return 1
+        case .time: return 2
+        case .distance: return 3
+        case .calories: return 4
+        case .custom: return 5
+        }
+    }
 }

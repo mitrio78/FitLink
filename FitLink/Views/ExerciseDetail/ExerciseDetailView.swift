@@ -20,9 +20,11 @@ struct ExerciseDetailView: View {
                         .padding(.horizontal)
                 }
 
-                mediaView
-                    .frame(maxWidth: .infinity, maxHeight: 220)
-                    .padding(.horizontal)
+                if viewModel.exercise.mediaURL != nil {
+                    mediaView
+                        .frame(maxWidth: .infinity, maxHeight: 220)
+                        .padding(.horizontal)
+                }
 
                 if !viewModel.exercise.variations.isEmpty {
                     Text(NSLocalizedString("ExerciseDetail.Variations", comment: "Variations"))
@@ -41,7 +43,7 @@ struct ExerciseDetailView: View {
                         .font(Theme.font.subheading)
                         .padding(.horizontal)
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: Theme.spacing.small) {
-                        ForEach(viewModel.exercise.metrics, id: \.self) { MetricBadge(metric: $0) }
+                        ForEach(viewModel.exercise.metrics.sorted { $0.type.sortOrder < $1.type.sortOrder }, id: \.self) { MetricBadge(metric: $0) }
                     }
                     .padding(.horizontal)
                 }
@@ -51,7 +53,8 @@ struct ExerciseDetailView: View {
                         .font(Theme.font.subheading)
                         .padding(.horizontal)
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: Theme.spacing.small) {
-                        ForEach(viewModel.exercise.muscleGroups, id: \.self) { group in
+                        let groups = [viewModel.exercise.mainMuscle] + viewModel.exercise.muscleGroups.filter { $0 != viewModel.exercise.mainMuscle }
+                        ForEach(groups, id: \.self) { group in
                             MuscleGroupBadge(group: group, isMain: group == viewModel.exercise.mainMuscle)
                         }
                     }
@@ -61,7 +64,6 @@ struct ExerciseDetailView: View {
             .padding(.vertical, Theme.spacing.medium)
         } //: ScrollView
         .background(Theme.color.background)
-        .navigationTitle(viewModel.exercise.name)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(NSLocalizedString("ExerciseDetail.Edit", comment: "Edit")) {
@@ -86,11 +88,6 @@ struct ExerciseDetailView: View {
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
-        } else {
-            Rectangle()
-                .fill(Theme.color.backgroundSecondary)
-                .overlay(Image(systemName: "photo"))
-                .clipShape(RoundedRectangle(cornerRadius: Theme.radius.image))
         }
     }
 }
