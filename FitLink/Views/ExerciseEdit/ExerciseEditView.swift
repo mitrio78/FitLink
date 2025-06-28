@@ -1,6 +1,7 @@
 import SwiftUI
 import PhotosUI
 import AVKit
+import UniformTypeIdentifiers
 
 struct ExerciseEditView: View {
     @Environment(\.dismiss) private var dismiss
@@ -41,25 +42,38 @@ struct ExerciseEditView: View {
             .onChange(of: pickerItem) { _, newValue in
                 guard let item = newValue else { return }
                 Task {
-                    // 1. Try to load a movie URL directly
-                    if let url = try? await item.loadTransferable(type: URL.self) {
+                    // 1. Attempt to load a direct file URL for videos
+                    if let url = try? await item.loadTransferable(type: URL.self),
+                       url.isFileURL,
+                       let type = UTType(filenameExtension: url.pathExtension),
+                       type.conforms(to: .movie) {
                         viewModel.onMediaSelected(tempURL: url)
+                        pickerItem = nil
+                        return
                     }
-                    // 2. Otherwise try loading image data and write a temp file
-                    else if let data = try? await item.loadTransferable(type: Data.self) {
-                        let tempDir = FileManager.default.temporaryDirectory
-                        let fileURL = tempDir.appendingPathComponent(UUID().uuidString + ".jpg")
-                        do {
-                            try data.write(to: fileURL)
-                            viewModel.onMediaSelected(tempURL: fileURL)
-                        } catch {
-                            viewModel.errorMessage = error.localizedDescription
+
+                    // 2. Load data representation when no URL is provided
+                    if let data = try? await item.loadTransferable(type: Data.self),
+                       let supported = item.supportedContentTypes.first {
+                        let ext = supported.preferredFilenameExtension ?? (supported.conforms(to: .image) ? "jpg" : supported.conforms(to: .movie) ? "mov" : nil)
+                        if let ext {
+                            let tempDir = FileManager.default.temporaryDirectory
+                            let fileURL = tempDir.appendingPathComponent(UUID().uuidString + "." + ext)
+                            do {
+                                try data.write(to: fileURL)
+                                viewModel.onMediaSelected(tempURL: fileURL)
+                            } catch {
+                                viewModel.errorMessage = error.localizedDescription
+                            }
+                        } else {
+                            viewModel.errorMessage = NSLocalizedString("ExerciseEdit.MediaLoadError", comment: "Could not load selected media")
                         }
+                        pickerItem = nil
+                        return
                     }
+
                     // 3. Fallback when nothing could be loaded
-                    else {
-                        viewModel.errorMessage = NSLocalizedString("ExerciseEdit.MediaLoadError", comment: "Could not load selected media")
-                    }
+                    viewModel.errorMessage = NSLocalizedString("ExerciseEdit.MediaLoadError", comment: "Could not load selected media")
                     pickerItem = nil
                 }
             }
